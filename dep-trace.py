@@ -17,8 +17,12 @@ def read_dependency_list(name):
 
 def sample(pid,libs):
     lsof = subprocess.Popen(['lsof', '-p', pid], stdout=subprocess.PIPE)
-    out = subprocess.check_output(['grep','lib'], stdin=lsof.stdout)
-    lsof.wait()
+
+    try:
+        out = subprocess.check_output(['grep','lib'], stdin=lsof.stdout)
+    except:
+        return
+
     for l in out.splitlines():
         fulllib = str(l.split()[-1],'utf-8')
         libname = fulllib.split('/')[-1]
@@ -26,7 +30,7 @@ def sample(pid,libs):
         libs[libname] = fulllib
 
 
-def monitor(pid,timeout,rate):
+def monitor_pid(pid,timeout,rate):
     print("monitoring process " + pid)
     target = timeout / 1000.0
     freq = rate / 1000.0
@@ -38,8 +42,19 @@ def monitor(pid,timeout,rate):
         time.sleep(freq)
         elapsed += freq
 
-    for lib in libs:
-        print(lib)
+    return libs
+
+
+def monitor_process(process,rate):
+    print("monitoring process " + str(process.pid))
+    freq = rate / 1000.0
+
+    libs = {}
+    process.poll()
+    while process.returncode is None:
+        sample(str(process.pid),libs)
+        time.sleep(freq)
+        process.poll()
 
     return libs
 
@@ -48,8 +63,8 @@ def search_deps(libs,deps):
     for d in deps:
         print('\t' + d)
     print('Process used ' + str(len(libs)) + ' libraries')
-    for l in libs:
-        print('\t' + str(l))
+    for l,fullname in libs.items():
+        print('\t' + str(fullname))
 
     print('Attempting to match...')
 
@@ -86,15 +101,18 @@ def search_deps(libs,deps):
         print('\t' + str(d))
     
 
-def execute(process):
-    print("executing " + process)
+def execute(procstr, rate):
+    print("executing " + procstr)
+    p = procstr.replace("'","").split()
+    proc = subprocess.Popen(p)
+    return monitor_process(proc,rate)
 
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
 parser.add_option('-p', '--pid', dest='pid', help='monitor running process PID', metavar='PID')
 parser.add_option('-e', '--execute', dest='execute', help='start and monitor PROGRAM', metavar='PROGRAM')
 parser.add_option('-t', '--timeout', dest='timeout', default=1000, help='monitor for TIME ms', metavar='TIME')
-parser.add_option('-r', '--rate', dest='rate', default=100, help='sample every TIME ms', metavar='TIME')
+parser.add_option('-r', '--rate', dest='rate', default=10, help='sample every TIME ms', metavar='TIME')
 
 (options, args) = parser.parse_args()
 
@@ -106,8 +124,13 @@ if (len(args) < 1 or options.pid is None and options.execute is None) or (option
 deps=read_dependency_list(args[0])
    
 if options.pid is not None:
-    libs = monitor(options.pid,options.timeout,options.rate)
+    libs = monitor_pid(options.pid,options.timeout,options.rate)
     search_deps(libs,deps)
+else:
+    libs = execute(options.execute,options.rate)
+    search_deps(libs,deps)
+
+
 
 
 
