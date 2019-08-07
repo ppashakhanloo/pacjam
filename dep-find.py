@@ -145,7 +145,7 @@ def stats(deps, g, trans):
             f.write('{}, {}, {}\n'.format(counter, name, size))
             counter += 1
 
-parser = OptionParser(usage=usage)
+parser = OptionParser()
 parser.add_option('-p', '--package', dest='package', help='build a dependency list for PACKAGE', metavar='PACKAGE')
 
 (options, args) = parser.parse_args()
