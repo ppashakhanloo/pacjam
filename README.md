@@ -31,7 +31,7 @@ Once you successfully build a target dependency with the modified compiler, runn
 
 ### 2. Checking for runtime dependency use
 
-Once you have a trace for a target dependency, you can feed it into the ``dep-symbol.py`` tool along with a dependency list (generated from dep-find.py)[#dep-find] to get some information on runtime dependency usage:
+Once you have a trace for a target dependency, you can feed it into the ``dep-symbol.py`` tool along with a dependency list [generated from dep-find.py](#dep-find) to get some information on runtime dependency usage:
 
 ```
 ./dep-symbol.py -t path/to/trace.txt path/to/trace.dep
