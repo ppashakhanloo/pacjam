@@ -12,8 +12,6 @@ import json
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
-# TODO : Stop packages from re-loading meta
-
 # Really just for tracking a bit more about a symbol stored in our table
 class Symbol:
     name = ""
@@ -36,6 +34,10 @@ class Meta:
         self.package_deb = package_deb
         self.has_symbols = has_symbols
         self.shared_libs = shared_libs
+
+    def add_lib(self, lib):
+        if lib not in self.shared_libs:
+            self.shared_libs.append(lib)
 
     def json_state(self):
         return self.__dict__
@@ -60,13 +62,16 @@ def read_dependency_list(name):
             deps[d] = True
     return deps
 
-def download_deps(deps):
+def download_deps(deps,metas):
     debs = {}
 
     for d in deps:
+        if d in metas:
+            continue
+
         print('fetching ' + d)
         try:
-            out = subprocess.check_output(['apt-get', 'download', d])
+            out = subprocess.check_output(['apt-get', 'download', d], stderr=subprocess.STDOUT)
             deb = glob.glob(d + '*.deb')[0]
             debs[d] = deb
             os.rename(deb, working_dir + '/' + deb)
@@ -132,7 +137,7 @@ def parse_symbols(meta,symbols):
             toks = l.split()
             if toks[-1] == "#MINVER#":
                 current_lib = toks[0]
-                meta.shared_libs.append(current_lib)
+                meta.add_lib(current_lib)
             elif toks[0] == "|":
                 pass
             else:
@@ -181,10 +186,10 @@ def load_trace(name):
 
     return calls
 
-def check_deps(metas,symbols,calls):
-    track = {}
-    for k,m in metas.items():
-        track[m.package_name] = None
+def check_deps(metas,deps,symbols,calls):
+    stats = {}
+    for d in deps:
+        stats[d] = None
 
     for c in calls:
         if c["indirect"]:
@@ -192,19 +197,23 @@ def check_deps(metas,symbols,calls):
         fname = c["fnptr"][1:]
         sym = symbols.get(fname)
         if sym is not None:
-            track[sym.metas[0].package_name] = sym.libs[0]
+            stats[sym.metas[0].package_name] = sym.libs[0]
+
+    return stats
+
+def dump_deps(stats,outfile):
         
     # Just for nice output
     used = []
     notused = []
 
-    for d,t in track.items():
+    for d,t in stats.items():
         if t is not None:
             used.append({"package_name":d, "shared_lib":t})
         else:
             notused.append(d)
 
-    print('Package has ' + str(len(track)) + ' tracked dependencies')
+    print('Package has ' + str(len(stats)) + ' tracked dependencies')
     print('Using ' + str(len(used)) + ':')
     for d in used:
         print('\t' + d["package_name"] + ' ===> ' + d["shared_lib"])
@@ -213,12 +222,20 @@ def check_deps(metas,symbols,calls):
     for d in notused:
         print('\t' + d)
 
+    if outfile is not None:
+        j = {}
+        j["used"] = used
+        j["notused"] = notused
+
+        with open(outfile, 'w') as f:
+            json.dump(j,f,indent=2)
 
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
 parser.add_option('-d', '--dir', dest='working_dir', default='symbol-out', help='use DIR as working output directory', metavar='DIR')
 parser.add_option('-t', '--trace', dest='trace', help='load trace file DIR', metavar='TRACE')
 parser.add_option('-l', '--load', action='store_true', help='jump straight to loading the repository symbols')
+parser.add_option('-o', '--outfile', dest='outfile', default=None, help='dump json data to OUTFILE for post-processing', metavar='OUTFILE')
 
 (options, args) = parser.parse_args()
 
@@ -233,7 +250,7 @@ if len(args) < 1:
 
 if not options.load:
     deps=read_dependency_list(args[0])
-    debs=download_deps(deps)
+    debs=download_deps(deps,metas)
     extract_debs(debs,metas)
 
 symbols = load_symbols(metas)
@@ -241,7 +258,8 @@ save_meta(metas)
 
 if options.trace is not None:
     calls = load_trace(options.trace)
-    check_deps(metas,symbols,calls) 
+    stats = check_deps(metas,deps,symbols,calls) 
+    dump_deps(stats, options.outfile)
    
 
 
