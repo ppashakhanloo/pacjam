@@ -44,5 +44,16 @@ Once you have a trace for a target dependency, you can feed it into the ``dep-sy
 
 # dep-find
 
-Coming soon
+This tool (written by Kihong) builds a dependency graph of the debian packages cached by apt. I have incluced the files ``direct.txt`` and ``transitive.txt`` which show the direct and transitive dependencies for debian packages respectively. 
+
+For the time being, you can grab a dependency list for a package with:
+
+```
+./dep-find.py -p PACKAGE
+```
+
+which will create a file ``PACKAGE.dep`` in the current working directory. This can then be feed into ``dep-symbols``. For example, ``./dep-find.py -p wget`` will get the dependencies for ``wget`` and create ``wget.dep``.
+
+You might also find it useful to search for dependecies and packages with ``apt``: ``apt-cache depends PACKAGE`` and ``apt-cache search PACKAGE``.
+
 
