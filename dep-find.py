@@ -47,7 +47,7 @@ def fetch(deps):
             continue
         depends = subprocess.check_output([
             'apt-cache', 'depends', '--no-suggests', '--no-breaks',
-            '--no-conflicts', '--no-pre-depends', name
+            '--no-conflicts', name
         ]).decode()
         dep_list = []
 
