@@ -179,8 +179,11 @@ def load_trace(name):
     if os.path.exists(name):
         with open(name, 'r') as f:
             for line in f:
-                j = json.loads(line)
-                calls.append(j)
+                try:
+                    j = json.loads(line)
+                    calls.append(j)
+                except json.decoder.JSONDecodeError:
+                    continue
     else:
         return {}
 
