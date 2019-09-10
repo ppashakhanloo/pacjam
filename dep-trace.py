@@ -58,6 +58,11 @@ def monitor_process(process,rate):
 
     return libs
 
+def dump_libs(libs):
+    print('Process used ' + str(len(libs)) + ' libraries')
+    for l,fullname in libs.items():
+        print('\t' + str(fullname)) 
+
 def search_deps(libs,deps):
     print('Package has ' + str(len(deps)) + ' transitive dependencies')
     for d in deps:
@@ -113,21 +118,24 @@ parser.add_option('-p', '--pid', dest='pid', help='monitor running process PID',
 parser.add_option('-e', '--execute', dest='execute', help='start and monitor PROGRAM', metavar='PROGRAM')
 parser.add_option('-t', '--timeout', dest='timeout', default=1000, help='monitor for TIME ms', metavar='TIME')
 parser.add_option('-r', '--rate', dest='rate', default=10, help='sample every TIME ms', metavar='TIME')
+parser.add_option('-d', '--dump', action='store_true', help='dump libs from lsof and exit')
 
 (options, args) = parser.parse_args()
 
-if (len(args) < 1 or options.pid is None and options.execute is None) or (options.pid is not None and options.execute is not None):
+if ((not options.dump and len(args) < 1) or options.pid is None and options.execute is None) or (options.pid is not None and options.execute is not None):
     print("error: must supply pid OR execute")
     parser.print_usage()
     sys.exit(1)
 
-deps=read_dependency_list(args[0])
-   
 if options.pid is not None:
     libs = monitor_pid(options.pid,options.timeout,options.rate)
-    search_deps(libs,deps)
 else:
     libs = execute(options.execute,options.rate)
+
+if options.dump:
+    dump_libs(libs)
+else:
+    deps=read_dependency_list(args[0])
     search_deps(libs,deps)
 
 
