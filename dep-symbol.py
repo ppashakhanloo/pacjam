@@ -44,7 +44,6 @@ class Meta:
 
     def as_meta(dct):
         return Meta(dct["package_name"],dct["package_deb"],dct["has_symbols"],dct["shared_libs"])
-    
 
 class MetaEncoder(json.JSONEncoder):
 
@@ -134,20 +133,21 @@ def parse_symbols(meta,symbols):
     with open(os.path.join(working_dir, meta.package_name, "symbols")) as f:
         current_lib = ""
         for l in f.readlines():
-            toks = l.split()
-            if toks[-1] == "#MINVER#":
-                current_lib = toks[0]
+            if l[0] != " " and l[0] != "|":
+                current_lib = l.split()[0]
                 meta.add_lib(current_lib)
-            elif toks[0] == "|":
-                pass
             else:
-                name = toks[0].split("@")[0]
-                if name in symbols:
-                    # Possible conflict (really only an issue between packages for now)
-                    symbols[name].libs.append(current_lib)
-                    symbols[name].metas.append(meta)
-                else:    
-                    symbols[name] = Symbol(name,[current_lib],[meta])
+                toks = l.split()
+                if toks[0] == "|":
+                    pass
+                else:
+                    name = toks[0].split("@")[0]
+                    if name in symbols:
+                        # Possible conflict (really only an issue between packages for now)
+                        symbols[name].libs.append(current_lib)
+                        symbols[name].metas.append(meta)
+                    else:    
+                        symbols[name] = Symbol(name,[current_lib],[meta])
         
 
 def load_meta():
@@ -165,14 +165,38 @@ def save_meta(meta):
         for k,m in metas.items():
             f.write(json.dumps(m, cls=MetaEncoder) + '\n')
 
+
+# From Anthony, this is very hacky and ugly, but for now while we are designing the
+# system, I'll just keep it as is.
+def exclude_symbol(exclude, libs):
+    for e in exclude:
+        for l in libs:
+            if e in l:
+                return True
+    return False;
+
 def load_symbols(metas):
     symbols = {}
-
+    
     for k,m in metas.items():
         if m.has_symbols:
             parse_symbols(m, symbols)
 
     return symbols
+
+def save_symbols(symbols):
+    with open(os.path.join(working_dir,'symbols.txt'), 'w') as f:
+        f.write("{}\n".format(len(symbols)))
+        for k,s in symbols.items():
+            if exclude_symbol(["libc.so"], s.libs):
+                continue 
+
+            f.write("{} {}\n".format(s.name, s.libs[0]))
+
+            #for l in s.libs:
+            #    f.write(" {}".format(l))
+            #f.write("\n")
+
 
 def load_trace(name):
     calls = []
@@ -258,6 +282,7 @@ if not options.load:
 
 symbols = load_symbols(metas)
 save_meta(metas)
+save_symbols(symbols)
 
 if options.trace is not None:
     calls = load_trace(options.trace)
