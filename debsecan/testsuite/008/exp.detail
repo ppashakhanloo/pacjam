@@ -1,0 +1,305 @@
+CVE-2005-3184 (remotely exploitable, medium urgency)
+  Buffer overflow vulnerability in the unicode_to_bytes in the Service ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3241 (remotely exploitable, medium urgency)
+  Multiple vulnerabilities in Ethereal 0.10.12 and earlier allow remote ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3242 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3243 (remotely exploitable, medium urgency)
+  Multiple buffer overflows in Ethereal 0.10.12 and earlier might allow ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3244 (remotely exploitable, medium urgency)
+  The BER dissector in Ethereal 0.10.3 to 0.10.12 allows remote ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3245 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the ONC RPC dissector in Ethereal 0.10.3 ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3246 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3247 (remotely exploitable, medium urgency)
+  The SigComp UDVM in Ethereal 0.10.12 allows remote attackers to cause ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3248 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the X11 dissector in Ethereal 0.10.12 and ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3249 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the WSP dissector in Ethereal 0.10.1 to ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+
+CVE-2005-3651 (fixed, remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: ethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2360 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the LDAP dissector in Ethereal 0.8.5 through ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2361 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the (1) AgentX dissector, (2) PER dissector, ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2362 (remotely exploitable, low urgency)
+  Unknown vulnerability several dissectors in Ethereal 0.9.0 through ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+
+CVE-2005-2363 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the (1) SMPP dissector, (2) 802.3 dissector, ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2364 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the (1) GIOP dissector, (2) WBXML, or (3) ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2365 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the SMB dissector in Ethereal 0.9.0 through ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2366 (fixed, remotely exploitable, low urgency)
+  Unknown vulnerability in the BER dissector in Ethereal 0.10.11 allows ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-2367 (fixed, remotely exploitable, medium urgency)
+  Format string vulnerability in the proto_item_set_text function in ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.12-1 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody13 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-3184 (remotely exploitable, medium urgency)
+  Buffer overflow vulnerability in the unicode_to_bytes in the Service ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3241 (remotely exploitable, medium urgency)
+  Multiple vulnerabilities in Ethereal 0.10.12 and earlier allow remote ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3242 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3243 (remotely exploitable, medium urgency)
+  Multiple buffer overflows in Ethereal 0.10.12 and earlier might allow ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3244 (remotely exploitable, medium urgency)
+  The BER dissector in Ethereal 0.10.3 to 0.10.12 allows remote ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3245 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the ONC RPC dissector in Ethereal 0.10.3 ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3246 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3247 (remotely exploitable, medium urgency)
+  The SigComp UDVM in Ethereal 0.10.12 allows remote attackers to cause ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3248 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the X11 dissector in Ethereal 0.10.12 and ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3249 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the WSP dissector in Ethereal 0.10.1 to ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+
+CVE-2005-3651 (fixed, remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: ethereal-common 0.10.10-2sarge2
+             (built from ethereal 0.10.10-2sarge2)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-3184 (remotely exploitable, medium urgency)
+  Buffer overflow vulnerability in the unicode_to_bytes in the Service ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3241 (remotely exploitable, medium urgency)
+  Multiple vulnerabilities in Ethereal 0.10.12 and earlier allow remote ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3242 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3243 (remotely exploitable, medium urgency)
+  Multiple buffer overflows in Ethereal 0.10.12 and earlier might allow ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3244 (remotely exploitable, medium urgency)
+  The BER dissector in Ethereal 0.10.3 to 0.10.12 allows remote ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3245 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the ONC RPC dissector in Ethereal 0.10.3 ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3246 (remotely exploitable, medium urgency)
+  Ethereal 0.10.12 and earlier allows remote attackers to cause a denial ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3247 (remotely exploitable, medium urgency)
+  The SigComp UDVM in Ethereal 0.10.12 allows remote attackers to cause ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3248 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the X11 dissector in Ethereal 0.10.12 and ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3249 (remotely exploitable, medium urgency)
+  Unspecified vulnerability in the WSP dissector in Ethereal 0.10.1 to ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed in unstable: ethereal 0.10.13-1 (source package)
+
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+
+CVE-2005-3651 (fixed, remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: tethereal 0.10.12-6
+             (built from ethereal 0.10.12-6)
+  fixed on branch:   ethereal 0.10.10-2sarge3 (source package)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+  fixed on branch:   ethereal 0.9.4-1woody14 (source package)
+  fix is available for the selected suite (sid)
+

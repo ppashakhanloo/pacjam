@@ -1,0 +1,102 @@
+# Swedish translation for debsecan.
+# Copyright (C) 2007 Free Software Foundation, Inc.
+# This file is distributed under the same license as the debsecan package.
+# Daniel Nylander <po@danielnylander.se>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan 0.4.2\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-02-22 22:13+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "Vill du att debsecan ska skicka dagliga rapporter?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"debsecan kan kontrollera säkerhetsstatusen för värdmaskinen en gång per dag "
+"och notifiera dig om ändringar via e-post."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Om du väljer det här alternativet kommer debsecan att dagligen hämta en "
+"liten fil.  Din paketlista kommer inte att överföras till servern."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "E-postadress till vilken dagliga rapporter ska skickas:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Huvudsvit från vilken paket installeras:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"För att presentera mer användbar data behöver debsecan veta den Debian-"
+"utgåva som du vanligtvis installerar paket från."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Om du anger \"GENERIC\" (standardvalet) kommer endast grundläggande "
+"funktionalitet finnas tillgänglig i debsecan.  Om du anger sviten som "
+"matchar konfigurationsfilen sources.list kommer information om rättade och "
+"föråldrade paket att inkluderas i e-postrapporterna."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "URL för sårbarhetsinformation:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"debsecan hämtar sårbarhetsinformation från nätverket. Om ditt system inte är "
+"anslutet till Internet kan du ange url:en till en lokal spegelserver här.  "
+"Om du lämnar det här alternativet tomt kommer den inbyggda standard-url:en "
+"att användas."
+
+#, fuzzy
+#~ msgid "Suite to install packages from:"
+#~ msgstr "Från vilken svit vill du installera paket?"

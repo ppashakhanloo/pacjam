@@ -1,0 +1,34 @@
+Debian Security Analyzer
+------------------------
+
+debsecan, the Debian Security Analyzer, is a tool to generate a list
+of vulnerabilities which affect a particular Debian installation.
+debsecan runs on the host which is to be checked, and downloads
+vulnerability information over the Internet.  It can send mail to
+interested parties when new vulnerabilities are discovered or when
+security updates become available.
+
+For details, see the debsecan(1) manual page.  For instructions how to
+create a suitable, randomized cron entry, see the
+debsecan-create-cron(8) manual page.
+
+The vulnerability database is maintained by the Debian testing
+security team:
+
+  <https://security-team.debian.org/security_tracker.html>
+
+A web interface to the database is available at:
+
+  <https://security-tracker.debian.org/tracker/>
+
+FAQ
+---
+
+Q: How can I reduce the frequency of reports (e.g. weekly instead of
+   daily reporting)?
+
+A: Just edit /etc/cron.d/debsecan to suit your needs.  Note that
+   debsecan internally limits the number of reports per day to 1, so
+   you cannot increase the frequency of reports, only decrease it.
+
+ -- Florian Weimer <fw@deneb.enyo.de>, Sun, 19 Aug 2007 21:17:44 +0200

@@ -1,0 +1,47 @@
+Package: libisc7
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 332
+Maintainer: LaMont Jones <lamont@debian.org>
+Architecture: i386
+Source: bind9
+Version: 1:9.3.0-1
+Replaces: libbind0
+Depends: libc6 (>= 2.3.2.ds1-4)
+Conflicts: libbind0
+Description: ISC Shared Library used by BIND
+ The Berkeley Internet Name Domain (BIND) implements an Internet domain
+ name server.  BIND is the most widely-used name server software on the
+ Internet, and is supported by the Internet Software Consortium, www.isc.org.
+ .
+ This package delivers the libisc shared library used by BIND's daemons and
+ clients.
+
+Package: bind9
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 616
+Maintainer: LaMont Jones <lamont@debian.org>
+Architecture: i386
+Version: 1:9.3.0-1
+Replaces: bind, dnsutils (<< 1:9.1.0-3)
+Depends: libbind9-0, libc6 (>= 2.3.5-1), libdns20, libisc9, libisccc0, libisccfg1, liblwres1, libssl0.9.8, netbase, adduser, libdns20 (= 1:9.3.1-2.0.1), libisccfg1 (= 1:9.3.1-2.0.1), libisc9 (= 1:9.3.1-2.0.1), libisccc0 (= 1:9.3.1-2.0.1)
+Suggests: dnsutils, bind9-doc
+Description: Internet Domain Name Server
+
+Package: pdftohtml
+Status: install ok installed
+Priority: optional
+Section: text
+Installed-Size: 696
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Version: 0.36-10
+Depends: libc6 (>= 2.3.2.ds1-4), libgcc1 (>= 1:3.4.1-3), libstdc++5 (>= 1:3.3.4-1), gs
+Recommends: xpdf-common
+Filename: pool/main/p/pdftohtml/pdftohtml_0.36-11_i386.deb
+Size: 253142
+MD5sum: 6db7eb4ac43616f355cf2ad8fc935865
+Description: Translates pdf documents into html format

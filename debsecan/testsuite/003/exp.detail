@@ -1,0 +1,33 @@
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: ethereal 0.10.13-1
+             (built from ethereal 0.10.13-1)
+
+CVE-2005-3651 (remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: ethereal 0.10.13-1
+             (built from ethereal 0.10.13-1)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: ethereal-common 0.10.13-1
+             (built from ethereal 0.10.13-1)
+
+CVE-2005-3651 (remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: ethereal-common 0.10.13-1
+             (built from ethereal 0.10.13-1)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+
+CVE-2005-3313 (remotely exploitable, medium urgency)
+  The IRC protocol dissector in Ethereal 0.10.13 allows remote attackers ...
+  installed: tethereal 0.10.13-1
+             (built from ethereal 0.10.13-1)
+
+CVE-2005-3651 (remotely exploitable, medium urgency)
+  Stack-based buffer overflow in the dissect_ospf_v3_address_prefix ...
+  installed: tethereal 0.10.13-1
+             (built from ethereal 0.10.13-1)
+  fixed on branch:   ethereal 0.10.10-2sarge4 (source package)
+

@@ -1,0 +1,100 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-03-08 21:11+0100\n"
+"Last-Translator: Bart Cornelis <cobaco@skolelinux.no>\n"
+"Language-Team: debian-l10n-dutch <debian-l10n-dutch@lists.debian.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Dutch\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "Wilt u dat debsecan dagelijkse rapporten stuurt?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"debsecan kan de beveiligingsstatus van uw computer eens per dag controleren, "
+"en u vervolgens per e-mail over veranderingen verwittigen."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Als u voor deze optie kiest zal debsecan elke dag een klein bestand ophalen. "
+"Uw pakketlijst wordt niet doorgestuurd naar de server."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr ""
+"E-mailadres waar de dagelijkse rapporten naar toe verstuurd moeten worden:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Van welke uitgave u de meeste pakketten geïnstalleerd heeft:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"Om nuttiger data te presenteren dient debsecan te weten van welke Debian-"
+"uitgave u normaal pakketten installeert."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Als u de standaardwaarde ('GENERIC') opgeeft is enkel de basis-debsecan-"
+"functionaliteit beschikbaar. Als u de met uw sources.list overeenkomende "
+"uitgave opgeeft, wordt er informatie over vastgezette en verouderde "
+"pakketten bijgesloten in de (per e-mail verstuurde) rapporten."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "Adres (URL) van de veiligheidslek-informatie:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"debsecan haalt veiligheidslek-informatie op via het netwerk. Als uw systeem "
+"niet met Internet verbonden is kunt u hier het adres (URL) van de lokale "
+"spiegelserver opgeven. Als u dit leeg laat wordt het ingebouwde adres "
+"gebruikt."

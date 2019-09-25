@@ -1,0 +1,66 @@
+Security report based on the sid release
+
+*** New security updates
+
+TEMP-2005-3184 Buffer overflow vulnerability in the...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3184>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3241 Multiple vulnerabilities in Ethereal 0.10.12 and...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3241>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3242 Ethereal 0.10.12 and earlier allows remote attackers...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3242>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3243 Multiple buffer overflows in Ethereal 0.10.12 and...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3243>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3244 The BER dissector in Ethereal 0.10.3 to 0.10.12...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3244>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3245 Unspecified vulnerability in the ONC RPC dissector...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3245>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3246 Ethereal 0.10.12 and earlier allows remote attackers...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3246>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3247 The SigComp UDVM in Ethereal 0.10.12 allows remote...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3247>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3248 Unspecified vulnerability in the X11 dissector in...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3248>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3249 Unspecified vulnerability in the WSP dissector in...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3249>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+*** Vulnerabilities without updates
+
+TEMP-2005-3313 The IRC protocol dissector in Ethereal 0.10.13...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3313>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+TEMP-2005-3651 Stack-based buffer overflow in the...
+  <https://security-tracker.debian.org/tracker/TEMP-2005-3651>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+

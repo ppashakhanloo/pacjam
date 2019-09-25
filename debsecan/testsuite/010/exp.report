@@ -1,0 +1,12 @@
+Security report based on the sid release
+
+*** Available security updates
+
+CVE-2005-0034 An &quot;incorrect assumption&quot; in the...
+  <https://security-tracker.debian.org/tracker/CVE-2005-0034>
+  - bind9 (remotely exploitable)
+
+CVE-2005-0064 Buffer overflow in the Decrypt::makeFileKey2 function
+  <https://security-tracker.debian.org/tracker/CVE-2005-0064>
+  - pdftohtml (remotely exploitable)
+

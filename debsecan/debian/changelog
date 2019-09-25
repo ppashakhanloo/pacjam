@@ -1,0 +1,334 @@
+debsecan (0.4.19) unstable; urgency=medium
+
+  * Add support for stretch and buster, using patches from Michael
+    Stapelberg and Salvatore Bonaccorso.  Closes: #789196
+  * Python needs https_proxy for proxy configuration with https:// URLs.
+    Apply patch from Michael Stapelberg.  Closes: #749424
+  * Update project URLs.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 02 Jul 2017 12:31:29 +0200
+
+debsecan (0.4.18) unstable; urgency=low
+
+  * Increase compatibility with Python 2.6 in squeeze.  The
+    ssl.wrap_socket function does not take a "ciphers" argument.
+  * Add dependency on ca-certificates
+  * Use https:// URLs everywhere.  Closes: #749421
+  * Add Vcs-Git heheader.  Closes: #761344
+  * Move primary repository to Gitorious.  Closes: #778798
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 22 Feb 2015 20:09:52 +0100
+
+debsecan (0.4.17) unstable; urgency=low
+
+  * Apply patch from Stephen Kitt <skitt@debian.org> to support jessie.
+    Closes: #709562
+  * Apply patch from Paul Wise <pabs@debian.org> to switch the default
+    data source URL to security-tracker.debian.org.
+  * Implement https:// checking.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 18 Mar 2014 10:18:37 +0100
+
+debsecan (0.4.16+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix pending l10n issues. Debconf translations:
+    - Danish (Joe Hansen).  Closes: #654514
+    - Polish (Michał Kułach).  Closes: #664652
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 28 Mar 2012 07:38:20 +0200
+
+debsecan (0.4.16) unstable; urgency=low
+
+  * Apply patch from Paul Wise to support wheezy
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Thu, 06 Oct 2011 15:03:37 +0200
+
+debsecan (0.4.15) unstable; urgency=low
+
+  * Actually support recent python-apt versions, with thanks to Michael
+    Gilbert.  Closes: #628541.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Thu, 02 Jun 2011 14:11:56 +0200
+
+debsecan (0.4.14) unstable; urgency=low
+
+  * Rework debconf handling.  /etc/default/debsecan is no longer a
+    conffile.  Closes: #545362, #545363
+  * Remove obsolete configuration migration code
+  * Update debconf parser for lenny, squeeze
+  * Adjust test suite and README URLs
+  * Try both version_compare and VersionCompare, for the python-apt 0.8
+    API migration.  Closes: #572086
+  * Do not use full path to command in postinst
+  * Update Standards-Version, adjust dependencies
+  * Switch debhelper compatibility level to 5
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 07 Mar 2010 18:07:39 +0100
+
+debsecan (0.4.13) unstable; urgency=low
+
+  * Update URL from security-tracker.debian.net to
+    security-tracker.debian.org
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Mon, 12 Oct 2009 18:23:57 +0000
+
+debsecan (0.4.12) unstable; urgency=low
+
+  * Fix squeeze typo.  Closes: #518276
+  * Add squeeze to the debconf templates.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Fri, 06 Mar 2009 22:16:18 +0100
+
+debsecan (0.4.11) unstable; urgency=low
+
+  * Acknowledge NMUs.  Closes: #490719, #465293.
+  * Add squeeze suite.  Closes: #516729.
+  * Guard against gethostbyname failure when determining the IP address.
+    Closes: #500480.
+  * Add Finnish debconf transaction by Esko Arajärvi.  Closes: #502734.
+  * Add Japanese debconf translation by Hideki Yamane.  Closes: #512986.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sat, 28 Feb 2009 19:24:04 +0100
+
+debsecan (0.4.10+nmu2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix pending l10n bugs. Debconf translations:
+    - Turkish. Closes: #490719
+
+ -- Christian Perrier <bubulle@debian.org>  Sat, 18 Oct 2008 07:26:48 +0200
+
+debsecan (0.4.10+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload with maintainer approval.
+  * Update URLs to point to security-tracker.debian.net (closes: #465293).
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Sat, 26 Apr 2008 21:22:46 +0200
+
+debsecan (0.4.10) unstable; urgency=low
+
+  * Support macros in MAILTO configuration variable
+    Closes: #433728.
+  * Make subject line configurable through /etc/default/debsecan.
+    Closes: #437762.
+  * Remove support for running without python-apt installed.
+    This produces more useful error messages in case python-apt is
+    installed, but unusable.  Closes: #435795.
+  * Document how to reduce the freqency of reports.  Closes: #422997.
+  * Add Brazilian Portuguese debconf templates translation,
+    by Eder L. Marques  <frolic@debian-ce.org>.  Closes: #437632.
+  * Set MAILTO=root in generated cron file.  This change is only effective
+    on new installations.  Suggested by Bastian Kleineidam.
+    Closes: #435791.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 02 Sep 2007 17:27:52 +0200
+
+debsecan (0.4.9) unstable; urgency=high
+
+  * Add lenny suite to the debconf template as well.  Closes: #418247.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 10 Apr 2007 07:16:24 +0200
+
+debsecan (0.4.8) unstable; urgency=high
+  
+  * Dutch translation of debconf messages,
+    by Bart Cornelis.  Closes: #415509.
+  * Add lenny suite.  Closes: #418247.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Mon,  9 Apr 2007 11:46:19 +0200
+
+debsecan (0.4.7) unstable; urgency=low
+
+  * Norwegian Bokmal translation of debconf messages,
+    by Hans Fredrik Nordhaug.  Closes: #414357.
+  * Spanish translation of debconf messages,
+    by Manuel Porras Peralta.  Closes: #411800.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Mon, 12 Mar 2007 19:17:22 +0100
+
+debsecan (0.4.6) unstable; urgency=low
+
+  * Migrate /var/lib/debsecan away from root permissions unconditionally.
+    Closes: #344117 (again).
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Fri,  2 Mar 2007 21:58:39 +0100
+
+debsecan (0.4.5) unstable; urgency=low
+
+  * debconf translation uppdates:
+    - Basque, by Piarres Beobide.  Closes: #411659.
+    - Catalan, by Jordà Polo.  Closes: 411992.
+    - Czecj, by Miroslav Kure.  Closes: #411556.
+    - French, by Christian Perrier.  Closes: #411616.
+    - Galician, by Jacobo Tarrio.  Closes: #411428.
+    - German, by Matthias Julius.  Closes: #411440.
+    - Hebrew, by Lior Kaplan.  Closes: #411572.
+    - Italian, by Luca Monducci.  Closes: #411478.
+    - Portuguese, by Miguel Figueiredo.  Closes: #411419.
+    - Russian, by Yuri Kozlov.  Closes: #411543.
+    - Swedish, by Daniel Nylander.  Closes: #411447.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Fri, 23 Feb 2007 08:35:10 +0100
+
+debsecan (0.4.4) unstable; urgency=high
+
+  * Add the configuration file /etc/default/debsecan.  Closes: #410946.
+  * Using the new configuration file, it is possible to control
+    where daily reports are sent.  Closes: #398199.
+  * Try to make debconf questions easier to understand.  Closes: #407186.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 18 Feb 2007 16:52:59 +0100
+
+debsecan (0.4.3.5) unstable; urgency=low
+
+  * Add /etc/cron.d directory to the package.  Closes: #408237.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Thu, 25 Jan 2007 21:49:17 +0100
+
+debsecan (0.4.3.4) unstable; urgency=low
+
+  * Add Italian debconf translation, by Luca Monducci.  Closes: #404418.
+  * Fix the fr.po file and remove strange characters.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 24 Dec 2006 18:52:21 +0100
+
+debsecan (0.4.3.3) unstable; urgency=low
+
+  * German debconf translation, by Matthias Julius.  Closes: #401497.
+  * French debconf translation, by Steve <dlist@bluewin.ch>.
+    Closes: #403025.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Thu, 14 Dec 2006 14:06:11 +0100
+
+debsecan (0.4.3.2) unstable; urgency=low
+
+  * Portuguese translation, by Rui Branco.  Closes: #400988.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Fri,  1 Dec 2006 09:08:56 +0100
+
+debsecan (0.4.3.1) unstable; urgency=low
+
+  * More fixes for debconf templates.  Closes: #400811, #368376.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Wed, 29 Nov 2006 20:47:43 +0100
+
+debsecan (0.4.3) unstable; urgency=low
+
+  * Correct spelling error in manpage.  Closes: #368376.
+  * Promote python-apt to a full dependency.  Package versions containing
+    the ~ characters lack a clear specification, and reusing the existing
+    implementation in APT is the best way to deal with this issue.
+    Closes: #390596.
+  * Document the http_proxy environment variable.  Closes: #376773.
+  * Add Czech translation of debconf messages, by Miroslav Kure
+    <kurem@upcase.inf.upol.cz>.  Closes: #369098.
+  * Add Swedish translation of debconf message, by Daniel Nylander
+    <yeager@lidkoping.net>.  Closes: #387520.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Mon,  2 Oct 2006 19:46:10 +0200
+
+debsecan (0.4.2) unstable; urgency=low
+
+  * Handle file open errors more gracefully.  Closes: #352925.
+  * Add --show-whitelist option.  Closes: #352927.
+  * Show an error message if a non-existing bug is removed from the
+    whitelist.  Closes: #352952.
+  * Add "simple" format.  Closes: #352929.
+  * Upgraded to policy version 3.7.2.0, no changes required.
+  * Add po-debconf support.  Closes: #351380.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sat, 20 May 2006 17:38:05 +0200
+
+debsecan (0.4.1) unstable; urgency=low
+
+  * urllib2 raises yet another exception when networking problems occur;
+    handle it.  Closes: #349760.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Wed, 25 Jan 2006 14:15:53 +0100
+
+debsecan (0.4.0) unstable; urgency=low
+
+  * In report mode, aggregate similar packages into lists.  Suggested by
+    Moritz Muehlenhoff.
+  * Use python-apt if it is available, which allows us to deal with
+    versions which do not conform to policy.  Closes: #346179.
+  * Add --line-length option.  Closes: #346193.
+  * In report mode, include an URL which has more information about the
+    bug.  Closes: #346191.
+  * Add whitelisting support.  Closes: #345920.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 17 Jan 2006 19:21:52 +0100
+
+debsecan (0.3.4) unstable; urgency=low
+
+  * Switch to urllib2, which handles HTTP errors in a better way.
+    Closes: #345308.
+  * Add --no-obsolete option.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun,  1 Jan 2006 13:50:24 +0100
+
+debsecan (0.3.3) unstable; urgency=low
+
+  * Fix syntax error in config script.  Closes: #344976.
+  * Be more tolerant about broken package descriptions in
+    /var/lib/dpkg/status.  Closes: #344996.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Wed, 28 Dec 2005 09:52:53 +0100
+
+debsecan (0.3.2) unstable; urgency=low
+
+  * Fix typo in obsolete packages message.  Closes: #344778.
+  * --format report and --only-fixed no longer conflict.
+  * Add debconf configuration.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 27 Dec 2005 14:23:03 +0100
+
+debsecan (0.3.1) unstable; urgency=low
+
+  * Remove duplicate explanations regarding obsolete packages.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Sun, 25 Dec 2005 18:12:25 +0100
+
+debsecan (0.3) unstable; urgency=low
+
+  * Support package pinning.
+  * The --suite option is no longer mandatory.
+  * When the user selected a specific suite, flag packages which have been
+    removed as obsolete.  Closes: #344241.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Fri, 23 Dec 2005 15:35:46 +0100
+
+debsecan (0.2.2) unstable; urgency=low
+
+  * Add Recommends: for cron and mail-transport-agent.
+  * Make debsecan-create-cron more robust to a --suite option.
+    Closes: #344204.
+  * Gracefully ignore packages with invalid version information.
+    Closes: #344106.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Thu, 22 Dec 2005 10:27:54 +0100
+
+debsecan (0.2.1) unstable; urgency=low
+
+  * Fix permissions of /var/lib/debsecan.  Closes: #344117.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 20 Dec 2005 11:17:28 +0100
+
+debsecan (0.2) unstable; urgency=low
+
+  * Remove duplicate output from --format report.
+  * Fix handling of binary packages (important fix, old output was very
+    incomplete).
+  * Switch to secure-testing.debian.net as vulnerability data source.
+  * Add debsecan-create-cron script.
+  * Use daemon:daemon for history data.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Mon, 19 Dec 2005 19:26:06 +0100
+
+debsecan (0.1) unstable; urgency=low
+
+  * First version.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Wed, 14 Dec 2005 16:09:20 +0100
+

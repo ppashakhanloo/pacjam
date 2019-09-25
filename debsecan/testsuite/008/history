@@ -1,0 +1,7 @@
+VERSION 0
+CVE-2005-3651,ethereal, 
+CVE-2005-3313,ethereal, 
+CVE-2005-3651,tethereal, 
+CVE-2005-3313,tethereal, 
+CVE-2005-3651,ethereal-common, 
+CVE-2005-3313,ethereal-common, 

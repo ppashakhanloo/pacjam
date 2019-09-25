@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+case "$1" in
+    configure)
+	# If the directory is owned by root, change ownership.  This
+	# happens for fresh installations, and re-installations after
+	# removal (and purge, of course).
+	find /var/lib/debsecan -maxdepth 0 -user root | while read dir ; do
+	    chown daemon:daemon "$dir"
+	done
+
+	if ! test -e /etc/default/debsecan ; then
+cat > /etc/default/debsecan <<EOF
+# Configuration file for debsecan.  Contents of this file should
+# adhere to the KEY=VALUE shell syntax.  This file may be edited by
+# debsecan's scripts, but your modifications are preserved.
+
+# If true, enable daily reports, sent by email.
+REPORT=true
+
+# For better reporting, specify the correct suite here, using the code
+# name (that is, "sid" instead of "unstable").
+SUITE=GENERIC
+
+# Mail address to which reports are sent.
+MAILTO=root
+
+# The URL from which vulnerability data is downloaded.  Empty for the
+# built-in default.
+SOURCE=
+EOF
+	fi
+
+	for var in REPORT SUITE MAILTO SOURCE ; do
+	    v=$(db_get debsecan/$(echo $var | tr A-Z a-z); printf "%s" "$RET")
+	    if ! test -z "$v" ; then
+		echo "$var=\"$v\""
+	    fi
+	done | debsecan --update-config
+
+	# Create the crontab entry if it does not exist, and reporting
+	# has been enabled.  (If reporting is later disabled, debsecan
+	# will detected this internally, so there is no need to remove
+	# the crontab entry in that case.)
+	db_get debsecan/report
+	if test "$RET" = 'true' -a ! -r /etc/cron.d/debsecan ; then
+	    debsecan-create-cron
+	fi
+
+	;;
+esac
+
+#DEBHELPER#

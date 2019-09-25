@@ -1,0 +1,17 @@
+Security report based on the sid release
+
+*** Available security updates
+
+CVE-2005-0034 An &quot;incorrect assumption&quot; in the...
+  <https://security-tracker.debian.org/tracker/CVE-2005-0034>
+  - bind9 (remotely exploitable)
+  - libisc7 (remotely exploitable, obsolete)
+
+CVE-2005-0064 Buffer overflow in the Decrypt::makeFileKey2 function
+  <https://security-tracker.debian.org/tracker/CVE-2005-0064>
+  - pdftohtml (remotely exploitable)
+
+Note that some packages were marked as obsolete.  To deal with the
+vulnerabilities in them, you need to remove them.  Before you can do
+this, you may have to upgrade other packages depending on them.
+

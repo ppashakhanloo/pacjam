@@ -1,0 +1,4 @@
+VERSION 1
+86400
+CVE-2004-0175,openssh-client, 
+CVE-2004-0175,openssh-server, 

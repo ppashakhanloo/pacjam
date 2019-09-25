@@ -1,0 +1,76 @@
+Security report based on the sid release
+
+*** Fixed vulnerabilities
+
+CVE-2005-3184
+  <https://security-tracker.debian.org/tracker/CVE-2005-3184>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3241
+  <https://security-tracker.debian.org/tracker/CVE-2005-3241>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3242
+  <https://security-tracker.debian.org/tracker/CVE-2005-3242>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3243
+  <https://security-tracker.debian.org/tracker/CVE-2005-3243>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3244
+  <https://security-tracker.debian.org/tracker/CVE-2005-3244>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3245
+  <https://security-tracker.debian.org/tracker/CVE-2005-3245>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3246
+  <https://security-tracker.debian.org/tracker/CVE-2005-3246>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3247
+  <https://security-tracker.debian.org/tracker/CVE-2005-3247>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3248
+  <https://security-tracker.debian.org/tracker/CVE-2005-3248>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+CVE-2005-3249
+  <https://security-tracker.debian.org/tracker/CVE-2005-3249>
+  - ethereal
+  - ethereal-common
+  - tethereal
+
+*** Vulnerabilities without updates
+
+CVE-2005-3313 The IRC protocol dissector in Ethereal 0.10.13 allows...
+  <https://security-tracker.debian.org/tracker/CVE-2005-3313>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+
+CVE-2005-3651 Stack-based buffer overflow in the...
+  <https://security-tracker.debian.org/tracker/CVE-2005-3651>
+  - ethereal, ethereal-common, tethereal
+    (remotely exploitable, medium urgency)
+

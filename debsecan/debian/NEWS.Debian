@@ -1,0 +1,10 @@
+debsecan (0.4.17) unstable; urgency=low
+
+  * The default data source URL has been switched to
+    <https://security-tracker.debian.org/>.  In addition, debsecan now
+    performs proper server certificate checks for https:// URLs.  This
+    functionality can be switched off with the new --disable-https-check
+    option.
+
+ -- Florian Weimer <fw@deneb.enyo.de>  Tue, 18 Mar 2014 10:03:51 +0100
+

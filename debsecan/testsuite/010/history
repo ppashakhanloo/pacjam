@@ -1,0 +1,4 @@
+VERSION 0
+CVE-2005-0034,libisc7,F
+CVE-2005-0034,bind9,F
+CVE-2005-0064,pdftohtml,F

@@ -1,0 +1,334 @@
+.\" debsecan - Debian Security Analyzer
+.\" Copyright (C) 2005, 2007 Florian Weimer
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+.\"
+.TH DEBSECAN 1 2005-12-23 "" ""
+.SH NAME
+debsecan \- Debian Security Analyzer
+.SH SYNOPSIS
+.B debsecan
+.I options...
+.SH DESCRIPTION
+.B debsecan
+analyzes the list of installed packages on the current host and
+reports vulnerabilities found on the system.
+.SH OPTIONS
+.TP
+.B --suite \fIcount\fP
+Choose a specific suite.
+.B debsecan
+produces more informative output (including obsolete packages) if the
+correct suite is specified.  The release code name has to be used
+("sid"), not the temporal name ("unstable").
+.TP
+.B --whitelist \fIfile\fP
+Change the name of the whitelist file.
+.TP
+.BR --add-whitelist ", " --remove-whitelist ", " --show-whitelist
+Add or remove entries from the whitelist, or print the whitelist to
+standard output.  See the
+.SM "CHANGING THE WHITELIST"
+section below.
+.TP
+.B --source \fIurl\fP
+Override the default download URL for vulnerability data.
+.TP
+.B --status \fIfile\fP
+Evaluate a different
+.B dpkg
+status file.
+.TP
+.B --format \fIformat\fP
+Change the output format.  If
+.I format
+is
+.B summary
+(the default), a short summary for each vulnerability is printed.
+The
+.B simple
+format is like the
+.B summary
+format, except that only the bug packages names are printed.  For
+.B bugs
+and
+.BR packages ,
+.B debsecan
+lists the names of vulnerabilities and binary packages, respectively.
+.B --format detail
+requests a verbose output format, showing all available data.
+The
+.B report
+format is used for email reports.
+.TP
+.B --line-length \fIcharacters\fP
+Specifies the line length in report mode.  The default is 72.
+.TP
+.B --mailto \fImailbox\fP
+The
+.B --mailto
+option instructions
+.B debsecan
+to the send the report to the email address
+.IR mailbox .
+No report is sent if there where no changes since the last invocation
+with
+.BR --update-history .
+This option requires the
+.B --format report
+output format.  The option value may contain macros, see the section
+.SM CONFIGURATION FILE MACROS
+below.
+.TP
+.B --only-fixed
+Only list vulnerabilities for which a fix is available in the archive.
+Note that it can happen that a fix is listed, although the package has
+not been built for the system's architecture and is not yet available
+for download.  (If you use this option, you also must specify the
+correct suite using
+.BR --suite .)
+.TP
+.B --no-obsolete
+Do not list any obsolete packages (see below).  Using this option is
+not recommended because it hides real vulnerabilities on some systems,
+not just false positives.
+.TP
+.B --history \fIfile\fP
+Change the name of the history file used by
+.BR "--format report" .
+.TP
+.B --disable-https-check
+Turn off certificate validation for HTTPS.
+.TP
+.B --update-history
+Update the vulnerability status information after reporting it using
+.BR "--format report" .
+.TP
+.B --cron
+Internal option used for invocations from
+.BR cron .
+Checks if the vulnerability data has already been downloaded today.
+In this case, further processing is skipped.  See
+.BR debsecan-create-cron (8)
+for instructions how to create a suitable cron entry.
+.TP
+.B --config \fIfile\fP
+Sets the location of the configuration file.
+.TP
+.B --help
+Display a short help message and exit.
+.TP
+.B --version
+Display version information and exit.
+.SH "CONFIGURATION FILE"
+The configuration file contains the following variables.  It follows
+.IR name = value
+shell syntax.  If
+.I value
+contains white space, it must be surrounded by double quotes.
+Some variables may contain macros; see the section
+.SM "CONFIGURATION FILE MACROS"
+below.
+.TP
+.B MAILTO
+Sets the email address to which reports are sent in
+.B --cron
+mode.  May contain macros.
+.TP
+.B REPORT
+Controls whether
+.B debsecan
+does any processing whatsoever in
+.B --cron
+mode.
+(Permitted values:
+.B true
+and
+.BR false .)
+.TP
+.B SOURCE
+Controls the URL from which vulnerability information is fetched.
+If empty, the built-in default is used.
+.TP
+.B SUITE
+Sets the default value of the
+.B --suite
+option (see there).
+.TP
+.B SUBJECT
+Changes the subject line of reports.  May contain macros.
+.TP
+.B DISABLE_HTTPS_CHECK
+Disables HTTPS certificate checking, just like the
+.B --disable-https-check
+command line option.
+.SH "CONFIGURATION FILE MACROS"
+Macro processing replaces strings of the form
+.BI %s( key )s
+with system-dependent values.  Support keys are:
+.TP
+.B hostname
+The host name on which
+.B debsecan
+runs, without the domain name part.
+.TP
+.B fqdn
+The fully-qualified domain name of the host on which
+.B debsecan
+runs.
+.TP
+.B ip
+The IP address of the host on which
+.B debsecan
+runs.  This may be inaccurate on multi-homed systems.
+.SH "CHANGING THE WHITELIST"
+You can use the
+.B --add-whitelist
+and
+.B --remove-whitelist
+options to change the whitelist.  Whitelisted vulnerabilities are not
+included in the reports.  For example,
+.IP
+.B debsecan --add-whitelist CVE-2005-4601
+.PP
+ignores the vulnerability CVE-2005-4601 completely, while
+.IP
+.B debsecan --add-whitelist CVE-2005-4601 perlmagick
+.PP
+ignores it only as far as the perlmagick is concerned.  (This is the
+same format that is produced by the
+.B --format simple
+option.)  To remove all whitelist entries for the CVE-2005-4601
+vulnerability, use:
+.IP
+.B debsecan --remove-whitelist CVE-2005-4601
+.PP
+If you want to remove an entry for a specific vulnerability/package
+pair, list the package name explicitly, as in:
+.IP
+.B debsecan --remove-whitelist CVE-2005-4601 imagemagick
+.PP
+You can list multiple vulnerability and packages.  For example,
+.IP
+.PD 0
+.B debsecan --add-whitelist CVE-2005-4601 \e
+.IP "" 1in
+.B CVE-2006-0082 imagemagick perlmagick
+.PD
+.PP
+whitelists CVE-2005-4601 for all packages, and CVE-2006-0082 for the
+imagemagick and perlmagick packages only.
+.SH "CAVEATS"
+Much like the official Debian security advisories,
+.BR debsecan 's
+vulnerability tracking is mostly based on source packages.  This can
+be confusing because tools like
+.B dpkg
+only display binary package names.  Therefore,
+.B debsecan
+displays the more familiar binary package names.  This has the
+unfortunate effect that all binary packages (including packages
+containing only documentation, for example) are flagged as vulnerable,
+and not only those packages which actually contain the vulnerable
+code.
+.P
+If
+the correct
+.B --suite
+option is specified,
+.B debsecan
+may mark some packages as
+.BR obsolete .
+This means that the binary package in question has been removed from
+the archive.  In this case, you need to update all the packages
+depending on the obsolete package, and subsequently remove the
+obsolete package.
+.P
+For certain architectures, build daemons may lag considerably.  In
+such case,
+.B debsecan
+may incorrectly mark a package as fixed, even if an update is not yet
+available in the Debian archive.
+.P
+Note that
+.B debsecan
+version uses the
+.B --suite
+option only to determine the availability of corrected packages and to
+detect obsolete packages.  If you specify the wrong suite, only the
+information on available security updates and obsolete packages is
+wrong, but the list of vulnerabilities is correct.
+.P
+Mixing packages from different Debian
+releases is supported, as long as the packages still carry their
+official version numbers.  Unknown package versions (from backported
+packages, for example) are compared to the version in Debian unstable
+only, which may lead to incorrect reports.
+.SH EXAMPLES
+This command prints all package names for which security fixes are
+available:
+.IP
+.B debsecan --suite
+.I suite
+.B --format packages --only-fixed
+.PP
+If you pass this output to
+.BR apt-get ,
+you can download new packages which contain security fixes.  For example,
+if you are running sid:
+.IP
+.PD 0
+.B apt-get install \e
+.IP "" 1in
+.B $(debsecan --suite sid --format packages --only-fixed)
+.PD
+.PP
+The following command can be invoked periodically, to get
+notifications of new security issues:
+.IP
+.PD 0
+.B debsecan --suite
+.I suite
+.B --format report \e
+.IP "" 1in
+.B --update-history --mailto root
+.PD
+.PP
+See
+.BR debsecan-create-cron (8)
+for a tool which creates a suitable cron entry.
+.SH ENVIRONMENT
+.TP
+.B https_proxy
+This environment variable instructs
+.B debsecan
+to use a proxy server to fetch the vulnerability data.  It must be of
+the form
+.B http://proxy.example.net:8080/
+(mimicking a URL).
+.SH FILES
+.TP
+.I /etc/default/debsecan
+Built-in location of the configuration file.
+.TP
+.I /var/lib/dpkg/status
+File from which the package information is fetched by default.
+.SH AUTHOR
+.B debsecan
+was written by Florian Weimer.
+.SH "SEE ALSO"
+.BR dpkg "(1),"
+.BR debsecan-create-cron "(8),"
+.BR apt-get "(8)"

@@ -1,0 +1,80 @@
+Package: ethereal
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 1264
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Version: 0.10.12-6
+Depends: libadns1, libatk1.0-0 (>= 1.9.0), libc6 (>= 2.3.5-1), libcap1, libcomerr2 (>= 1.33-3), libglib2.0-0 (>= 2.8.0), libgtk2.0-0 (>= 2.6.0), libkrb53 (>= 1.3.2), libpango1.0-0 (>= 1.8.2), libpcap0.8 (>= 0.9.3-1), libpcre3 (>= 4.5), zlib1g (>= 1:1.2.1), ethereal-common (= 0.10.12-6)
+Recommends: gksu
+Description: network traffic analyzer
+ Ethereal is a network traffic analyzer, or "sniffer", for Unix and
+ Unix-like operating systems. A sniffer is a tool used to capture
+ packets off the wire. Ethereal decodes numerous protocols (too many
+ to list).
+ .
+ This package provides ethereal (the GTK+ version)
+
+Package: ethereal2
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 1264
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Version: 0.10.12-6
+Recommends: gksu
+Description: network traffic analyzer
+
+Package: ethereal2-common
+Status: install ok installed
+Priority: optional
+Source: ethereal2
+Section: net
+Installed-Size: 1264
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Version: 0.10.12-6
+Recommends: gksu
+Description: network traffic analyzer
+
+Package: ethereal-common
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 20320
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Source: ethereal
+Version: 0.10.12-6
+Depends: libc6 (>= 2.3.5-1), libcap1, libglib2.0-0 (>= 2.8.0), libpcre3 (>= 4.5), zlib1g (>= 1:1.2.1)
+Recommends: ethereal (>= 0.9.1-3) | tethereal (>= 0.9.1-3)
+Conflicts: ethereal (<< 0.9.1-3), tethereal (<< 0.9.1-3)
+Description: network traffic analyser (common files)
+ Ethereal is a network traffic analyzer, or "sniffer", for Unix and
+ Unix-like operating systems. A sniffer is a tool used to capture
+ packets off the wire. Ethereal decodes numerous protocols (too many
+ to list).
+ .
+ This package provides files common to both ethereal (the GTK+ version)
+ and tethereal (the console version).
+
+Package: tethereal
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 240
+Maintainer: Frederic Peters <fpeters@debian.org>
+Architecture: i386
+Source: ethereal
+Version: 0.10.12-6
+Depends: libadns1, libc6 (>= 2.3.5-1), libcap1, libcomerr2 (>= 1.33-3), libglib2.0-0 (>= 2.8.0), libkrb53 (>= 1.3.2), libpcap0.8 (>= 0.9.3-1), libpcre3 (>= 4.5), zlib1g (>= 1:1.2.1), ethereal-common (= 0.10.12-6)
+Description: network traffic analyzer (console)
+ Ethereal is a network traffic analyzer, or "sniffer", for Unix and
+ Unix-like operating systems. A sniffer is a tool used to capture
+ packets off the wire. Ethereal decodes numerous protocols (too many
+ to list).
+ .
+ This package provides the console version of ethereal, named
+ "tethereal".

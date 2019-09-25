@@ -1,0 +1,77 @@
+Package: openssh-server
+Status: install ok installed
+Priority: optional
+Section: net
+Installed-Size: 448
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: i386
+Source: openssh
+Version: 1:4.2p1-5
+Replaces: ssh (<< 1:3.8.1p1-9), openssh-client (<< 1:3.8.1p1-11), ssh-krb5
+Provides: ssh-server
+Depends: libc6 (>= 2.3.5-1), libcomerr2 (>= 1.33-3), libkrb53 (>= 1.3.2), libpam0g (>= 0.76), libselinux1 (>= 1.26), libssl0.9.8, libwrap0, zlib1g (>= 1:1.2.1), debconf (>= 1.2.0) | debconf-2.0, libpam-runtime (>= 0.76-14), libpam-modules (>= 0.72-9), adduser (>= 3.9), dpkg (>= 1.9.0), openssh-client (= 1:4.2p1-5)
+Suggests: ssh-askpass, xbase-clients, rssh
+Conflicts: ssh (<< 1:3.8.1p1-9), ssh-nonfree (<< 2), ssh-socks, ssh2, sftp, rsh-client (<< 0.16.1-1), ssh-krb5
+Conffiles:
+ /etc/init.d/ssh 60c7f78120c01b393255eb7619886d96
+ /etc/default/ssh 500e3cf069fe9a7b9936108eb9d9c035
+ /etc/pam.d/ssh 19d07aa0f645d6d50e55d989761d9afa
+Description: Secure shell server, an rshd replacement
+ This is the portable version of OpenSSH, a free implementation of
+ the Secure Shell protocol as specified by the IETF secsh working
+ group.
+ .
+ Ssh (Secure Shell) is a program for logging into a remote machine
+ and for executing commands on a remote machine.
+ It provides secure encrypted communications between two untrusted
+ hosts over an insecure network.  X11 connections and arbitrary TCP/IP
+ ports can also be forwarded over the secure channel.
+ It is intended as a replacement for rlogin, rsh and rcp, and can be
+ used to provide applications with a secure communication channel.
+ .
+ This package provides the sshd server.
+ .
+ --------------------------------------------------------------------
+ .
+ In some countries it may be illegal to use any encryption at all
+ without a special permit.
+
+Package: openssh-client
+Status: install ok installed
+Priority: standard
+Section: net
+Installed-Size: 1172
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: i386
+Source: openssh
+Version: 1:4.2p1-5
+Replaces: ssh (<< 1:3.8.1p1-9), ssh-krb5
+Provides: rsh-client, ssh-client
+Depends: libc6 (>= 2.3.5-1), libcomerr2 (>= 1.33-3), libedit2 (>= 2.5.cvs.20010821-1), libkrb53 (>= 1.3.2), libncurses5 (>= 5.4-5), libselinux1 (>= 1.26), libssl0.9.8, zlib1g (>= 1:1.2.1), debconf (>= 1.2.0) | debconf-2.0, adduser (>= 3.10), dpkg (>= 1.7.0)
+Suggests: ssh-askpass, xbase-clients
+Conflicts: ssh (<< 1:3.8.1p1-9), sftp, rsh-client (<< 0.16.1-1), ssh-krb5
+Conffiles:
+ /etc/ssh/ssh_config 790070e72fb5a4ce36b50a151a2882a6
+ /etc/ssh/moduli d93b0dd7a654a68e39361caff3f3061e
+Description: Secure shell client, an rlogin/rsh/rcp replacement
+ This is the portable version of OpenSSH, a free implementation of
+ the Secure Shell protocol as specified by the IETF secsh working
+ group.
+ .
+ Ssh (Secure Shell) is a program for logging into a remote machine
+ and for executing commands on a remote machine.
+ It provides secure encrypted communications between two untrusted
+ hosts over an insecure network.  X11 connections and arbitrary TCP/IP
+ ports can also be forwarded over the secure channel.
+ It is intended as a replacement for rlogin, rsh and rcp, and can be
+ used to provide applications with a secure communication channel.
+ .
+ This package provides the ssh, scp and sftp clients, the ssh-agent
+ and ssh-add programs to make public key authentication more convenient,
+ and the ssh-keygen, ssh-keyscan, ssh-copy-id and ssh-argv0 utilities.
+ .
+ --------------------------------------------------------------------
+ .
+ In some countries it may be illegal to use any encryption at all
+ without a special permit.
+

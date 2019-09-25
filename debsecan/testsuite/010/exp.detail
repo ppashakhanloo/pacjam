@@ -1,0 +1,17 @@
+CVE-2005-0034 (fixed, remotely exploitable)
+  An &quot;incorrect assumption&quot; in the authvalidated validator function in ...
+  installed: bind9 1:9.3.0-1
+             (built from bind9 1:9.3.0-1)
+  fixed in unstable: bind9 1:9.3.1 (source package)
+  fixed on branch:   bind9 1:9.2.1-2.woody.1 (source package)
+  fixed on branch:   bind9 1:9.2.1-2.woody.2 (source package)
+  fixed on branch:   bind9 1:9.2.4-1 (source package)
+  fix is available for the selected suite (sid)
+
+CVE-2005-0064 (fixed, remotely exploitable)
+  Buffer overflow in the Decrypt::makeFileKey2 function
+  installed: pdftohtml 0.36-10
+             (built from pdftohtml 0.36-10)
+  fixed in unstable: pdftohtml 0.36-11 (source package)
+  fix is available for the selected suite (sid)
+

@@ -1,0 +1,97 @@
+# translation of he.po to Hebrew
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Lior Kaplan <kaplan@debian.org>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: he\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-02-19 22:16+0100\n"
+"Last-Translator: Lior Kaplan <kaplan@debian.org>\n"
+"Language-Team: Hebrew <debian-hebrew-common@lists.alioth.debian.org>\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "האם אתה רוצה ש-debsecan ישלח דוחות יומיים בדואר?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"debsecan יכול לבדוק את מצב האבטחה של המחשב פעם ביום ולהודיע לך על השינויים "
+"דרך דואר אלקטרוני."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"אם תבחר באפשרות זאת, debsecan יוריד קובץ קטן פעם ביום. רשימת החבילות שלך לא "
+"תשלח לשרת."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "כתובת דואר אלקטרוני ש אליה ישלחו הדוחות היומיים:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "המאגר הראשי ממנו מותקנות חבילות:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"כדי להציג מידע יותר שימושי debsecan צריך להכיר את הפצת דביאן ממנה אתה בדרך "
+"כלל מתקין חבילות."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"אם תציין \"GENERIC\" (בררת המחדל), תופיע רק פונקציונליות בסיסית של debsecan. "
+"אם תציין את המאגר שתואם להגדרות בקובץ sources.list שלך, המידע על חבילות "
+"מתוקנות או ישנות יכלל בדוחות הדואר."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "כתובת של מידע על הרגישויות:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"debsecan מביא מידע על הרגישויות מהרשת. אם המערכת שלך אינה מחוברת לאינטנרט, "
+"תוכל להכניס כתובת של אתר מראה מקומי. אם תשאיר את שדה זה ריק, יבוצע שימוש "
+"בכתובת ברירת המחדל."

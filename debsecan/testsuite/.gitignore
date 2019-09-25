@@ -1,0 +1,4 @@
+whitelist.exp
+whitelist.out
+whitelist.test
+out.*

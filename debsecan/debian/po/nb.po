@@ -1,0 +1,103 @@
+# debsecan.
+# Copyright (C) 2007
+# This file is distributed under the same license as the debsecan package.
+# Hans Fredrik Nordhaug <hans@nordhaug.priv.no>, 2007
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-03-11 08:26+0100\n"
+"Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
+"Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "Vil du at debsecan skal sende daglige rapporter?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"debsecan kan sjekke sikkerhetsstatusen for tjeneren en gang daglig og\n"
+"sende deg endringer på e-post."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Hvis du velger denne innstillingen, vil debsecan laste ned en liten fil en "
+"gang daglig.\n"
+"Pakkelisten din vil ikke bli overført til tjeneren."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "E-postadressen som de daglige rapportene skal sendes til:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Hovedsuite som pakkene er installert fra:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"For å presentere mer nyttig informasjon, må debsecan vite fra hvilken \n"
+"Debian-utgivelsen du vanligvis installerer pakker."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Hvis du oppgir \\\"GENERIC\\\" (standardvalget), så vil kun grunnleggende "
+"debsecan\n"
+"funksjonalitet være tilgjengelig. Hvis du oppgir suiten som samsvarer med "
+"din\n"
+"sources.list-konfigurasjon, så vil informasjon om fiksede og foreldede \n"
+"pakker bli inkludert i e-postrapportene."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "URL til sårbarhetsinformasjon:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"debseccan henter sårbarhetsinformasjon fra nettverket. Hvis ditt system "
+"ikke \n"
+"er tilknyttet Internett, kan du oppgi en URL til et lokalt speil her. Hvis "
+"du \n"
+"lar denne innstillingen være tom, så vil den innebygde standard URL-en bli "
+"brukt."

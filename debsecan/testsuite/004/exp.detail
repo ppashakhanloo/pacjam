@@ -1,0 +1,10 @@
+CVE-2004-0175 (remotely exploitable)
+  Directory traversal vulnerability in scp for OpenSSH before 3.4p1 ...
+  installed: openssh-server 1:4.2p1-5
+             (built from openssh 1:4.2p1-5)
+
+CVE-2004-0175 (remotely exploitable)
+  Directory traversal vulnerability in scp for OpenSSH before 3.4p1 ...
+  installed: openssh-client 1:4.2p1-5
+             (built from openssh 1:4.2p1-5)
+

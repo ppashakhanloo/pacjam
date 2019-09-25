@@ -1,0 +1,47 @@
+#!/usr/bin/python
+
+import sys
+import zlib
+import urllib2
+from cStringIO import StringIO
+
+URL_PREFIX = 'https://security-tracker.debian.org/tracker/debsecan/release/1/'
+
+if len(sys.argv) <> 2:
+    print "usage: %s SUITE"
+
+url = sys.argv[1]
+if not url.startswith("http"):
+    url = URL_PREFIX + sys.argv[1]
+r = urllib2.Request(url)
+u = urllib2.urlopen(r)
+data = StringIO(zlib.decompress(u.read()))
+
+if data.readline() <> "VERSION 1\n":
+    sys.stderr.write("error: server sends data in unknown format\n")
+    sys.exit(1)
+
+vuln_names = []
+for line in data:
+    if line[-1:] == '\n':
+        line = line[:-1]
+    if line == '':
+        break
+    (name, flags, desc) = line.split(',', 2)
+    vuln_names.append(name)
+
+for line in data:
+    if line[-1:] == '\n':
+        line = line[:-1]
+    if line == '':
+        break
+    (package, vuln, rest) = line.split(',', 2)
+    vuln = vuln_names[int(vuln)]
+    print "%s,%s,%s" % (package, vuln, rest)
+
+for line in data:
+    if line[-1:] == '\n':
+        line = line[:-1]
+    if line == '':
+        break
+    print line

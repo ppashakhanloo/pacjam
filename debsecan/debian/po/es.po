@@ -1,0 +1,123 @@
+# debsecan translation to spanish
+# Copyright (C) 2007 Free Software Foundation, Inc.
+# This file is distributed under the same license as the package.
+#
+# Changes:
+# - Initial translation
+#     Manuel Porras Peralta , 2007
+#
+#
+#  Traductores, si no conoce el formato PO, merece la pena leer la
+#  documentación de gettext, especialmente las secciones dedicadas a este
+#  formato, por ejemplo ejecutando:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+# Equipo de traducción al español, por favor lean antes de traducir
+# los siguientes documentos:
+#
+# - El proyecto de traducción de Debian al español
+#   https://www.debian.org/intl/spanish/
+#   especialmente las notas y normas de traducción en
+#   https://www.debian.org/intl/spanish/notas
+#
+# - La guía de traducción de po's de debconf:
+#   /usr/share/doc/po-debconf/README-trans
+#   o https://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+# Si tiene dudas o consultas sobre esta traducción consulte con el último
+# traductor (campo Last-Translator) y ponga en copia a la lista de
+# traducción de Debian al español (<debian-l10n-spanish@lists.debian.org>)
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan 0.4.4\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-02-25 13:29+0100\n"
+"Last-Translator: Manuel Porras Peralta «Venturi» <venturi.debian@gmail.com>\n"
+"Language-Team: Debian Spanish <debian-l10n-spanish@lists.debian.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "¿Desea que debsecan envíe informes diarios?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"Debsecan puede comprobar el estado de la seguridad del servidor una vez al "
+"día, y notificarle cualquier cambio por correo electrónico."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Si elige esta opción, debsecan descargará un pequeño archivo una vez al día. "
+"Su lista de paquetes no se enviará al servidor."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "Correo electrónico al que se enviarán los informes diarios:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Distribución principal de la que se instalan los paquetes:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"Debsecan necesita saber la distribución de Debian de la que instala los "
+"paquetes normalmente, para mostrar datos más útiles."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Si especifica «GENERIC» (predeterminado) sólo estarán disponibles las "
+"funciones básicas de debsecan. Si especifica una distribución que coincida "
+"con la configuración del «sources.list», se incluirá en los informes por "
+"correo electrónico información sobre los paquetes actualizados y obsoletos."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "URL de información de vulnerabilidades:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"Debsecan descarga información de vulnerabilidades desde la red. Si su "
+"sistema no está conectado a internet, puede introducir aquí la URL del sitio "
+"local equivalente. Si lo deja en blanco, se usará la URL que viene como "
+"predeterminada."

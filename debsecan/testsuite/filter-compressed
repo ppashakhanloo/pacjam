@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+import cStringIO
+import re
+import sys
+import zlib
+
+if sys.argv[1] == '-n':
+    no_compress = True
+    del sys.argv[1]
+else:
+    no_compress = False
+
+re_filter = re.compile(sys.argv[1])
+
+data = cStringIO.StringIO(zlib.decompress(sys.stdin.read()))
+line = data.readline()
+assert line == 'VERSION 1\n'
+
+bug_list = []
+bugs = {}
+for line in data:
+    assert line[-1] == '\n'
+    line = line[:-1]
+    if line:
+        (name, flags, desc) = line.split(',', 2)
+        bug_list.append(name)
+        bugs[name] = desc
+    else:
+        break
+
+
+copied_bugs = []
+copied_bugs_index = {}
+
+result_main = []
+for line in data:
+    assert line[-1] == '\n'
+    line = line[:-1]
+    if line:
+        line = line.split(',')
+        bug_name = line[1] = bug_list[int(line[1])]
+        line_combined = ','.join(line)
+        if re_filter.match(line_combined):
+            if copied_bugs_index.has_key(bug_name):
+                line[1] = str(copied_bugs_index[bug_name])
+            else:
+                number = len(copied_bugs)
+                copied_bugs.append("%s,,%s\n" % (bug_name, bugs[bug_name]))
+                copied_bugs_index[bug_name] = number
+                line[1] = str(number)
+            line = ','.join(line) + '\n'
+            result_main.append(line)
+    else:
+        break
+
+result = ['VERSION 1\n'] + copied_bugs + ['\n'] + result_main + ['\n']
+
+for line in data:
+    result.append(line)
+
+result = ''.join(result)
+if not no_compress:
+    result = zlib.compress(result, 9)
+sys.stdout.write(result)

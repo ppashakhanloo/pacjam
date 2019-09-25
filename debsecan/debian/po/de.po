@@ -1,0 +1,99 @@
+# translation of po-debconf template to German
+# Copyright (C) 2006, Matthias Julius
+# This file is distributed under the same license as the debsecan package.
+#
+# Matthias Julius <mdeb@julius-net.net>, 2006, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan 0.4.3.2\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-02-18 21:41-0500\n"
+"Last-Translator: Matthias Julius <mdeb@julius-net.net>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "Möchten Sie, dass debsecan tägliche Berichte versendet?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"Debsecan kann den Sicherheitsstatus des Rechners einmal pro Tag prüfen und "
+"Sie bei Änderungen per Email informieren."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Falls Sie diese Möglichkeit wählen, wird debsecan einmal pro Tag eine kleine "
+"Datei herunterladen. Ihre Paketliste wird nicht an den Server übermittelt."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "Email-Adresse, an die tägliche Berichte gesendet werden sollen:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Hauptsächliche Release, von der Pakete installiert werden:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"Um nützlichere Daten zu präsentieren, muss debsecan die Debian-Release "
+"kennen, von der Sie gewöhnlich Pakete installieren."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Falls Sie »GENERIC« (Voreinstellung) angeben, ist nur die "
+"Basisfunktionalität von debsecan verfügbar. Falls Sie die Release angeben, "
+"die zu Ihrer souces.list-Konfiguration passt, werden die Email-Berichte "
+"Informationen bezüglich aktualisierter und veralteter Pakete enthalten."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "URL für Informationen über Sicherheitslücken:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"Debsecan lädt Informationen über Sicherheitslücken aus dem Netzerk. Falls "
+"Ihr System nicht mit dem Internet verbunden ist, können Sie die URL eines "
+"lokalen Spiegel-Servers hier angeben. Falls Sie diese Einstellung leer "
+"lassen, wird eine voreingestellte URL verwendet."

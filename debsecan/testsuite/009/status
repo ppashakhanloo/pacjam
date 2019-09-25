@@ -1,0 +1,13 @@
+Package: libboost-test1.33.0c2a
+Status: install ok installed
+Priority: optional
+Section: libs
+Installed-Size: 920
+Maintainer: Debian Boost Team <pkg-boost-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: boost
+Version: 1.33.0-5
+Replaces: libboost-test1.33.0
+Depends: libc6 (>= 2.3.5-1), libgcc1 (>= 1:4.0.2), libstdc++6 (>= 4.0.2-4)
+Conflicts: libboost-test1.33.0
+Description: components for writing and executing test suites

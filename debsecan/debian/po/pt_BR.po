@@ -1,0 +1,102 @@
+# debsecan Brazilian Portuguese translation
+# Copyright (c) 2006-2007 Florian Weimer
+# Copyright (c) 2006, Herbert Parentes Fortes Neto (hpfn) <listasdebian@terra.com.br>
+# Copyright (c) 2007, Eder L. Marques <frolic@debian-ce.org>
+# This file is distributed under the same license as the debsecan package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debsecan_0.4.9\n"
+"Report-Msgid-Bugs-To: debsecan@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-12 14:38+0200\n"
+"PO-Revision-Date: 2007-08-06 00:45-0300\n"
+"Last-Translator: Eder L. Marques <frolic@debian-ce.org>\n"
+"Language-Team: l10n Portuguese <debian-l10n-portuguese@lists.debian.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"pt_BR utf-8\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid "Do you want debsecan to send daily reports?"
+msgstr "Você quer que o debsecan envie relatórios diários?"
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"debsecan can check the security status of the host once per day, and notify "
+"you of any changes by email."
+msgstr ""
+"O debsecan pode checar o estado de segurança de uma máquina uma vez por dia, "
+"e notificá-lo sobre qualquer mudança por e-mail."
+
+#. Type: boolean
+#. Description
+#: ../debsecan.templates:1001
+msgid ""
+"If you choose this option, debsecan will download a small file once a day.  "
+"Your package list will not be transmitted to the server."
+msgstr ""
+"Se você escolher esta opção, o debsecan irá baixar um pequeno arquivo uma "
+"vez por dia. Sua lista de pacotes não será transmitida para o servidor."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:2001
+msgid "Email address to which daily reports should be sent:"
+msgstr "Endereço de e-mail para o qual os relatórios devem ser enviados:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid "Main suite from which packages are installed:"
+msgstr "Suite principal de onde os pacotes são instalados:"
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"To present more useful data, debsecan needs to know the Debian release from "
+"which you usually install packages."
+msgstr ""
+"Para apresentar dados mais úteis, o debsecan precisa saber a versão do "
+"Debian de onde você geralmente instala pacotes."
+
+#. Type: select
+#. Description
+#: ../debsecan.templates:3001
+msgid ""
+"If you specify \"GENERIC\" (the default), only basic debsecan functionality "
+"is available.  If you specify the suite matching your sources.list "
+"configuration, information about fixed and obsolete packages will be "
+"included in email reports."
+msgstr ""
+"Se você especificar \"GENERIC\" (o padrão), apenas as funcionalidades "
+"básicas do debsecan estarão disponíveis. Se você especificar a suite de "
+"acordo com a configuração do seu sources.list, informações sobre pacotes "
+"consertados ('fixed') e obsoletos ('obsolete') serão incluídas nos "
+"relatórios enviados por email."
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid "URL of vulnerability information:"
+msgstr "URL das informações de vulnerabilidade:"
+
+#. Type: string
+#. Description
+#: ../debsecan.templates:4001
+msgid ""
+"debsecan fetches vulnerability information from the network. If your system "
+"is not connected to the Internet, you can enter the URL of a local mirror "
+"here.  If you leave this option empty, the built-in default URL is used."
+msgstr ""
+"O debsecan busca informações de vulnerabilidade através da rede. Se o seu "
+"sistema não está conectado à Internet, você deve informar a URL do espelho "
+"(\"mirror\") local aqui. Se você deixar esta opção em branco, a URL padrão "
+"interna será usada."
