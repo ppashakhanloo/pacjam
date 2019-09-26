@@ -1288,6 +1288,52 @@ class TargetPrint(Target):
     def write(self, line):
         print line
 
+def get_recent_vul(target, options, vulns, history, pkg_name, pkg_version, pkg_source, pkg_source_version):
+    re_source = re.compile\
+                (r'^([a-zA-Z0-9.+-]+)(?:\s+\((\S+)\))?$')
+    formatter = formatters[options.format](target, options, history)
+
+    pkg_status = None
+    pkg_arch = None
+
+    match = re_source.match(pkg_source)
+    if match is None:
+        raise SyntaxError(('package %s references '
+                           + 'invalid source package %s') %
+                          (pkg_name, `contents`))
+    (pkg_source, pkg_source_version) = match.groups()
+
+    if pkg_source_version is None:
+        pkg_source_version = pkg_version
+    if not pkg_source:
+        pkg_source = pkg_name
+
+    try:
+        pkg_version = Version(pkg_version)
+    except ValueError:
+        formatter.invalid_version(pkg_name, pkg_version)
+    try:
+        pkg_source_version = Version(pkg_source_version)
+    except ValueError:
+        formatter.invalid_source_version(pkg_name, pkg_source_version)
+
+    try:
+        vlist = vulns[pkg_source]
+    except KeyError:
+        vlist = vulns[pkg_name]
+
+    bp = (pkg_name, pkg_version)
+    sp = (pkg_source, pkg_source_version)
+
+    print "Binary: " + str(bp)
+    print "Source: " + str(sp)
+
+    for v in vlist:
+        if v.is_vulnerable (bp, sp):
+            formatter.maybe_record(v, bp, sp)
+
+    formatter.finish()
+    target.finish() 
 
 def rate_system(target, options, vulns, history):
     """Read /var/lib/dpkg/status and discover vulnerable packages.
@@ -1356,11 +1402,13 @@ def rate_system(target, options, vulns, history):
                 vlist = vulns[pkg_name]
             except:
                 continue
+    
         for v in vlist:
             bp = (pkg_name, pkg_version)
             sp = (pkg_source, pkg_source_version)
             if v.is_vulnerable (bp, sp):
                 formatter.maybe_record(v, bp, sp)
+
     formatter.finish()
     target.finish()
 
@@ -1386,10 +1434,13 @@ if __name__ == "__main__":
     # NOTE: Edits that I (Anthony) made to gather package CVE
     # information
     vulns = fetch_data(options,config)
-    for p, vs in vulns.items():
-        sys.stdout.write(p)
-        for v in vs:
-            sys.stdout.write("," + v.bug)
-        sys.stdout.write("\n")
+    #for p, vs in vulns.items():
+    #    sys.stdout.write(p)
+    #    for v in vs:
+    #        sys.stdout.write("," + v.bug)
+    #    sys.stdout.write("\n")
     
+    get_recent_vul(target, options, vulns, history, "wget", "1.20.1-1.1", "wget", "1.20.1-1.1")
+    get_recent_vul(target, options, vulns, history, "wget", "1.20.1", "wget", "1.20.1")
+
     #rate_system(target, options, vulns, history)
