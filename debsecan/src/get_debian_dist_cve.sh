@@ -14,10 +14,10 @@ debian_dists["squeeze2011"]="http://archive.debian.org/debian-archive/debian/dis
 
 # retrieve package lists
 for key in ${!debian_dists[@]}; do
-    wget -q ${debian_dists[${key}]}
-    gunzip Packages.gz
-    mv Packages Packages-${key}
-    echo "Downloaded" ${key} ${debian_dists[${key}]}
+  wget -q ${debian_dists[${key}]}
+  gunzip Packages.gz
+  mv Packages Packages-${key}
+  echo "Downloaded" ${key} ${debian_dists[${key}]}
 done
 
 
@@ -38,5 +38,12 @@ for key in ${!debian_dists[@]}; do
   sed -i 's/Package: //g' Package-Versions-${key}
   sed -i 'N;s/\n//' Package-Versions-${key}
   echo "Processed" ${key}
+done
+
+# retrieve CVEs
+for key in ${!debian_dists[@]}; do
+  cat Package-Versions-${key} | ./debsecan > CVE-List-${key}
+  sed -i 's/$/,/g' CVE-List-${key}
+  sed -i 'N;N;s/\n//g' CVE-List-${key}
 done
 
