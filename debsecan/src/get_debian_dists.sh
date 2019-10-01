@@ -24,6 +24,16 @@ done
 # retrieve version info
 for key in ${!debian_dists[@]}; do
   cat Packages-${key} | grep -E 'Package:|Version:' > Package-Versions-${key}
+  # remove invalid instances
+  sed -i '/-Package/ d' Package-Versions-${key}
+  sed -i '/-Version/ d' Package-Versions-${key}
+  sed -i '/Version::/ d' Package-Versions-${key}
+  sed -i '/wvVersion/ d' Package-Versions-${key}
+  sed -i '/\"Package/ d' Package-Versions-${key}
+  sed -i '/::Version/ d' Package-Versions-${key}
+  sed -i '/Package::/ d' Package-Versions-${key}
+  
+  # transform to comma-separated csv file
   sed -i 's/Version: /,/g' Package-Versions-${key}
   sed -i 's/Package: //g' Package-Versions-${key}
   sed -i 'N;s/\n//' Package-Versions-${key}
