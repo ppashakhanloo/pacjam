@@ -1452,5 +1452,6 @@ if __name__ == "__main__":
     for line in fileinput.input():
       [package,version] = line.split(",")
       print package
+      print version
       get_recent_vul(target, options, vulns, history, package, version, package, version)
     #rate_system(target, options, vulns, history)

@@ -44,7 +44,10 @@ done
 for key in ${!debian_dists[@]}; do
   cat Package-Versions-${key} | ./debsecan > CVE-List-${key}
   sed -i 's/$/,/g' CVE-List-${key}
-  sed -i 'N;N;s/\n//g' CVE-List-${key}
+  sed -i 'N;N;N;N;s/\n//g' CVE-List-${key}
+  cut -d, -f3 --complement CVE-List-${key} > temp
+  cut -d, -f5 --complement temp > CVE-List-${key}
+  rm -f temp
   echo "Retrieved CVEs from"  ${key}
 done
 
