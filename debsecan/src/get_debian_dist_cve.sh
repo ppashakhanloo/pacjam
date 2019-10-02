@@ -1,9 +1,6 @@
 #!/bin/bash
 
-debian_dist_names=("buster" "stretch" "jessie" "wheezy" "squeeze")
-debian_dist_contents=("" "" "" "" "")
-
-declare -A debian_dists 
+declare -A debian_dists
 
 debian_dists["buster2019"]="http://ftp.debian.org/debian/dists/buster/main/binary-amd64/Packages.gz"
 debian_dists["stretch2017"]="http://ftp.debian.org/debian/dists/stretch/main/binary-amd64/Packages.gz"
@@ -51,12 +48,25 @@ for key in ${!debian_dists[@]}; do
   echo "Retrieved CVEs from"  ${key}
 done
 
-# join popcon data with CVE
+# join popcon data with each  CVE
 for key in ${!debian_dists[@]}; do
   sort -t, -k1,1 CVE-List-${key} > file1
-  sort -t, -k2,2 popcon_by_inst.csv > file2
-  join -1 1 -2 2 -t, file1 file2 > FULL-${key}
+  sort -t, -k1,1 popcon_by_inst.csv > file2
+  join -1 1 -2 1 -t, file1 file2 > FULL-${key}
   rm -f file1 file2
-  #sed -i '1s/^/package,version,cve-list,cve-num,popcon-rank,inst,vote,old,recent,no-file\n/' FULL-${key}
+  #sed -i '1s/^/package,version,cve-list,cve-num,inst,vote,old,recent,no-file\n/' FULL-${key}
   echo "Joined CVEs with popcon data for"  ${key}
 done
+
+# join popcon data with all dists
+cat popcon_by_inst.csv > temp_popcon
+for key in ${!debian_dists[@]}; do
+  sort -t, -k1,1 temp_popcon > file1
+  sort -t, -k1,1 CVE-List-${key} > file2
+  join -1 1 -2 1 -t, file1 file2 > temp_popcon
+  rm -f file1 file2
+  #sed -i '1s/^/package,version,cve-list,cve-num,popcon-rank,inst,vote,old,recent,no-file\n/' FULL-${key}
+done
+
+mv temp_popcon "ALL-CVES"
+echo "Joined all CVEs with popcon data"
