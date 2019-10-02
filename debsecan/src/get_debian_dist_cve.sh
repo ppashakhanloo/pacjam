@@ -51,3 +51,12 @@ for key in ${!debian_dists[@]}; do
   echo "Retrieved CVEs from"  ${key}
 done
 
+# join popcon data with CVE
+for key in ${!debian_dists[@]}; do
+  sort -t, -k1,1 CVE-List-${key} > file1
+  sort -t, -k2,2 popcon_by_inst.csv > file2
+  join -1 1 -2 2 -t, file1 file2 > FULL-${key}
+  rm -f file1 file2
+  #sed -i '1s/^/package,version,cve-list,cve-num,popcon-rank,inst,vote,old,recent,no-file\n/' FULL-${key}
+  echo "Joined CVEs with popcon data for"  ${key}
+done
