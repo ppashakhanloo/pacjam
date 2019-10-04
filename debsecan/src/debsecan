@@ -31,6 +31,7 @@ import types
 import urllib2
 import zlib
 import apt_pkg
+import fileinput
 
 apt_pkg.init()
 try:
@@ -1320,18 +1321,26 @@ def get_recent_vul(target, options, vulns, history, pkg_name, pkg_version, pkg_s
     try:
         vlist = vulns[pkg_source]
     except KeyError:
-        vlist = vulns[pkg_name]
+        try:
+          vlist = vulns[pkg_name]
+        except KeyError:
+            vlist = []
 
     bp = (pkg_name, pkg_version)
     sp = (pkg_source, pkg_source_version)
 
-    print "Binary: " + str(bp)
-    print "Source: " + str(sp)
+    #print "Binary: " + str(bp)
+    #print "Source: " + str(sp)
 
+    cves = ""
+    cve_counter = 0
     for v in vlist:
         if v.is_vulnerable (bp, sp):
-            formatter.maybe_record(v, bp, sp)
-
+            cves += str(v.bug) + ";"
+            cve_counter = cve_counter + 1
+            #formatter.maybe_record(v, bp, sp)
+    print cves
+    print cve_counter
     formatter.finish()
     target.finish() 
 
@@ -1440,7 +1449,8 @@ if __name__ == "__main__":
     #        sys.stdout.write("," + v.bug)
     #    sys.stdout.write("\n")
     
-    get_recent_vul(target, options, vulns, history, "wget", "1.20.1-1.1", "wget", "1.20.1-1.1")
-    get_recent_vul(target, options, vulns, history, "wget", "1.20.1", "wget", "1.20.1")
-
-    #rate_system(target, options, vulns, history)
+    for line in fileinput.input():
+      [package,version] = line.split(",")
+      print package
+      print version
+      get_recent_vul(target, options, vulns, history, package, version, package, version)
