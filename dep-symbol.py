@@ -12,6 +12,8 @@ import json
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf"]
+
 # Really just for tracking a bit more about a symbol stored in our table
 class Symbol:
     name = ""
@@ -79,6 +81,25 @@ def download_deps(deps,metas):
 
     return debs
 
+def download_deps_src(deps,metas):
+    srcs = []
+
+    for d in deps:
+        if d in metas or exclude_src(d, EXCLUDES):
+            continue
+
+        print('fetching ' + d)
+        try:
+            srchome = os.path.join(working_dir,d)
+            if not os.path.exists(srchome):
+                os.mkdir(srchome)
+                out = subprocess.check_output(['apt-get', 'source', d], stderr=subprocess.STDOUT, cwd=srchome)
+            srcs.append(d)
+        except e:
+            print("No package found for " + d)
+
+    return srcs
+
 def build_symbols(meta):
     try:
         subprocess.check_call(['dpkg', '-x', meta.package_deb, 'tmp']) 
@@ -124,7 +145,25 @@ def extract_debs(debs,metas):
 
         os.chdir(home) 
 
+def build_srcs(srcs,metas):
+    # Create some metadata about our little repository
+    home = os.getcwd()
 
+    for s in srcs:
+        srchome = os.path.join(working_dir,s)
+        dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
+
+        if len(dirs) > 1:
+            print("Error: multiple source directories for package: {}".format(s))
+            continue
+
+        print("building " + str(s))
+
+        try:
+            out = subprocess.check_output(['dpkg-buildpackage', '-us', '-uc'], stderr=subprocess.STDOUT, cwd=dirs[0])
+            print(out)
+        except subprocess.CalledProcessError as err:
+            print(err)
 
 def parse_symbols(meta,symbols):
     # We'll point every symbol to its metadata for now
@@ -168,12 +207,18 @@ def save_meta(meta):
 
 # From Anthony, this is very hacky and ugly, but for now while we are designing the
 # system, I'll just keep it as is.
+def exclude_src(dep, excludes):
+    for e in excludes:
+        if dep in e:
+            return True
+    return False
+
 def exclude_symbol(exclude, libs):
     for e in exclude:
         for l in libs:
             if e in l:
                 return True
-    return False;
+    return False
 
 def load_symbols(metas):
     symbols = {}
@@ -263,6 +308,7 @@ parser.add_option('-d', '--dir', dest='working_dir', default='symbol-out', help=
 parser.add_option('-t', '--trace', dest='trace', help='load trace file DIR', metavar='TRACE')
 parser.add_option('-l', '--load', action='store_true', help='jump straight to loading the repository symbols')
 parser.add_option('-o', '--outfile', dest='outfile', default=None, help='dump json data to OUTFILE for post-processing', metavar='OUTFILE')
+parser.add_option('-s', '--src', action='store_true', default=None, help='download source packages from dep file', metavar='SRC')
 
 (options, args) = parser.parse_args()
 
@@ -273,6 +319,13 @@ metas = load_meta()
 if len(args) < 1:
     print("error: must supply dependency-list")
     parser.print_usage()
+    sys.exit(1)
+
+if options.src:
+    deps=read_dependency_list(args[0])
+    srcs=download_deps_src(deps,metas)
+    build_srcs(srcs,metas)
+
     sys.exit(1)
 
 if not options.load:
