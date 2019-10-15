@@ -52,13 +52,26 @@ def build(deps):
     return g, name2idx
 
 
+number_of_new_id = 0
+
+
+def get_new_id(g):
+    global number_of_new_id
+    newid = g.num_vertices() + number_of_new_id
+    number_of_new_id += 1
+    return newid
+
+
 def store_vertex_dict(g):
     with open('{}/{}/bnet-dict.txt'.format(REPO_HOME, 'policy'), 'w') as f:
-        count = 0
         for pkg in g.vertices():
-            f.write('{}: {}\n'.format(
-                count, g.vertex_properties['info'][pkg]['label']))
-            count += 1
+            f.write(
+                '{}: {}\n'.format(g.vertex_index[pkg],
+                                  g.vertex_properties['info'][pkg]['label']))
+        # for unreachable nodes
+        for i in range(0, number_of_new_id):
+            n = g.num_vertices() + i
+            f.write('{}: dummy{}\n'.format(n, n))
 
 
 def get_bin(x, n):
@@ -74,39 +87,67 @@ def get_daily_info(pkg):
     return data
 
 
-def invalid_date(names, daily_info_list, date):
-    for i in range(0, len(names)):
-        if date not in daily_info_list[i][names[i]]:
+def match(daily_info, date, bit):
+    if date not in daily_info:
+        answer = False
+    else:
+        answer = daily_info[date]['binary']
+    return bool(int(bit)) == answer
+
+
+def match_exists(unreachable_daily_info_list, date):
+    for pred, daily_info in unreachable_daily_info_list:
+        if date not in daily_info[pred]:
+            answer = False
+        else:
+            answer = daily_info[pred][date]['binary']
+        if answer:
             return True
     return False
 
 
-def match(daily_info, bit):
-    return bool(int(bit)) == daily_info['binary']
+def match_all(unreachable_daily_info_list, date):
+    for pred, daily_info in unreachable_daily_info_list:
+        if date not in daily_info[pred]:
+            answer = False
+        else:
+            answer = daily_info[pred][date]['binary']
+        if answer:
+            return False
+    return True
 
 
-def compute_conditional_probability(names, daily_info_list, bin_vector):
-    assert (len(names) == len(daily_info_list)
-            and len(names) == len(bin_vector))
-    target = daily_info_list[-1][names[-1]]
+def compute_conditional_probability(target, target_daily_info,
+                                    reachable_daily_info_list,
+                                    unreachable_daily_info_list, bin_vector):
+    assert len(reachable_daily_info_list) + 2 == len(bin_vector)
     hypothesis_date = 0
     conclusion_date = 0
-    for date in target:
-        # if there exists a package not installed at the time
-        if invalid_date(names, daily_info_list, date):
-            continue
+    for date in target_daily_info[target]:
         # count the number of days where the hypothesis matches
         hypothesis_hit = True
-        for i in range(0, len(names) - 1):
+        i = 0
+        for pred, reachable_daily_info in reachable_daily_info_list:
             hypothesis_hit = hypothesis_hit and match(
-                daily_info_list[i][names[i]][date], bin_vector[i])
+                reachable_daily_info[pred], date, bin_vector[i])
+            i += 1
         if hypothesis_hit:
-            hypothesis_date += 1
+            # if there is no unreachable pred, hit
+            if len(unreachable_daily_info_list) == 0:
+                hypothesis_date += 1
+            # if there exists at least one use of unreachable node then it is used
+            elif bool(int(bin_vector[-2])) and match_exists(
+                    unreachable_daily_info_list, date):
+                hypothesis_date += 1
+            # if all unreachable nodes do not use then hit then it is not used
+            elif not bool(int(bin_vector[-2])) and match_all(
+                    unreachable_daily_info_list, date):
+                hypothesis_date += 1
+            else:
+                hypothesis_hit = False
 
         # count the number of days where the conclusion matches
-        i = len(names) - 1
-        conclusion_hit = match(daily_info_list[i][names[i]][date],
-                               bin_vector[i])
+        conclusion_hit = match(target_daily_info[target], date, bin_vector[-1])
         if hypothesis_hit and conclusion_hit:
             conclusion_date += 1
     if hypothesis_date == 0:
@@ -116,17 +157,20 @@ def compute_conditional_probability(names, daily_info_list, bin_vector):
 
 
 # https://staff.fnwi.uva.nl/j.m.mooij/libDAI/doc/fileformats.html
-def print_factor(name2idx, nodes, factor_table, f):
+def print_factor(g, name2idx, info, factor_table, f):
     # number of nodes
-    f.write(str(len(nodes)) + "\n")
+    f.write(str(len(info['reachable']) + 2) + "\n")
     # node ids
     s = ""
-    for node in nodes:
+    for node, _ in info['reachable']:
         s = s + str(name2idx[node]) + " "
+    if len(info['unreachable']) > 0:
+        s = s + str(get_new_id(g)) + " "
+    s = s + str(name2idx[info['package']])
     f.write(s + "\n")
     # arity
     s = ""
-    for node in nodes:
+    for i in range(0, len(info['reachable']) + 2):
         s = s + "2 "
     f.write(s + "\n")
     count = 0
@@ -143,9 +187,7 @@ def print_factor(name2idx, nodes, factor_table, f):
 
 
 def generate_factor_graph(args, g, name2idx, reachable_nodes):
-    store_vertex_dict(g)
     vp = g.vertex_properties['info']
-
     total = len(reachable_nodes)
     count = 0
     result = {}
@@ -155,49 +197,62 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
         count += 1
         name = vp[pkg]['label']
         print('[{}/{}] Processing nodes...'.format(count, total), end='\r')
-        # TODO: handle properly
-        reachable_pred = [
-            p.source() for p in pkg.in_edges() if p.source() in reachable_nodes
-        ]
-        logging.info('{} / {} are reachable pred'.format(
-            len(reachable_pred), pkg.in_degree()))
-        if pkg.in_degree() > args.max_pred:
-            result['skipped'] += 1
-            logging.warn(
-                'Skip {} with too many preds ({} / {} are reachable)'.format(
-                    name, len(reachable_pred), pkg.in_degree()))
-            continue
-        else:
-            logging.info('Processing {} with {} preds'.format(
-                name, pkg.in_degree()))
 
         # if the package does not have popcon data, then skip
         target_daily_info = get_daily_info(name)
         if target_daily_info is None:
             continue
-        edges = pkg.in_edges()
-        candidate_nodes = [vp[x.source()]['label'] for x in edges]
-        candidate_nodes.append(name)
-        nodes = []
-        daily_info_list = []
-        for pkg_name in candidate_nodes:
-            daily_info = get_daily_info(pkg_name)
-            if daily_info is None:
-                continue
-            nodes.append(pkg_name)
-            daily_info_list.append(daily_info)
+
+        reachable_preds = [
+            vp[p.source()]['label'] for p in pkg.in_edges()
+            if p.source() in reachable_nodes
+        ]
+        unreachable_preds = [
+            vp[p.source()]['label'] for p in pkg.in_edges()
+            if p.source() not in reachable_nodes
+        ]
+        if len(reachable_preds) > args.max_pred:
+            result['skipped'] += 1
+            logging.warn(
+                'Skip {} with too many preds ({} / {} are reachable)'.format(
+                    name, len(reachable_preds), pkg.in_degree()))
+            continue
+        else:
+            logging.info('Processing {} with {} / {} reachable preds'.format(
+                name, len(reachable_preds), pkg.in_degree()))
+        # if the package does not have popcon data, then skip
+        reachable_daily_info_list = []
+        for pred in reachable_preds:
+            daily_info = get_daily_info(pred)
+            if daily_info is not None:
+                reachable_daily_info_list.append((pred, daily_info))
+
+        unreachable_daily_info_list = []
+        for pred in unreachable_preds:
+            daily_info = get_daily_info(pred)
+            if daily_info is not None:
+                unreachable_daily_info_list.append((pred, daily_info))
+
         factor_table = []
-        for i in range(0, int(math.pow(2, len(nodes)))):
-            bin_vector = list('{}'.format(get_bin(i, len(nodes))))
+        # consider len(reachable) + 2 variables. one is for the target, the other is an aggregation of all unreachable
+        bitvector_length = len(reachable_daily_info_list) + 2
+        for i in range(0, int(math.pow(2, bitvector_length))):
+            bin_vector = list('{}'.format(get_bin(i, bitvector_length)))
             cond_prob = compute_conditional_probability(
-                nodes, daily_info_list, bin_vector)
+                name, target_daily_info, reachable_daily_info_list,
+                unreachable_daily_info_list, bin_vector)
             factor_table.append(cond_prob)
-        factors.append((nodes, factor_table))
+        info = {
+            'reachable': reachable_daily_info_list,
+            'unreachable': unreachable_daily_info_list,
+            'package': name
+        }
+        factors.append((info, factor_table))
 
     with open('{}.fg'.format(args.package), 'w') as f:
         f.write('{}\n\n'.format(len(factors)))
-        for (nodes, factor_table) in factors:
-            print_factor(name2idx, nodes, factor_table, f)
+        for (info, factor_table) in factors:
+            print_factor(g, name2idx, info, factor_table, f)
     result['size'] = count
     return result
 
@@ -233,6 +288,7 @@ def main():
     g, name2idx = build(deps)
     reachable_nodes = compute_reachable_nodes(args, g, name2idx)
     result = generate_factor_graph(args, g, name2idx, reachable_nodes)
+    store_vertex_dict(g)
     logging.info('Skipped nodes: {}'.format(result['skipped']))
     print('\nDone ({}sec)'.format(int(time.process_time() - start)))
 
