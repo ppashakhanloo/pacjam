@@ -53,7 +53,6 @@ def build_srcs(srcs):
     compile_db_env = os.environ.copy()
     compile_db_env["CC"] = os.path.join(KLLVM, "clang")
     compile_db_env["CXX"] = os.path.join(KLLVM, "clang++")
-    compile_db_env["DUMMY_LIB_GEN"] = "OFF"
 
     for s in srcs:
         srchome = os.path.join(working_dir,s)
@@ -96,7 +95,6 @@ def build_srcs(srcs):
 
         # Start the dummy build process
         dummylib_env = compile_db_env.copy()
-        dummylib_env["DUMMY_LIB_GEN"] = "ON"
         dummylib_env["COMPILE_COMMAND_DB"] = command_db
 
         rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath)
