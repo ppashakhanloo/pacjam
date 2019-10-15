@@ -9,6 +9,7 @@ import shutil
 from optparse import OptionParser 
 
 import json
+import re
 
 ARCH='x86_64-linux-gnu'
 working_dir = ""
@@ -49,10 +50,10 @@ def build_srcs(srcs):
     if not os.path.exists(libhome):
         os.mkdir(libhome)
 
-    compiledb_env = os.environ.copy()
-    compiledb_env["CC"] = os.path.join(KLLVM, "clang")
-    compiledb_env["CXX"] = os.path.join(KLLVM, "clang++")
-    compiledb_env["DUMMY_LIB_GEN"] = "OFF"
+    compile_db_env = os.environ.copy()
+    compile_db_env["CC"] = os.path.join(KLLVM, "clang")
+    compile_db_env["CXX"] = os.path.join(KLLVM, "clang++")
+    compile_db_env["DUMMY_LIB_GEN"] = "OFF"
 
     for s in srcs:
         srchome = os.path.join(working_dir,s)
@@ -61,6 +62,8 @@ def build_srcs(srcs):
         if len(dirs) > 1:
             print("Error: multiple source directories for package: {}".format(s))
             continue
+        
+        srcpath = os.path.abspath(dirs[0])
 
         #libs = glob.glob(os.path.join(dirs[0], "**/*.so"), recursive=True) 
         # Already built
@@ -74,47 +77,55 @@ def build_srcs(srcs):
         rc = subprocess.call(['apt-get', 'build-dep', '-y', s], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Build the package normally first to get a compile_command.json
-        rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=dirs[0])
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=dirs[0], env=compiledb_env)
-
-        print("Working in dir {} looking for {}".format(dirs[0], command_db))
-
+        rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_db_env)
 
         # Check for compile_command.json, and then move to tmp file so the next build doesn't
         # overwrite it 
-        command_db = os.path.join(dirs[0], "compile_command.json")
+        command_db = os.path.join(srcpath, "compile_commands.json")
+
         if not os.path.exists(command_db):
-            print("Error: failed to generate compile_command.json for {}, skipping...".format(s))
+            print("Error: failed to generate compile_commands.json for {}, skipping...".format(s))
             continue
         # Tmp
-        continue
 
-        shutil.copy(command_db, os.path.join(dirs[0], "command.json"))
-        command_db = os.path.join(dirs[0], "command.json")
+        shutil.copy(command_db, os.path.join(srcpath, "commands.json"))
+        command_db = os.path.join(srcpath, "commands.json")
         
         print("building dummy " + str(s))
 
         # Start the dummy build process
-        dummylib_env = compiledb_env.copy()
+        dummylib_env = compile_db_env.copy()
         dummylib_env["DUMMY_LIB_GEN"] = "ON"
-        dummylib_env["COMPILE_COMMAND_PATH"] = command_db
+        dummylib_env["COMPILE_COMMAND_DB"] = command_db
 
-        rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=dirs[0])
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=dirs[0], env=dummylib_env)
+        rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=dummylib_env)
+        #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stderr=subprocess.STDOUT, cwd=srcpath)
+        #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stderr=subprocess.STDOUT, cwd=srcpath, env=dummylib_env)
 
         # Anthony : Hacking, will come back to systematically find the right libs
-        libs = glob.glob(os.path.join(dirs[0], "**/.libs/*.so.*"), recursive=True) 
-        if len(libs) == 0:
-            libs = glob.glob(os.path.join(dirs[0], "**/*.so.*"), recursive=True) 
+        hiddenlibs = glob.glob(os.path.join(srcpath, "**/.libs/**.so*"), recursive=True) 
+        normallibs = glob.glob(os.path.join(srcpath, "**/.so*"), recursive=True) 
+        libs = hiddenlibs + normallibs
+
+        print(libs)
+        libs = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+", l)]
 
         if len(libs) == 0:
             print("Error: failed to build shared library for " + str(s))
             continue
     
-        #for l in libs:
-        #    if os.path.islink(l): 
-        #        continue
-        #    shutil.copy(l, libhome)
+        for l in libs:
+            # Copy raw
+            shutil.copy(l, libhome)
+            # Create "version"
+            libname = l.split("/")[-1]
+            toks = libname.split(".")
+            version = ".".join(toks[0:-2])
+            print(version)
+            path = os.path.join(libhome,version)
+            shutil.copy(l, os.path.join(libhome, version))
 
 #STDOUT From Anthony, this is very hacky and ugly, but for now while we are designing the
 # system, I'll just keep it as is.

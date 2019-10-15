@@ -1,4 +1,3 @@
-libpsl5
+libuuid1
+libunistring2
 libpcre3
-libidn2-0
-libssl1.1
