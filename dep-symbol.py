@@ -81,25 +81,6 @@ def download_deps(deps,metas):
 
     return debs
 
-def download_deps_src(deps,metas):
-    srcs = []
-
-    for d in deps:
-        if d in metas or exclude_src(d, EXCLUDES):
-            continue
-
-        print('fetching ' + d)
-        try:
-            srchome = os.path.join(working_dir,d)
-            if not os.path.exists(srchome):
-                os.mkdir(srchome)
-                out = subprocess.check_output(['apt-get', 'source', d], stderr=subprocess.STDOUT, cwd=srchome)
-            srcs.append(d)
-        except e:
-            print("No package found for " + d)
-
-    return srcs
-
 def build_symbols(meta):
     try:
         subprocess.check_call(['dpkg', '-x', meta.package_deb, 'tmp']) 
@@ -145,26 +126,6 @@ def extract_debs(debs,metas):
 
         os.chdir(home) 
 
-def build_srcs(srcs,metas):
-    # Create some metadata about our little repository
-    home = os.getcwd()
-
-    for s in srcs:
-        srchome = os.path.join(working_dir,s)
-        dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
-
-        if len(dirs) > 1:
-            print("Error: multiple source directories for package: {}".format(s))
-            continue
-
-        print("building " + str(s))
-
-        try:
-            out = subprocess.check_output(['dpkg-buildpackage', '-us', '-uc'], stderr=subprocess.STDOUT, cwd=dirs[0])
-            print(out)
-        except subprocess.CalledProcessError as err:
-            print(err)
-
 def parse_symbols(meta,symbols):
     # We'll point every symbol to its metadata for now
     # Build a true repo later
@@ -204,14 +165,6 @@ def save_meta(meta):
         for k,m in metas.items():
             f.write(json.dumps(m, cls=MetaEncoder) + '\n')
 
-
-# From Anthony, this is very hacky and ugly, but for now while we are designing the
-# system, I'll just keep it as is.
-def exclude_src(dep, excludes):
-    for e in excludes:
-        if dep in e:
-            return True
-    return False
 
 def exclude_symbol(exclude, libs):
     for e in exclude:
@@ -319,13 +272,6 @@ metas = load_meta()
 if len(args) < 1:
     print("error: must supply dependency-list")
     parser.print_usage()
-    sys.exit(1)
-
-if options.src:
-    deps=read_dependency_list(args[0])
-    srcs=download_deps_src(deps,metas)
-    build_srcs(srcs,metas)
-
     sys.exit(1)
 
 if not options.load:
