@@ -1,0 +1,17 @@
+#!/bin/bash
+
+dir=`dirname "$0"`
+
+PARENT=$(ps -o args= $PPID)
+echo $PARENT >> /tmp/make-outs.txt
+#preserve="configure|clean|test|debhelper|dbgsym"
+#if [[ $PARENT =~ $preserve ]]; then
+#  echo "shutting off" >> /tmp/make-outs.txt
+#  export DUMMY_LIB_GEN=OFF
+#else
+#  echo "turning on" >> /tmp/make-outs.txt
+#  export DUMMY_LIB_GEN=ON
+#fi
+
+bear --append $dir/make-orig $@
+exit
