@@ -16,13 +16,19 @@ end_date = date(2019, 10, 4)
 
 
 def load_data(pkg):
-    with open('{}/{}.json'.format(POPCON_PATH, pkg)) as f:
-        data = json.load(f)
-    return data
+    try:
+        with open('{}/{}.json'.format(POPCON_PATH, pkg)) as f:
+            data = json.load(f)
+        return data
+    except:
+        print(pkg)
+        sys.exit(1)
 
 
 def process_pkg(pkg):
     if not os.path.exists('{}/{}.json'.format(POPCON_PATH, pkg)):
+        return None
+    if os.path.exists('{}/{}.daily.json'.format(POPCON_PATH, pkg)):
         return None
     data = load_data(pkg)
     if pkg not in data:
