@@ -15,7 +15,7 @@ ARCH='x86_64-linux-gnu'
 working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf"]
-KLLVM = "/home/acanino/local-llvm/llvm/build/bin"
+KLLVM = "/home/acanino/llvm/build/bin"
 
 def read_dependency_list(name):
     deps = {}
@@ -64,12 +64,6 @@ def build_srcs(srcs):
         
         srcpath = os.path.abspath(dirs[0])
 
-        #libs = glob.glob(os.path.join(dirs[0], "**/*.so"), recursive=True) 
-        # Already built
-        #if len(libs) > 0:
-        #    print("already built " + str(s))
-        #    continue
-
         print("building original " + str(s))
 
         # Install dependencies to building the make easier
@@ -104,26 +98,32 @@ def build_srcs(srcs):
 
         # Anthony : Hacking, will come back to systematically find the right libs
         hiddenlibs = glob.glob(os.path.join(srcpath, "**/.libs/**.so*"), recursive=True) 
-        normallibs = glob.glob(os.path.join(srcpath, "**/.so*"), recursive=True) 
+        normallibs = glob.glob(os.path.join(srcpath, "**/**.so*"), recursive=True) 
         libs = hiddenlibs + normallibs
 
-        print(libs)
-        libs = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+", l)]
+        libs_3v = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+$", l)]
 
-        if len(libs) == 0:
+        libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
+
+        if len(libs_3v) == 0 and len(libs_2v) == 0:
             print("Error: failed to build shared library for " + str(s))
             continue
     
-        for l in libs:
+        for l in libs_3v:
+            libname = l.split("/")[-1]
+            print("\tbuilt {}".format(libname))
             # Copy raw
             shutil.copy(l, libhome)
             # Create "version"
-            libname = l.split("/")[-1]
             toks = libname.split(".")
             version = ".".join(toks[0:-2])
-            print(version)
             path = os.path.join(libhome,version)
             shutil.copy(l, os.path.join(libhome, version))
+
+        for l in libs_2v:
+            libname = l.split("/")[-1]
+            print("\tbuilt {}".format(libname))
+            shutil.copy(l, libhome)
 
 #STDOUT From Anthony, this is very hacky and ugly, but for now while we are designing the
 # system, I'll just keep it as is.
