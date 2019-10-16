@@ -111,7 +111,7 @@ def match(daily_info, date, bit):
 
 
 def match_exists(unreachable_daily_info_list, date):
-    for pred, daily_info in unreachable_daily_info_list:
+    for pred, daily_info in unreachable_daily_info_list.items():
         if date not in daily_info[pred]:
             answer = False
         else:
@@ -122,7 +122,7 @@ def match_exists(unreachable_daily_info_list, date):
 
 
 def match_all(unreachable_daily_info_list, date):
-    for pred, daily_info in unreachable_daily_info_list:
+    for pred, daily_info in unreachable_daily_info_list.items():
         if date not in daily_info[pred]:
             answer = False
         else:
@@ -135,14 +135,13 @@ def match_all(unreachable_daily_info_list, date):
 def compute_conditional_probability(target, target_daily_info,
                                     reachable_daily_info_list,
                                     unreachable_daily_info_list, bin_vector):
-    assert len(reachable_daily_info_list) + 2 == len(bin_vector)
     hypothesis_date = 0
     conclusion_date = 0
     for date in target_daily_info[target]:
         # count the number of days where the hypothesis matches
         hypothesis_hit = True
         i = 0
-        for pred, reachable_daily_info in reachable_daily_info_list:
+        for pred, reachable_daily_info in reachable_daily_info_list.items():
             hypothesis_hit = hypothesis_hit and match(
                 reachable_daily_info[pred], date, bin_vector[i])
             i += 1
@@ -179,7 +178,7 @@ def print_factor(g, factor, f):
     f.write(str(length) + "\n")
     # node ids
     s = ""
-    for node, _ in factor['reachable']:
+    for node in factor['reachable']:
         s = s + str(id_dict[node]) + " "
     if factor['unreachable_id'] is not None:
         s = s + str(factor['unreachable_id']) + " "
@@ -204,7 +203,44 @@ def print_factor(g, factor, f):
     f.write('\n')
 
 
-def generate_factor_graph(args, g, name2idx, reachable_nodes):
+def partition_preds(vp, pkg, reachable_nodes):
+    reachable_preds = [
+        vp[p.source()]['label'] for p in pkg.in_edges()
+        if p.source() in reachable_nodes
+    ]
+    unreachable_preds = [
+        vp[p.source()]['label'] for p in pkg.in_edges()
+        if p.source() not in reachable_nodes
+    ]
+    return reachable_preds, unreachable_preds
+
+
+def daily_information(preds):
+    daily_info_list = {}
+    for pred in preds:
+        daily_info = get_daily_info(pred)
+        # if the package does not have popcon data, then skip
+        if daily_info is not None:
+            daily_info_list[pred] = daily_info
+    return daily_info_list
+
+
+def generate_factor_table(name, target_daily_info, reachable_daily_info_list,
+                          unreachable_daily_info_list):
+    factor_table = []
+    # consider len(reachable) + 2 variables. one is for the target, the other is an aggregation of all unreachable
+    bitvector_length = len(reachable_daily_info_list) + int(
+        unreachable_daily_info_list != []) + 1
+    for i in range(0, int(math.pow(2, bitvector_length))):
+        bin_vector = list('{}'.format(get_bin(i, bitvector_length)))
+        cond_prob = compute_conditional_probability(
+            name, target_daily_info, reachable_daily_info_list,
+            unreachable_daily_info_list, bin_vector)
+        factor_table.append(cond_prob)
+    return factor_table
+
+
+def generate_factor_graph(args, g, reachable_nodes):
     vp = g.vertex_properties['info']
     total = len(reachable_nodes)
     count = 0
@@ -221,14 +257,9 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
         if target_daily_info is None:
             continue
 
-        reachable_preds = [
-            vp[p.source()]['label'] for p in pkg.in_edges()
-            if p.source() in reachable_nodes
-        ]
-        unreachable_preds = [
-            vp[p.source()]['label'] for p in pkg.in_edges()
-            if p.source() not in reachable_nodes
-        ]
+        reachable_preds, unreachable_preds = partition_preds(
+            vp, pkg, reachable_nodes)
+
         if len(reachable_preds) > args.max_pred:
             result['skipped'] += 1
             logging.warn(
@@ -238,28 +269,12 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
         else:
             logging.info('Processing {} with {} / {} reachable preds'.format(
                 name, len(reachable_preds), pkg.in_degree()))
-        # if the package does not have popcon data, then skip
-        reachable_daily_info_list = []
-        for pred in reachable_preds:
-            daily_info = get_daily_info(pred)
-            if daily_info is not None:
-                reachable_daily_info_list.append((pred, daily_info))
+        reachable_daily_info_list = daily_information(reachable_preds)
+        unreachable_daily_info_list = daily_information(unreachable_preds)
 
-        unreachable_daily_info_list = []
-        for pred in unreachable_preds:
-            daily_info = get_daily_info(pred)
-            if daily_info is not None:
-                unreachable_daily_info_list.append((pred, daily_info))
-
-        factor_table = []
-        # consider len(reachable) + 2 variables. one is for the target, the other is an aggregation of all unreachable
-        bitvector_length = len(reachable_daily_info_list) + 2
-        for i in range(0, int(math.pow(2, bitvector_length))):
-            bin_vector = list('{}'.format(get_bin(i, bitvector_length)))
-            cond_prob = compute_conditional_probability(
-                name, target_daily_info, reachable_daily_info_list,
-                unreachable_daily_info_list, bin_vector)
-            factor_table.append(cond_prob)
+        factor_table = generate_factor_table(name, target_daily_info,
+                                             reachable_daily_info_list,
+                                             unreachable_daily_info_list)
 
         if len(unreachable_preds) > 0:
             uid = get_new_id()
@@ -322,7 +337,7 @@ def main():
         deps = json.load(f)
     g, name2idx = build(deps)
     reachable_nodes = compute_reachable_nodes(args, g, name2idx)
-    result = generate_factor_graph(args, g, name2idx, reachable_nodes)
+    result = generate_factor_graph(args, g, reachable_nodes)
     store_vertex_dict(args, g, name2idx, result)
 
     logging.info('Skipped nodes: {}'.format(result['skipped']))
