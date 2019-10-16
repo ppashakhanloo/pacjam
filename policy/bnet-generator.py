@@ -32,6 +32,9 @@ def get_vertex(g, name2idx, v_prop, name):
     return idx
 
 
+blacklist = {'libc6'}
+
+
 def build(deps):
     g = graph_tool.Graph()
     name2idx = {}
@@ -40,10 +43,14 @@ def build(deps):
     counter = 0
 
     for name, depends in deps.items():
+        if name in blacklist:
+            continue
         counter += 1
         src = get_vertex(g, name2idx, v_prop, name)
         edges = []
         for dep_name in depends:
+            if dep_name in blacklist:
+                continue
             dst = get_vertex(g, name2idx, v_prop, dep_name)
             edges.append((src, dst))
         g.add_edge_list(edges)
@@ -53,25 +60,33 @@ def build(deps):
 
 
 number_of_new_id = 0
+id_dict = {}
 
 
-def get_new_id(g):
+def get_new_id():
     global number_of_new_id
-    newid = g.num_vertices() + number_of_new_id
+    newid = number_of_new_id
     number_of_new_id += 1
     return newid
 
 
-def store_vertex_dict(g):
+def store_id_dict(name, nid):
+    global id_dict
+    id_dict[name] = nid
+
+
+def store_vertex_dict(args, g, name2idx, result):
+    factors = result['factors']
     with open('{}/{}/bnet-dict.txt'.format(REPO_HOME, 'policy'), 'w') as f:
-        for pkg in g.vertices():
-            f.write(
-                '{}: {}\n'.format(g.vertex_index[pkg],
-                                  g.vertex_properties['info'][pkg]['label']))
-        # for unreachable nodes
-        for i in range(0, number_of_new_id):
-            n = g.num_vertices() + i
-            f.write('{}: dummy{}\n'.format(n, n))
+        global id_dict
+        for name, nid in id_dict.items():
+            f.write('{}: {}\n'.format(nid, name))
+
+    with open('{}.fg'.format(args.package), 'w') as f:
+        f.write('{}\n\n'.format(len(factors)))
+        for pkg, factor in factors.items():
+            print(pkg)
+            print_factor(g, factor, f)
 
 
 def get_bin(x, n):
@@ -157,23 +172,26 @@ def compute_conditional_probability(target, target_daily_info,
 
 
 # https://staff.fnwi.uva.nl/j.m.mooij/libDAI/doc/fileformats.html
-def print_factor(g, name2idx, info, factor_table, f):
+def print_factor(g, factor, f):
+    global id_dict
     # number of nodes
-    f.write(str(len(info['reachable']) + 2) + "\n")
+    length = len(factor['reachable']) + int(factor['unreachable'] != []) + 1
+    f.write(str(length) + "\n")
     # node ids
     s = ""
-    for node, _ in info['reachable']:
-        s = s + str(name2idx[node]) + " "
-    if len(info['unreachable']) > 0:
-        s = s + str(get_new_id(g)) + " "
-    s = s + str(name2idx[info['package']])
+    for node, _ in factor['reachable']:
+        s = s + str(id_dict[node]) + " "
+    if factor['unreachable_id'] is not None:
+        s = s + str(factor['unreachable_id']) + " "
+    s = s + str(factor['id'])
     f.write(s + "\n")
     # arity
     s = ""
-    for i in range(0, len(info['reachable']) + 2):
+    for i in range(0, length):
         s = s + "2 "
     f.write(s + "\n")
     count = 0
+    factor_table = factor['factor_table']
     for i in range(0, len(factor_table)):
         if factor_table[i] == 0:
             continue
@@ -192,7 +210,7 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
     count = 0
     result = {}
     result['skipped'] = 0
-    factors = []
+    factors = {}
     for pkg in reachable_nodes:
         count += 1
         name = vp[pkg]['label']
@@ -214,9 +232,9 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
         if len(reachable_preds) > args.max_pred:
             result['skipped'] += 1
             logging.warn(
-                'Skip {} with too many preds ({} / {} are reachable)'.format(
-                    name, len(reachable_preds), pkg.in_degree()))
-            continue
+                'Prune preds of {} with too many preds ({} / {} are reachable)'.
+                format(name, len(reachable_preds), pkg.in_degree()))
+            reachable_preds = reachable_preds[0:args.max_pred]
         else:
             logging.info('Processing {} with {} / {} reachable preds'.format(
                 name, len(reachable_preds), pkg.in_degree()))
@@ -242,18 +260,35 @@ def generate_factor_graph(args, g, name2idx, reachable_nodes):
                 name, target_daily_info, reachable_daily_info_list,
                 unreachable_daily_info_list, bin_vector)
             factor_table.append(cond_prob)
+
+        if len(unreachable_preds) > 0:
+            uid = get_new_id()
+            uname = 'dummy{}'.format(uid)
+            store_id_dict(uname, uid)
+            factors[uname] = {
+                'reachable': [],
+                'unreachable': [],
+                # TODO
+                'factor_table': [0.5, 0.5],
+                'id': uid,
+                'unreachable_id': None
+            }
+        else:
+            uid = None
+
+        nid = get_new_id()
+        store_id_dict(name, nid)
         info = {
             'reachable': reachable_daily_info_list,
             'unreachable': unreachable_daily_info_list,
-            'package': name
+            'factor_table': factor_table,
+            'id': nid,
+            'unreachable_id': uid
         }
-        factors.append((info, factor_table))
+        factors[name] = info
 
-    with open('{}.fg'.format(args.package), 'w') as f:
-        f.write('{}\n\n'.format(len(factors)))
-        for (info, factor_table) in factors:
-            print_factor(g, name2idx, info, factor_table, f)
     result['size'] = count
+    result['factors'] = factors
     return result
 
 
@@ -288,7 +323,8 @@ def main():
     g, name2idx = build(deps)
     reachable_nodes = compute_reachable_nodes(args, g, name2idx)
     result = generate_factor_graph(args, g, name2idx, reachable_nodes)
-    store_vertex_dict(g)
+    store_vertex_dict(args, g, name2idx, result)
+
     logging.info('Skipped nodes: {}'.format(result['skipped']))
     print('\nDone ({}sec)'.format(int(time.process_time() - start)))
 
