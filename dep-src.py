@@ -60,11 +60,20 @@ def build_with_dpkg(path, env):
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path)
     rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path, env=env)
 
+def try_build_dep(src):
+    rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if rc != 0:
+        rc = subprocess.call(['dpkg', '--configure', '-a'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return rc
+
 def build_original(src, srcpath, env):
     print("building original " + str(src))
 
     # Install dependencies to building the make easier
-    rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if try_build_dep(src) != 0:
+        print("\twarning: issue building dependencies for {}".format(src))
+        
 
     # Build the package normally first to get a compile_command.json
     build_with_dpkg(srcpath, env)

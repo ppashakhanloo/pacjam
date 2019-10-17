@@ -1,46 +1,6 @@
-# dep-symbol
+# Overview
 
-Tool uses a dependency list for a package (built from Kihongs scripts) to download all dependencies and build a small repository of those dependency that contain symbol information. We then build the package we are tracing with a modified LLVM that instruments code to dump LLVM IR call instructions invoked at runtime, generating a trace. The tool then uses the trace and symbol repository to see if any invoked functions match up with the dependencies. Crude, but it does work for some cases.
-
-Please see the [google doc](https://docs.google.com/document/d/1DJzJAaDPN94_ZdD39uNFcFySFgTIDlI41zmcGUhyxKs/edit) for some notes about the tool.
-
-## Build
-
-All that is required for ``dep-symbol`` itself is a working python installation. Once you've pulled the repository, you can kickoff the ``test.sh`` script to make sure ``dep-symbol`` works. I've done my work on fir02, and have hardcoded the test script to use a copy of ``jq`` in my local installation directory (``/home/acanino/local``). If you do not run on fir02, you'll have to setup ``jq`` yourself and modify the test script. 
-
-## Usage
-
-### 1. Building target dependency with modified compiler
-
-First, select a package or linux utility to gather dependency information for and grab the raw source. We will have to compile the target utility with the modified LLVM compiler. On fir02, the path for this compiler is ``/home/acanino/Projects/package-manager-debloat/llvm-kihong/build``. It's simplest to use my copy directly for the time being. For the remainder of the doc, I'll assume KLLVM is set to this path. 
-
-As long as the source can be built with the modified compiler, it should be able to be run and generate a compatible trace. The actual command to compile some source would be:
-```
-${KLLVM}/bin/clang -trace-extract -L${KLLVM}/lib -lTracePrint hello.c -o a.out
-```
-
-For the standard linux autotools build system, you can set the following environment variables before kicking off ``configure``:
-```
-export CC=${KLLVM}/bin/clang
-export CFLAGS="-trace-extract -g"
-export LDFLAGS=-L${KLLVM}/lib
-export LIBS=-lTracePrint
-```
-
-Once you successfully build a target dependency with the modified compiler, running the built program will generate a trace file in the current working directory called ``analysis-out/trace.txt``.
-
-### 2. Checking for runtime dependency use
-
-Once you have a trace for a target dependency, you can feed it into the ``dep-symbol.py`` tool along with a dependency list [generated from dep-find.py](#dep-find) to get some information on runtime dependency usage:
-
-```
-./dep-symbol.py -t path/to/trace.txt path/to/trace.dep
-```
-
-``dep-symbol`` will build a repository of symbol information (defaulting to ``./symbol-out``) by downloading the debian packages from the supplied dependency list. If there is no symbol information for a debian package, ``dep-symbol`` will attempt to generate a ``symbols`` file. 
-
-``dep-symbol`` can generate JSON about runtime dependency information for post-processing by supplying ``-o out.json``.
-
+Repository is a suite of tools for manipulating debian packages. At a high level, dep-find generates a dependency list for use with dep-symbol and dep-src. I have also created a script, dep-all.sh, that chains the use of all three scripts together.
 
 # dep-find
 
@@ -54,6 +14,75 @@ For the time being, you can grab a dependency list for a package with:
 
 which will create a file ``PACKAGE.dep`` in the current working directory. This can then be feed into ``dep-symbols``. For example, ``./dep-find.py -p wget`` will get the dependencies for ``wget`` and create ``wget.dep``.
 
-You might also find it useful to search for dependecies and packages with ``apt``: ``apt-cache depends PACKAGE`` and ``apt-cache search PACKAGE``.
+You might also find it useful to search for dependecies and packages with ``apt``: ``apt-cache depends PACKAGE`` and ``apt-cache search PACKAGE``.  
 
+# dep-symbol
 
+Tool uses a dependency list for a package (built from dep-find.py) to download all dependencies and build a small repository of those dependency that contain symbol information.
+
+## Install
+
+All that is required for ``dep-symbol`` itself is a working python installation. Once you've pulled the repository, you can kickoff the ``test.sh`` script to make sure ``dep-symbol`` works. I've done my work on fir02, and have hardcoded the test script to use a copy of ``jq`` in my local installation directory (``/home/acanino/local``). If you do not run on fir02, you'll have to setup ``jq`` yourself and modify the test script. 
+
+## Usage
+
+### 1. Generate symbol repository for dependency list
+
+```
+mkdir symbol-out
+./dep-symbol.py -d symbol-out wget.dep
+```
+
+# lzload
+
+lzload is a C library that does the actual shim / dummy library loading at runtime. Seperately, clone https://github.com/petablox/lzload and build and install with cmake:
+
+```
+git@github.com:petablox/lzload.git
+mkdir build && cd build
+cmake .. -DCMAKE_C_COMPILER=/path/to/clang 
+make
+sudo make install
+```
+
+# dep-src
+
+## Install
+
+Run setup.sh to install dependencies and place the necessary make/dpkg-buildflags files on the system (this will require root). This will also setup a local symbol repository for lzload to use at runtime at $HOME/var/symbol-out.
+
+## Usage
+
+### 1. Building a dependency list
+
+dep-src downloads and builds debian source packages from a dependency list. 
+
+```
+./dep-find.py -p wget
+mkdir src-out
+./dep-src.py -d src-out wget.dep
+```
+
+### 2. Generating symbol database
+
+Generate a symbol repository for lzload to use to help find the correct symbol / library mapping at runtime. 
+
+```
+./dep-symbol.py -d $HOME/var/symbol-out wget.dep
+```
+
+### 3. Build dummy libraries
+
+Generate dummy libraries for use with lzload. The following will attempt to build the dummy libraries and then store them in src-out/lib
+
+```
+mkdir src-out
+./dep-src.py -d src-out wget.dep
+```
+
+### 4. Running with the dummy libraries.
+
+There is a script at the top level, wget.sh, that demonstrates what environmnet variables need to be set to hook into the dummy libs. We need to set three environment variables: ``LZLOAD_LIB``, ``LZ_LIBRARY_PATH``, and ``LD_LIBRARY_PATH``.
+
+``LZLOAD_LIB`` contains a colon seperate list of libraries that lzload should intercept. ``LZ_LIBRARY_PATH`` points to the actual path of the real libraries that lzload should load on a fault. ``LD_LIBRARY_PATH`` must point to the dummy libraries and liblzload.so. 
+~
