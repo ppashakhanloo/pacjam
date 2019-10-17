@@ -15,7 +15,6 @@ ARCH='x86_64-linux-gnu'
 working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf"]
-KLLVM = "/home/acanino/llvm/build/bin"
 
 def gather_libs(path):
     out = subprocess.run(['find',path, '-name', 'lib*.so*'], stdout=subprocess.PIPE)
@@ -82,20 +81,22 @@ def build_original(src, srcpath, env):
     shutil.copy(command_db, os.path.join(srcpath, "commands.json"))
     return True
 
-def check_erasure(srcpath):
+def check_erasure(srcpath, warn):
     # Anthony : Hacking, will come back to systematically find the right libs
     libs = gather_libs(srcpath)
     libs_3v = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+$", l)]
     libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
 
     if len(libs_3v) == 0 and len(libs_2v) == 0:
-        print("Error: failed to build shared library for " + str(s))
+        if warn:
+            print("Error: failed to build shared library for " + str(srcpath))
         return None
 
     built_libs = libs_3v + libs_2v
     for l in built_libs:
         if not check_elf(l): 
-            print("\twarning: {} was not erased".format(l))
+            if warn:
+                print("\twarning: {} was not erased".format(l))
             return None
 
     return libs
@@ -103,8 +104,8 @@ def check_erasure(srcpath):
 def build_with_make(srcpath, env, compile_env):
     print("\ttrying to build with configure/make")
     configure_env = env.copy()
-    configure_env["CFLAGS"] = "-L/home/acanino/lzload/build -llzload"
-    configure_env["LDFLAGS"] = "-L/home/acanino/lzload/build -llzload"
+    configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
+    configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
     rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
     rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
 
@@ -118,7 +119,7 @@ def build_dummy(src, srcpath, env):
     dummylib_env["COMPILE_COMMAND_DB"] = command_db
 
     build_with_dpkg(srcpath, dummylib_env)
-    libs = check_erasure(srcpath)
+    libs = check_erasure(srcpath, True)
     if libs is not None:
         return libs
 
@@ -126,7 +127,7 @@ def build_dummy(src, srcpath, env):
     # to try ad-hoc rules
     if os.path.exists(os.path.join(srcpath, "configure")):
         build_with_make(srcpath, env, dummylib_env)
-        libs = check_erasure(srcpath)
+        libs = check_erasure(srcpath, True)
         if libs is not None:
             return libs
 
@@ -183,8 +184,13 @@ def build_srcs(srcs):
         os.mkdir(libhome)
 
     env = os.environ.copy()
-    env["CC"] = os.path.join(KLLVM, "clang")
-    env["CXX"] = os.path.join(KLLVM, "clang++")
+
+    if not env["KLLVM"]:
+        print("Error: Set KLLVM to point to our modified LLVM installation")
+        return
+
+    env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
+    env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
 
     for s in srcs:
         srchome = os.path.join(working_dir,s)
@@ -196,18 +202,18 @@ def build_srcs(srcs):
         
         srcpath = os.path.abspath(dirs[0])
         libs = gather_libs(srcpath)
-        #if len(libs) == 0:
-        rc = build_original(s, srcpath, env) 
-        if not rc: continue
+        if not check_erasure(srcpath, False):
+            rc = build_original(s, srcpath, env) 
+            if not rc: continue
 
-        libs = build_dummy(s, srcpath, env)
-        if libs is None:
-            print("\terror, could not build {} for lzload".format(s))
-            continue
+            libs = build_dummy(s, srcpath, env)
+            if libs is None:
+                print("\tesrror, could not build {} for lzload".format(s))
+                continue
 
-        copy_libs(libs, libhome)
-        #else:
-        #    print("already built " + str(s))
+            copy_libs(libs, libhome)
+        else:
+            print("already built " + str(s))
 
 #STDOUT From Anthony, this is very hacky and ugly, but for now while we are designing the
 # system, I'll just keep it as is.
