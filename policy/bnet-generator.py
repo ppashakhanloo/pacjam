@@ -75,7 +75,7 @@ def store_id_dict(name, nid):
     id_dict[name] = nid
 
 
-def store_vertex_dict(args, g, name2idx, result):
+def store_result(args, g, reachable, name2idx, result):
     factors = result['factors']
     with open('{}/{}/{}.dict'.format(REPO_HOME, 'policy', args.package),
               'w') as f:
@@ -87,6 +87,12 @@ def store_vertex_dict(args, g, name2idx, result):
         f.write('{}\n\n'.format(len(factors)))
         for pkg, factor in factors.items():
             print_factor(g, factor, f)
+
+    with open('{}/{}/{}.reachable.json'.format(REPO_HOME, 'policy',
+                                               args.package), 'w') as f:
+        vp = g.vertex_properties['info']
+        l = [vp[x]['label'] for x in reachable]
+        json.dump(l, f, indent=2)
 
 
 def get_bin(x, n):
@@ -378,8 +384,7 @@ def main():
     g, name2idx = build(deps)
     reachable_nodes = compute_reachable_nodes(args, g, name2idx)
     result = generate_factor_graph(args, g, reachable_nodes)
-    store_vertex_dict(args, g, name2idx, result)
-
+    store_result(args, g, reachable_nodes, name2idx, result)
     logging.info('# nodes with pruned preds: {}'.format(result['pruned']))
     print('\nDone ({} sec)'.format(int(time.process_time() - start)))
 

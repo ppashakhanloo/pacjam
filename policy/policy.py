@@ -6,6 +6,7 @@ import requests
 import sys
 import logging
 import time
+import subprocess
 
 from datetime import date
 from dateutil.rrule import rrule, DAILY
@@ -41,8 +42,23 @@ def get_daily_info(pkg):
     return data
 
 
-def compute_naive_policy(args, target_daily_info, dep_daily_info):
+def compute_static_policy(args, dep_daily_info):
     num_installed = 0
+    num_used = 0
+    for dt in rrule(DAILY, dtstart=start_date, until=end_date):
+        dtstr = dt.strftime("%Y-%m-%d")
+        if dtstr in dep_daily_info:
+            num_installed += 1
+            if dep_daily_info[dtstr]['binary']:
+                num_used += 1
+    distrib = {}
+    distrib['installed'] = num_installed
+    distrib['used'] = num_used
+    distrib['prob'] = float(num_used) / float(num_installed)
+    return distrib
+
+
+def compute_naive_policy(args, target_daily_info, dep_daily_info):
     num_commonly_installed = 0
     num_used = 0
     num_commonly_used = 0
@@ -62,14 +78,73 @@ def compute_naive_policy(args, target_daily_info, dep_daily_info):
     return joint
 
 
-# TODO
 def static_policy(args, deps):
-    return None
+    dependent_packages = deps[args.package]
+    logging.info('Dependent packages:')
+    logging.info(dependent_packages)
+
+    target_daily_info = get_daily_info(args.package)
+    result = {}
+    info = compute_static_policy(args, target_daily_info[args.package])
+    result[args.package] = info
+    for dep in dependent_packages:
+        dep_daily_info = get_daily_info(dep)
+        info = compute_static_policy(args, dep_daily_info[dep])
+        result[dep] = info
+    return result
 
 
-# TODO
+def read_dictionary(dict_file):
+    dictionary = {}
+    for line in open(dict_file):
+        line = line.strip()
+        if len(line) == 0: continue
+        components = [
+            c.strip() for c in line.split(': ') if len(c.strip()) > 0
+        ]
+        assert len(components) == 2
+        dictionary[components[1]] = components[0]
+    return dictionary
+
+
+def exec_wrapper_cmd(ps, cmd):
+    logging.info('Driver to wrapper: ' + cmd)
+    print(cmd, file=ps.stdin)
+    ps.stdin.flush()
+    response = ps.stdout.readline().strip()
+    logging.info('Wrapper to driver: ' + response)
+    return response
+
+
 def dynamic_policy(args, deps):
-    return None
+    with open(args.installed) as f:
+        installed_packages = json.load(f)
+    bnet_dict = read_dictionary(args.dict)
+    candidate = set()
+    for installed in installed_packages:
+        candidate.update(deps[installed])
+    with open('solver.log', 'w') as f:
+        with subprocess.Popen(
+            [args.solver, args.fg],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=f,
+                universal_newlines=True) as ps:
+            # mark all installed packages as true
+            for pkg in installed_packages:
+                cmd = 'O {} true'.format(bnet_dict[pkg])
+                exec_wrapper_cmd(ps, cmd)
+            # perform belief propagation
+            exec_wrapper_cmd(ps, 'BP 1e-06 500 1000 100')
+            prob = {}
+            for pkg in candidate:
+                if pkg not in bnet_dict:
+                    logging.warn('{} not found'.format(pkg))
+                    continue
+                prob[pkg] = {}
+                prob[pkg]['prob'] = exec_wrapper_cmd(ps, 'Q {}'.format(
+                    bnet_dict[pkg]))
+    return prob
 
 
 def naive_policy(args, deps):
@@ -96,6 +171,10 @@ parser_static = subparsers.add_parser('static')
 parser_static.add_argument("package")
 parser_dynamic = subparsers.add_parser('dynamic')
 parser_dynamic.add_argument("package")
+parser_dynamic.add_argument("--installed", dest='installed')
+parser_dynamic.add_argument("--fg", dest='fg')
+parser_dynamic.add_argument("--dict", dest='dict')
+parser_dynamic.add_argument("--solver", dest='solver')
 parser_naive = subparsers.add_parser('naive')
 parser_naive.add_argument("package")
 

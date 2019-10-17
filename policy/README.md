@@ -44,8 +44,21 @@ This script provides the statistical installation policy.
 `[policy]` can be one of the followings:
 ### static
 The static policy uses only static use ratio: # days when X is used / # days when X is installed.
+The output will contain a set of directly depenent packages attached with probabilities for a given package.
+
 ### dynamic
 The dynamic policy uses the Bayesian inference.
+You should give file paths for factor graph, dictionary, a list of installed packages, and solver.
+For example, 
+```
+./policy.py dynamic wget --fg wget.fg --dict wget.dict --installed installed.json --solve [path-to-nichrome]/main/libsrc/libdai/bingo
+```
+An example `installed.json` is like
+```json
+["wget", "zlib1g"]
+```
+The output will contain a set of direclty dependenty packages attached with probabilities for a given set of installed packages.
+
 ### naive
 The naive policy is a simple version of dynamic and just for debugging. Given a package `X`, it computes the probability of each package `Y` on which `X` depends without considering the whole dependency graph.
 
@@ -53,3 +66,4 @@ For example, the following command will generate `wget.naive.json`:
 ```
 ./policy.py naive wget
 ```
+The output will contain a set of directly depenent packages attached with probabilities for a given package.
