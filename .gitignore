@@ -1,1 +1,3 @@
 popcon-data/*.json
+policy/*.fg
+policy/*.dict
