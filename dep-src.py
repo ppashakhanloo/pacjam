@@ -74,7 +74,7 @@ def build_original(src, srcpath, env):
     command_db = os.path.join(srcpath, "compile_commands.json")
 
     if not os.path.exists(command_db):
-        print("Error: failed to generate compile_commands.json for {}, skipping...".format(src))
+        print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
         return False
     # Tmp
 
@@ -88,26 +88,28 @@ def check_erasure(srcpath, warn):
     libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
 
     if len(libs_3v) == 0 and len(libs_2v) == 0:
-        if warn:
-            print("Error: failed to build shared library for " + str(srcpath))
-        return None
+        if warn: print("\terror: failed to build shared library for " + str(srcpath))
+        return []
 
     built_libs = libs_3v + libs_2v
-    for l in built_libs:
-        if not check_elf(l): 
-            if warn:
-                print("\twarning: {} was not erased".format(l))
-            return None
+    erased_libs = [l for l in built_libs if check_elf(l)]
+    if warn and len(erased_libs) == 0: print("\twarning: failed to erase libs for {}".format(srcpath)) 
 
-    return libs
+    return erased_libs
 
 def build_with_make(srcpath, env, compile_env):
     print("\ttrying to build with configure/make")
     configure_env = env.copy()
     configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
     configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
+    #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath)
     rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
+    rc = subprocess.call(['make', 'clean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
     rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
+
+    #rc = subprocess.call(['./configure'], cwd=srcpath, env=configure_env)
+    #rc = subprocess.call(['make', 'clean'], cwd=srcpath, env=compile_env)
+    #rc = subprocess.call(['make'], cwd=srcpath, env=compile_env)
 
 def build_dummy(src, srcpath, env):
     command_db = os.path.join(srcpath, "commands.json")
@@ -120,7 +122,7 @@ def build_dummy(src, srcpath, env):
 
     build_with_dpkg(srcpath, dummylib_env)
     libs = check_erasure(srcpath, True)
-    if libs is not None:
+    if len(libs) > 0:
         return libs
 
     # If we didn't find libs with __get in the ELF files, we have
@@ -128,11 +130,9 @@ def build_dummy(src, srcpath, env):
     if os.path.exists(os.path.join(srcpath, "configure")):
         build_with_make(srcpath, env, dummylib_env)
         libs = check_erasure(srcpath, True)
-        if libs is not None:
-            return libs
-
-    return None
-
+        if len(libs) >= 0:
+            return libs 
+    return None 
 
 # Anthony: Fix this
 def copy_libs(libs, libhome):
@@ -186,7 +186,7 @@ def build_srcs(srcs):
     env = os.environ.copy()
 
     if not env["KLLVM"]:
-        print("Error: Set KLLVM to point to our modified LLVM installation")
+        print("error: Set KLLVM to point to our modified LLVM installation")
         return
 
     env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
@@ -197,18 +197,18 @@ def build_srcs(srcs):
         dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
 
         if len(dirs) > 1:
-            print("Error: multiple source directories for package: {}".format(s))
+            print("error: multiple source directories for package: {}".format(s))
             continue
         
         srcpath = os.path.abspath(dirs[0])
         libs = gather_libs(srcpath)
-        if not check_erasure(srcpath, False):
+        if len(check_erasure(srcpath, False)) == 0:
             rc = build_original(s, srcpath, env) 
             if not rc: continue
 
             libs = build_dummy(s, srcpath, env)
             if libs is None:
-                print("\tesrror, could not build {} for lzload".format(s))
+                print("\terror, could not build {} for lzload".format(s))
                 continue
 
             copy_libs(libs, libhome)
