@@ -1,0 +1,4 @@
+popcon-data/*.json
+policy/*.fg
+policy/*.dict
+policy/*.log
