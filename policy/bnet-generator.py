@@ -77,7 +77,8 @@ def store_id_dict(name, nid):
 
 def store_vertex_dict(args, g, name2idx, result):
     factors = result['factors']
-    with open('{}/{}/bnet-dict.txt'.format(REPO_HOME, 'policy'), 'w') as f:
+    with open('{}/{}/{}.dict'.format(REPO_HOME, 'policy', args.package),
+              'w') as f:
         global id_dict
         for name, nid in id_dict.items():
             f.write('{}: {}\n'.format(nid, name))
