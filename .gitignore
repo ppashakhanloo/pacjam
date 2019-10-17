@@ -2,3 +2,8 @@ popcon-data/*.json
 policy/*.fg
 policy/*.dict
 policy/*.log
+policy/*.dynamic.json
+policy/*.naive.json
+policy/*.static.json
+policy/*.reachable.json
+policy/installed.json
