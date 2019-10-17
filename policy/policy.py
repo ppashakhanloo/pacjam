@@ -41,8 +41,23 @@ def get_daily_info(pkg):
     return data
 
 
-def compute_naive_policy(args, target_daily_info, dep_daily_info):
+def compute_static_policy(args, dep_daily_info):
     num_installed = 0
+    num_used = 0
+    for dt in rrule(DAILY, dtstart=start_date, until=end_date):
+        dtstr = dt.strftime("%Y-%m-%d")
+        if dtstr in dep_daily_info:
+            num_installed += 1
+            if dep_daily_info[dtstr]['binary']:
+                num_used += 1
+    distrib = {}
+    distrib['installed'] = num_installed
+    distrib['used'] = num_used
+    distrib['prob'] = float(num_used) / float(num_installed)
+    return distrib
+
+
+def compute_naive_policy(args, target_daily_info, dep_daily_info):
     num_commonly_installed = 0
     num_used = 0
     num_commonly_used = 0
@@ -62,9 +77,20 @@ def compute_naive_policy(args, target_daily_info, dep_daily_info):
     return joint
 
 
-# TODO
 def static_policy(args, deps):
-    return None
+    dependent_packages = deps[args.package]
+    logging.info('Dependent packages:')
+    logging.info(dependent_packages)
+
+    target_daily_info = get_daily_info(args.package)
+    result = {}
+    info = compute_static_policy(args, target_daily_info[args.package])
+    result[args.package] = info
+    for dep in dependent_packages:
+        dep_daily_info = get_daily_info(dep)
+        info = compute_static_policy(args, dep_daily_info[dep])
+        result[dep] = info
+    return result
 
 
 # TODO
