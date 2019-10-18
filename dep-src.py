@@ -165,29 +165,35 @@ def copy_libs(libs, libhome):
         else:
             shutil.copy(l, libhome)
         
-        copied[toks[0]] = True
+        copied[toks[0]] = True 
 
+def build_src(src, libhome, env):
+    srchome = os.path.join(working_dir,src)
+    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
 
+    if len(dirs) > 1:
+        print("error: multiple source directories for package: {}".format(src))
+        return False
+    
+    srcpath = os.path.abspath(dirs[0])
+    libs = gather_libs(srcpath)
+    if len(check_erasure(srcpath, False)) != 0:
+        print("already built " + str(src))
+        return True
 
-    #for l in libs_3v:
-    #    libname = l.split("/")[-1]
-    #    print("\tbuilt {}".format(libname))
-    #    # Copy raw
-    #    shutil.copy(l, libhome)
-    #    # Create "version"
-    #    toks = libname.split(".")
-    #    version = ".".join(toks[0:-2])
-    #    path = os.path.join(libhome,version)
-    #    shutil.copy(l, path)
-    #    
-    #for l in libs_2v:
-    #    libname = l.split("/")[-1]
-    #    print("\tbuilt {}".format(libname))
-    #    shutil.copy(l, libhome)
-    #    if not check_elf(os.path.join(libhome,l)):
-    #        print("\twarning: {} was not erased".format(libname))
+    rc = build_original(src, srcpath, env) 
+    if not rc:
+        return False
 
-def build_srcs(srcs):
+    libs = build_dummy(src, srcpath, env)
+    if libs is None:
+        print("\terror, could not build {} for lzload".format(src))
+        return False
+
+    copy_libs(libs, libhome)
+    return True
+
+def build_srcs(srcs, pkg_name):
     libhome = os.path.join(working_dir, "lib")
     if not os.path.exists(libhome):
         os.mkdir(libhome)
@@ -201,29 +207,15 @@ def build_srcs(srcs):
     env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
     env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
 
+    stat = open(os.path.join(working_dir, pkg_name + '.stat'), "w")
+    stat.write("package name, build\n")
+
     for s in srcs:
-        srchome = os.path.join(working_dir,s)
-        dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
+        rc = build_src(s, libhome, env)
+        stat.write("{},{}\n".format(s, rc))
 
-        if len(dirs) > 1:
-            print("error: multiple source directories for package: {}".format(s))
-            continue
+    stat.close()
         
-        srcpath = os.path.abspath(dirs[0])
-        libs = gather_libs(srcpath)
-        if len(check_erasure(srcpath, False)) == 0:
-            rc = build_original(s, srcpath, env) 
-            if not rc: continue
-
-            libs = build_dummy(s, srcpath, env)
-            if libs is None:
-                print("\terror, could not build {} for lzload".format(s))
-                continue
-
-            copy_libs(libs, libhome)
-        else:
-            print("already built " + str(s))
-
 #STDOUT From Anthony, this is very hacky and ugly, but for now while we are designing the
 # system, I'll just keep it as is.
 def exclude_src(dep, excludes):
@@ -245,7 +237,11 @@ if len(args) < 1:
     parser.print_usage()
     sys.exit(1)
 
-deps=read_dependency_list(args[0])
+deplist = args[0]
+deps=read_dependency_list(deplist)
 srcs=download_src(deps)
-build_srcs(srcs)
+
+pkgname = deplist.split('/')[-1]
+
+build_srcs(srcs, pkgname)
 
