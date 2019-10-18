@@ -16,6 +16,10 @@ working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf"]
 
+ORIGINAL=".original"
+DPKG=".dpkg"
+MAKE=".make"
+
 def gather_libs(path):
     out = subprocess.run(['find',path, '-name', 'lib*.so*'], stdout=subprocess.PIPE)
     libs = []
@@ -35,7 +39,21 @@ def read_dependency_list(name):
             deps[d] = True
     return deps
 
-def download_src(deps):
+def download_src(dep):
+    try:
+        srchome = os.path.join(working_dir,dep)
+        if not os.path.exists(srchome):
+            os.mkdir(srchome)
+            out = subprocess.check_output(['apt-get', 'source', dep], stderr=subprocess.STDOUT, cwd=srchome)
+        return True
+    except IOError as e:
+        print(e)
+        return False
+    except subprocess.CalledProcessError as e:
+        print(e) 
+        return False 
+
+def download_srcs(deps):
     srcs = []
 
     for d in deps:
@@ -43,22 +61,16 @@ def download_src(deps):
             continue
 
         print('fetching ' + d)
-        try:
-            srchome = os.path.join(working_dir,d)
-            if not os.path.exists(srchome):
-                os.mkdir(srchome)
-                out = subprocess.check_output(['apt-get', 'source', d], stderr=subprocess.STDOUT, cwd=srchome)
+        if download_src(d):
             srcs.append(d)
-        except IOError as e:
-            print(e)
-        except subprocess.CalledProcessError as e:
-            print(e)
 
     return srcs
 
 def build_with_dpkg(path, env):
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path)
     rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path, env=env)
+    #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], cwd=path)
+    #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], cwd=path, env=env)
 
 def try_build_dep(src):
     rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -67,13 +79,22 @@ def try_build_dep(src):
         rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return rc
 
-def build_original(src, srcpath, env):
+def build_original(src, env):
     print("building original " + str(src))
+
+    srchome = copy_src(os.path.join(working_dir, src), ORIGINAL)
+
+    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
+
+    if len(dirs) > 1:
+        print("error: multiple source directories for package: {}".format(src))
+        return None
+
+    srcpath = dirs[0]
 
     # Install dependencies to building the make easier
     if try_build_dep(src) != 0:
-        print("\twarning: issue building dependencies for {}".format(src))
-        
+        print("\twarning: issue building dependencies for {}".format(src)) 
 
     # Build the package normally first to get a compile_command.json
     build_with_dpkg(srcpath, env)
@@ -84,11 +105,9 @@ def build_original(src, srcpath, env):
 
     if not os.path.exists(command_db):
         print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
-        return False
-    # Tmp
+        return None, None
 
-    shutil.copy(command_db, os.path.join(srcpath, "commands.json"))
-    return True
+    return os.path.abspath(command_db), srcpath
 
 def check_erasure(srcpath, warn):
     # Anthony : Hacking, will come back to systematically find the right libs
@@ -106,24 +125,37 @@ def check_erasure(srcpath, warn):
 
     return erased_libs
 
-def build_with_make(srcpath, env, compile_env):
+def build_with_make(src, command_db, env):
+    # Try a re-fetch and clean build with make
+    srchome = copy_src(os.path.join(working_dir, src), MAKE)
+    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
+    srcpath = dirs[0]
+
     print("\ttrying to build with configure/make")
     configure_env = env.copy()
     configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
     configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
-    #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath)
+    compile_env = env.copy()
+    compile_env["COMPILE_COMMAND_DB"] = command_db
     rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
-    rc = subprocess.call(['make', 'clean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
     rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
-
     #rc = subprocess.call(['./configure'], cwd=srcpath, env=configure_env)
-    #rc = subprocess.call(['make', 'clean'], cwd=srcpath, env=compile_env)
     #rc = subprocess.call(['make'], cwd=srcpath, env=compile_env)
 
-def build_dummy(src, srcpath, env):
-    command_db = os.path.join(srcpath, "commands.json")
-                        
+    libs = check_erasure(srcpath, True)
+    if len(libs) > 0:
+        return libs
+    else:
+        return None 
+
+def build_dummy(src, command_db, env):
+    srchome = copy_src(os.path.join(working_dir, src), DPKG)
+
     print("building dummy " + str(src))
+    
+    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
+
+    srcpath = dirs[0]
 
     # Start the dummy build process
     dummylib_env = env.copy()
@@ -133,16 +165,9 @@ def build_dummy(src, srcpath, env):
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
         return libs
-
-    # If we didn't find libs with __get in the ELF files, we have
-    # to try ad-hoc rules
-    if os.path.exists(os.path.join(srcpath, "configure")):
-        build_with_make(srcpath, env, dummylib_env)
-        libs = check_erasure(srcpath, True)
-        if len(libs) > 0:
-            return libs 
-    return None 
-
+    else:
+        return None 
+    
 # Anthony: Fix this
 def copy_libs(libs, libhome):
     copied = {}
@@ -167,28 +192,24 @@ def copy_libs(libs, libhome):
         
         copied[toks[0]] = True 
 
+def copy_src(path, ext):
+    newpath = path + ext
+    shutil.copytree(path, newpath)
+    return newpath
+
 def build_src(src, libhome, env):
-    srchome = os.path.join(working_dir,src)
-    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
-
-    if len(dirs) > 1:
-        print("error: multiple source directories for package: {}".format(src))
-        return False
-    
-    srcpath = os.path.abspath(dirs[0])
-    libs = gather_libs(srcpath)
-    if len(check_erasure(srcpath, False)) != 0:
-        print("already built " + str(src))
-        return True
-
-    rc = build_original(src, srcpath, env) 
-    if not rc:
+    command_db, origpath = build_original(src, env) 
+    if not command_db:
         return False
 
-    libs = build_dummy(src, srcpath, env)
+    libs = build_dummy(src, command_db, env)
     if libs is None:
-        print("\terror, could not build {} for lzload".format(src))
-        return False
+        # If we didn't find libs with __get in the ELF files, we have
+        # to try ad-hoc rules
+        if os.path.exists(os.path.join(origpath, "configure")):
+            libs = build_with_make(src, command_db, env)
+            if libs is None:
+                return False 
 
     copy_libs(libs, libhome)
     return True
@@ -239,7 +260,7 @@ if len(args) < 1:
 
 deplist = args[0]
 deps=read_dependency_list(deplist)
-srcs=download_src(deps)
+srcs=download_srcs(deps)
 
 pkgname = deplist.split('/')[-1]
 
