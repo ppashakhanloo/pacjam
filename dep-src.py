@@ -139,12 +139,12 @@ def build_dummy(src, srcpath, env):
     if os.path.exists(os.path.join(srcpath, "configure")):
         build_with_make(srcpath, env, dummylib_env)
         libs = check_erasure(srcpath, True)
-        if len(libs) >= 0:
+        if len(libs) > 0:
             return libs 
     return None 
 
 # Anthony: Fix this
-def copy_libs(libs, libhome):
+def copy_libs(libs, lib=home):
     copied = {}
     for l in libs:
         libname = l.split("/")[-1]
