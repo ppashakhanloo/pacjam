@@ -67,16 +67,16 @@ def download_srcs(deps):
     return srcs
 
 def build_with_dpkg(path, env):
-    rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path)
-    rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=path, env=env)
+    rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
+    rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], cwd=path)
     #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], cwd=path, env=env)
 
 def try_build_dep(src):
-    rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
     if rc != 0:
-        rc = subprocess.call(['dpkg', '--configure', '-a'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        rc = subprocess.call(['dpkg', '--configure', '-a'], stdout=log, stderr=subprocess.STDOUT)
+        rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
     return rc
 
 def build_original(src, env):
@@ -137,10 +137,10 @@ def build_with_make(src, command_db, env):
     configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
     compile_env = env.copy()
     compile_env["COMPILE_COMMAND_DB"] = command_db
-    rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
-    rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
-    #rc = subprocess.call(['./configure'], cwd=srcpath, env=configure_env)
-    #rc = subprocess.call(['make'], cwd=srcpath, env=compile_env)
+    #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
+    #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
+    rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+    rc = subprocess.call(['make'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
 
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
@@ -202,14 +202,14 @@ def build_src(src, libhome, env):
     if not command_db:
         return False
 
-    libs = build_dummy(src, command_db, env)
-    if libs is None:
+    #libs = build_dummy(src, command_db, env)
+    #if libs is None:
         # If we didn't find libs with __get in the ELF files, we have
         # to try ad-hoc rules
-        if os.path.exists(os.path.join(origpath, "configure")):
-            libs = build_with_make(src, command_db, env)
-            if libs is None:
-                return False 
+    if os.path.exists(os.path.join(origpath, "configure")):
+        libs = build_with_make(src, command_db, env)
+        if libs is None:
+            return False 
 
     copy_libs(libs, libhome)
     return True
@@ -259,10 +259,13 @@ if len(args) < 1:
     sys.exit(1)
 
 deplist = args[0]
+log = open("build.log", "w")
 deps=read_dependency_list(deplist)
 srcs=download_srcs(deps)
 
 pkgname = deplist.split('/')[-1]
 
 build_srcs(srcs, pkgname)
+
+log.close()
 
