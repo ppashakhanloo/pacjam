@@ -144,7 +144,7 @@ def build_dummy(src, srcpath, env):
     return None 
 
 # Anthony: Fix this
-def copy_libs(libs, lib=home):
+def copy_libs(libs, libhome):
     copied = {}
     for l in libs:
         libname = l.split("/")[-1]
