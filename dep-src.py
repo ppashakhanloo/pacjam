@@ -202,14 +202,14 @@ def build_src(src, libhome, env):
     if not command_db:
         return False
 
-    #libs = build_dummy(src, command_db, env)
-    #if libs is None:
+    libs = build_dummy(src, command_db, env)
+    if libs is None:
         # If we didn't find libs with __get in the ELF files, we have
         # to try ad-hoc rules
-    if os.path.exists(os.path.join(origpath, "configure")):
-        libs = build_with_make(src, command_db, env)
-        if libs is None:
-            return False 
+        if os.path.exists(os.path.join(origpath, "configure")):
+            libs = build_with_make(src, command_db, env)
+            if libs is None:
+                return False 
 
     copy_libs(libs, libhome)
     return True
