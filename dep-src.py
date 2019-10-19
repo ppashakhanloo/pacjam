@@ -14,7 +14,7 @@ import re
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf"]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1"]
 
 ORIGINAL=".original"
 DPKG=".dpkg"
