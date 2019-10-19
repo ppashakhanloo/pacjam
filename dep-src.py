@@ -210,6 +210,10 @@ def build_src(src, libhome, env):
             libs = build_with_make(src, command_db, env)
             if libs is None:
                 return False 
+        # TODO: some projects do not have configure but only have Makefile
+        else:
+            print("\twarn: configure not found")
+            return False 
 
     copy_libs(libs, libhome)
     return True
