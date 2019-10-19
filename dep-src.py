@@ -68,7 +68,7 @@ def download_srcs(deps):
 
 def build_with_dpkg(path, env):
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
-    rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+    rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b', '-j8'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], cwd=path)
     #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], cwd=path, env=env)
 
