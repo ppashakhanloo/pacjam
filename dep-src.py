@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 import subprocess
 import os.path
@@ -88,7 +88,10 @@ def build_original(src, env):
 
     if len(dirs) > 1:
         print("error: multiple source directories for package: {}".format(src))
-        return None
+        return None, None
+    if len(dirs) == 0:
+        print("error: no source directories for package: {}".format(src))
+        return None, None
 
     srcpath = dirs[0]
 
@@ -213,7 +216,7 @@ def copy_libs(libs, libhome):
 def copy_src(path, ext):
     newpath = path + ext
     try:
-        shutil.copytree(path, newpath)
+        shutil.copytree(path, newpath, symlinks=True)
     except FileExistsError:
         print("\twarning: {} exists".format(newpath))
         pass
