@@ -14,7 +14,7 @@ import re
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1"]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6"]
 
 ORIGINAL=".original"
 DPKG=".dpkg"
@@ -96,8 +96,12 @@ def build_original(src, env):
     if try_build_dep(src) != 0:
         print("\twarning: issue building dependencies for {}".format(src)) 
 
-    # Build the package normally first to get a compile_command.json
-    build_with_dpkg(srcpath, env)
+    success = os.path.join(srcpath, ".petablox_success")
+    if os.path.exists(success):
+        print("\twarning: reuse old build result")
+    else:
+        # Build the package normally first to get a compile_command.json
+        build_with_dpkg(srcpath, env)
 
     # Check for compile_command.json, and then move to tmp file so the next build doesn't
     # overwrite it 
@@ -106,6 +110,9 @@ def build_original(src, env):
     if not os.path.exists(command_db):
         print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
         return None, None
+
+    with open(success, 'w') as f:
+        f.write("\n")
 
     return os.path.abspath(command_db), srcpath
 
@@ -131,39 +138,50 @@ def build_with_make(src, command_db, env):
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
     srcpath = dirs[0]
 
-    print("\ttrying to build with configure/make")
-    configure_env = env.copy()
-    configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
-    configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
-    compile_env = env.copy()
-    compile_env["COMPILE_COMMAND_DB"] = command_db
-    #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
-    #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
-    rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
-    rc = subprocess.call(['make'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
+    success = os.path.join(srcpath, ".petablox_success")
+    if os.path.exists(success):
+        print("\twarning: reuse old build result")
+    else:
+        print("\ttrying to build with configure/make")
+        configure_env = env.copy()
+        configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
+        configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
+        compile_env = env.copy()
+        compile_env["COMPILE_COMMAND_DB"] = command_db
+        #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
+        #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
+        rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+        rc = subprocess.call(['make'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
 
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
+        with open(success, 'w') as f:
+            f.write("\n")
         return libs
     else:
         return None 
 
 def build_dummy(src, command_db, env):
-    srchome = copy_src(os.path.join(working_dir, src), DPKG)
-
     print("building dummy " + str(src))
+    srchome = copy_src(os.path.join(working_dir, src), DPKG)
     
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
 
     srcpath = dirs[0]
 
-    # Start the dummy build process
-    dummylib_env = env.copy()
-    dummylib_env["COMPILE_COMMAND_DB"] = command_db
+    success = os.path.join(srcpath, ".petablox_success")
+    if os.path.exists(success):
+        print("\twarning: reuse old build result")
+    else:
+        # Start the dummy build process
+        dummylib_env = env.copy()
+        dummylib_env["COMPILE_COMMAND_DB"] = command_db
 
-    build_with_dpkg(srcpath, dummylib_env)
+        build_with_dpkg(srcpath, dummylib_env)
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
+        with open(success, 'w') as f:
+            f.write("\n")
         return libs
     else:
         return None 
@@ -194,7 +212,11 @@ def copy_libs(libs, libhome):
 
 def copy_src(path, ext):
     newpath = path + ext
-    shutil.copytree(path, newpath)
+    try:
+        shutil.copytree(path, newpath)
+    except FileExistsError:
+        print("\twarning: {} exists".format(newpath))
+        pass
     return newpath
 
 def build_src(src, libhome, env):
