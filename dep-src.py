@@ -11,6 +11,9 @@ from optparse import OptionParser
 import json
 import re
 
+REPO_HOME = os.path.dirname(os.path.realpath(__file__))
+COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
+
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
@@ -66,9 +69,12 @@ def download_srcs(deps):
 
     return srcs
 
-def build_with_dpkg(path, env):
+def build_with_dpkg(path, env, parallel=False):
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
-    rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+    if parallel:
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+    else:
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], cwd=path)
     #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], cwd=path, env=env)
 
@@ -99,37 +105,37 @@ def build_original(src, env):
     if try_build_dep(src) != 0:
         print("\twarning: issue building dependencies for {}".format(src)) 
 
-    success = os.path.join(srcpath, ".petablox_success")
-    if os.path.exists(success):
-        print("\twarning: reuse old build result")
+    saved_command_db = os.path.join(*[COMPILATION_DB_DIR_PATH, src, "compile_commands.json"])
+    if os.path.exists(saved_command_db):
+        print("\twarning: reuse saved compilation db")
     else:
         # Build the package normally first to get a compile_command.json
         build_with_dpkg(srcpath, env)
 
-    # Check for compile_command.json, and then move to tmp file so the next build doesn't
-    # overwrite it 
-    command_db = os.path.join(srcpath, "compile_commands.json")
+        # Check for compile_command.json, and then move to tmp file so the next build doesn't
+        # overwrite it 
+        command_db = os.path.join(srcpath, "compile_commands.json")
 
-    if not os.path.exists(command_db):
-        print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
-        return None, None
+        if not os.path.exists(command_db):
+            print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
+            return None, None
 
-    with open(success, 'w') as f:
-        f.write("\n")
+        os.makedirs(os.path.dirname(saved_command_db), exist_ok=True)
+        shutil.copy(command_db, saved_command_db)
 
-    return os.path.abspath(command_db), srcpath
+    return os.path.abspath(saved_command_db), srcpath
 
 def check_erasure(srcpath, warn):
     # Anthony : Hacking, will come back to systematically find the right libs
     libs = gather_libs(srcpath)
     libs_3v = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+$", l)]
     libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
-
-    if len(libs_3v) == 0 and len(libs_2v) == 0:
+    libs_1v = [l for l in libs if re.match(".*\.so\.\d+$", l)]
+    if len(libs_3v) == 0 and len(libs_2v) == 0 and len(libs_1v) == 0:
         if warn: print("\terror: failed to build shared library for " + str(srcpath))
         return []
 
-    built_libs = libs_3v + libs_2v
+    built_libs = libs_3v + libs_2v + libs_1v
     erased_libs = [l for l in built_libs if check_elf(l)]
     if warn and len(erased_libs) == 0: print("\twarning: failed to erase libs for {}".format(srcpath)) 
 
@@ -154,7 +160,7 @@ def build_with_make(src, command_db, env):
         #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
         #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
         rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
-        rc = subprocess.call(['make'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
+        rc = subprocess.call(['make', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
 
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
@@ -180,7 +186,7 @@ def build_dummy(src, command_db, env):
         dummylib_env = env.copy()
         dummylib_env["COMPILE_COMMAND_DB"] = command_db
 
-        build_with_dpkg(srcpath, dummylib_env)
+        build_with_dpkg(srcpath, dummylib_env, parallel=True)
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
         with open(success, 'w') as f:
