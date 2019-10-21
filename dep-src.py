@@ -157,10 +157,19 @@ def build_with_make(src, command_db, env):
         configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
         compile_env = env.copy()
         compile_env["COMPILE_COMMAND_DB"] = command_db
-        #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
-        #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
-        rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
-        rc = subprocess.call(['make', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
+        if os.path.exists(os.path.join(srcpath, './configure')):
+            #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
+            #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
+            rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+        elif os.path.exists(os.path.join(srcpath, './autogen.sh')):
+            rc = subprocess.call(['./autogen.sh'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+            rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+
+        if os.path.exists(os.path.join(srcpath, './Makefile')):
+            rc = subprocess.call(['make', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=compile_env)
+        else:
+            print("\twarning: Makefile not found")
+            return None
 
     libs = check_erasure(srcpath, True)
     if len(libs) > 0:
