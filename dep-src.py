@@ -246,13 +246,14 @@ def build_src(src, libhome, env):
     if libs is None:
         # If we didn't find libs with __get in the ELF files, we have
         # to try ad-hoc rules
-        if os.path.exists(os.path.join(origpath, "configure")):
+        if os.path.exists(os.path.join(origpath, "configure")) \
+        or os.path.exists(os.path.join(origpath, "autogen.sh")):
             libs = build_with_make(src, command_db, env)
             if libs is None:
                 return False 
         # TODO: some projects do not have configure but only have Makefile
         else:
-            print("\twarn: configure not found")
+            print("\twarnint: configure not found")
             return False 
 
     copy_libs(libs, libhome)
