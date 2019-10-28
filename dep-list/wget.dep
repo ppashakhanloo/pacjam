@@ -1,0 +1,16 @@
+libc6
+libgcc1
+gcc-8-base
+zlib1g
+libuuid1
+libgmp10
+libffi6
+libgnutls30
+libtasn1-6
+libhogweed4
+libnettle6
+libunistring2
+libpcre2-8-0
+libpsl5
+libidn2-0
+libp11-kit0
