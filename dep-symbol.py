@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 import subprocess
 import os.path
@@ -165,6 +165,11 @@ def save_meta(meta):
         for k,m in metas.items():
             f.write(json.dumps(m, cls=MetaEncoder) + '\n')
 
+def save_packages(meta):
+    with open(os.path.join(working_dir,'packages.txt'), 'w') as f:
+        for k,m in metas.items():
+            for l in m.shared_libs:
+                f.write("{} {}\n".format(l, m.package_name)) 
 
 def exclude_symbol(exclude, libs):
     for e in exclude:
@@ -281,6 +286,7 @@ if not options.load:
 
 symbols = load_symbols(metas)
 save_meta(metas)
+save_packages(metas)
 save_symbols(symbols)
 
 if options.trace is not None:
