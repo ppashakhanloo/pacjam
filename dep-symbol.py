@@ -133,12 +133,12 @@ def parse_symbols(meta,symbols):
     with open(os.path.join(working_dir, meta.package_name, "symbols")) as f:
         current_lib = ""
         for l in f.readlines():
-            if l[0] != " " and l[0] != "|":
+            if l[0] != " " and l[0] != "|" and l[0] != '*':
                 current_lib = l.split()[0]
                 meta.add_lib(current_lib)
             else:
                 toks = l.split()
-                if toks[0] == "|":
+                if toks[0] == "|" or toks[0] == "*":
                     pass
                 else:
                     name = toks[0].split("@")[0]
