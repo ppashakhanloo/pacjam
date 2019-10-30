@@ -1,0 +1,10 @@
+#!/bin/bash
+
+dir=`dirname "$0"`
+
+if [ ! -z "$COMPILE_COMMAND_DB" ]; then
+	$HOME/llvm/build/bin/clang "$@"
+else
+	$dir/gcc-orig "$@"
+fi
+exit

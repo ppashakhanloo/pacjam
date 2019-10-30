@@ -85,6 +85,7 @@ def build_symbols(meta):
     try:
         subprocess.check_call(['dpkg', '-x', meta.package_deb, 'tmp']) 
         subprocess.check_call(['dpkg-gensymbols', '-v0', '-p' + meta.package_name, '-etmp/lib/'+ARCH+'/lib*.so*', '-Osymbols'])
+        subprocess.check_call(['dpkg-gensymbols', '-v0', '-p' + meta.package_name, '-etmp/usr/lib/'+ARCH+'/lib*.so*', '-Osymbols'])
         meta.has_symbols = True
         #subprocess.check_call(['rm', '-rf', 'tmp'])
     except subprocess.CalledProcessError as err:

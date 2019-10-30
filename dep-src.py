@@ -134,8 +134,13 @@ def check_erasure(srcpath, warn):
     libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
     libs_1v = [l for l in libs if re.match(".*\.so\.\d+$", l)]
     if len(libs_3v) == 0 and len(libs_2v) == 0 and len(libs_1v) == 0:
-        if warn: print("\terror: failed to build shared library for " + str(srcpath))
-        return []
+        # As a last resort, try non-versioned libs
+        libs_0v = [l for l in libs if re.match(".*\.so$", l)]
+        if len(libs_0v) == 0:
+            if warn: print("\terror: failed to build shared library for " + str(srcpath))
+            return []
+        else:
+            libs_1v = libs_0v
 
     built_libs = libs_3v + libs_2v + libs_1v
     erased_libs = [l for l in built_libs if check_elf(l)]
@@ -253,14 +258,11 @@ def build_src(src, libhome):
         # If we didn't find libs with __get in the ELF files, we have
         # to try ad-hoc rules
         if os.path.exists(os.path.join(origpath, "configure")) \
-        or os.path.exists(os.path.join(origpath, "autogen.sh")):
+        or os.path.exists(os.path.join(origpath, "autogen.sh")) \
+        or os.path.exists(os.path.join(origpath, "Makefile")):
             libs = build_with_make(src, command_db, env)
             if libs is None:
                 return False 
-        # TODO: some projects do not have configure but only have Makefile
-        else:
-            print("\twarnint: configure not found")
-            return False 
 
     copy_libs(libs, libhome)
     return True
