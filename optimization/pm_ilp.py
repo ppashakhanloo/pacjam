@@ -31,11 +31,9 @@ def create_string(alpha, all_packages, test_cases):
   
   # constraint type (3)
   c3_str = "c3: "
-  for i in range(len(all_packages)):#range(len(test_cases)):
-    c3_str += "x" + str(i) + " + "
-    #c3_str += "y" + str(i) + " + "
-  #thresh = int(math.floor(alpha * len(test_cases)))
-  thresh=int(math.ceil(alpha * len(all_packages)))
+  for i in range(len(test_cases)):
+    c3_str += "y" + str(i) + " + "
+  thresh = int(math.floor(alpha * len(test_cases)))
   c3_str = c3_str[:-2] + ">= " + str(thresh) + "\n"
   
   # variables
