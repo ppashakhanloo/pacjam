@@ -17,7 +17,7 @@ COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6"]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar"]
 
 ORIGINAL=".original"
 DPKG=".dpkg"
@@ -39,6 +39,8 @@ def read_dependency_list(name):
     deps = {}
     with open(name, 'r') as f:
         for d in f.read().splitlines():
+            if d.startswith('#'):
+                continue
             deps[d] = True
     return deps
 
@@ -237,10 +239,14 @@ def copy_src(path, ext):
         pass
     return newpath
 
-def build_src(src, libhome, env):
+def build_src(src, libhome):
+    env = os.environ.copy()
     command_db, origpath = build_original(src, env) 
     if not command_db:
         return False
+
+    env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
+    env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
 
     libs = build_dummy(src, command_db, env)
     if libs is None:
@@ -270,14 +276,11 @@ def build_srcs(srcs, pkg_name):
         print("error: Set KLLVM to point to our modified LLVM installation")
         return
 
-    env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
-    env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
-
     stat = open(os.path.join(working_dir, pkg_name + '.stat'), "w")
     stat.write("package name, build\n")
 
     for s in srcs:
-        rc = build_src(s, libhome, env)
+        rc = build_src(s, libhome)
         stat.write("{},{}\n".format(s, rc))
 
     stat.close()
