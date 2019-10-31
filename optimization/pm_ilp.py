@@ -8,7 +8,7 @@ def create_string(alpha, all_packages, test_cases):
   # minimize
   minimization_str = "Minimize\n"
   for i in range(len(all_packages)):
-    minimization_str += str(all_packages[i][1]) + " " + "x" + str(i) + " + "
+    minimization_str += str(int(all_packages[i][1]) + 1) + " " + "x" + str(i) + " + "
   minimization_str = minimization_str[:-2] + "\n"
   
   subject_to_str = "Subject To\n"
@@ -21,13 +21,17 @@ def create_string(alpha, all_packages, test_cases):
     for j in range(len(test_cases[i])):
       ones += 1
       c1_str += " - x" + str(test_cases[i][j])
-    c1_str = c1_str + " > " + "-"  + str(ones) + "\n"
+    c1_str += " > " + "-"  + str(ones) + "\n"
   
   # constraint type (2)
-  c2_str = "c2: "
+  c2_str = ""
   for i in range(len(test_cases)):
-    c2_str += "x" + str(i) + " - " + str(len(test_cases[i])) + " y" + str(i) + " + "
-  c2_str = c2_str[:-2] + ">= 0" + "\n"
+    c2_str += "c2" + str(i) + ": "
+    for j in range(len(test_cases[i])):
+      c2_str += "x" + str(test_cases[i][j]) + " + "
+    c2_str = c2_str[:-2]
+    c2_str += " - " + str(len(test_cases[i])) + " " + "y" + str(i)
+    c2_str += " >= 0" + "\n"
   
   # constraint type (3)
   c3_str = "c3: "
@@ -57,17 +61,22 @@ def create_string(alpha, all_packages, test_cases):
 def get_data(all_packages_file, test_cases_file):
   all_packages = []
   test_cases = []
+  package_mapping = dict()
   with open(all_packages_file) as f:
-    csv_reader = csv.reader(f, delimiter=',')
+    csv_reader = csv.reader(f, delimiter=' ')
     for row in csv_reader:
-      all_packages.append((row[0], row[1]))
+      # index, name, cve
+      all_packages.append((row[1], row[2]))
+      package_mapping[row[1]] = int(row[0])
 
   with open(test_cases_file) as f:
-    csv_reader = csv.reader(f, delimiter=',')
+    csv_reader = csv.reader(f, delimiter=' ')
     for row in csv_reader:
       test_case = []
       for i in row:
-        test_case.append(i)
+        i = i.strip()
+        if i != "":
+          test_case.append(package_mapping.get(i))
       test_cases.append(test_case)
   return all_packages, test_cases
 
@@ -78,13 +87,12 @@ if __name__ == '__main__':
   all_packages_file = sys.argv[2]
   test_cases_file = sys.argv[3]
   lp_file = sys.argv[4]
-  
+
   # get data
   all_packages, test_cases = get_data(all_packages_file, test_cases_file)
   
   # create ilp string 
   ilp_formulation = create_string(alpha, all_packages, test_cases)
-
   # write ilp string to file
   with open(lp_file, 'w') as f:
     print(f"{ilp_formulation}", file=f)
