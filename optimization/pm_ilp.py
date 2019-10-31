@@ -8,7 +8,7 @@ def create_string(alpha, all_packages, test_cases):
   # minimize
   minimization_str = "Minimize\n"
   for i in range(len(all_packages)):
-    minimization_str += str(all_packages[i][1]) + " " + "x" + str(i) + " + "
+    minimization_str += str(int(all_packages[i][1]) + 1) + " " + "x" + str(i) + " + "
   minimization_str = minimization_str[:-2] + "\n"
   
   subject_to_str = "Subject To\n"
@@ -26,11 +26,11 @@ def create_string(alpha, all_packages, test_cases):
   # constraint type (2)
   c2_str = ""
   for i in range(len(test_cases)):
-    print("test case " + str(i))
     c2_str += "c2" + str(i) + ": "
     for j in range(len(test_cases[i])):
       c2_str += "x" + str(test_cases[i][j]) + " + "
-    c2_str += str(len(test_cases[i])) + " " + "y" + str(i) 
+    c2_str = c2_str[:-2]
+    c2_str += " - " + str(len(test_cases[i])) + " " + "y" + str(i)
     c2_str += " >= 0" + "\n"
   
   # constraint type (3)
