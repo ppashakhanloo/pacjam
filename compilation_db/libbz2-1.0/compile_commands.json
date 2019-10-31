@@ -1,0 +1,265 @@
+[
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "bzlib.sho",
+            "bzlib.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "bzlib.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "blocksort.o",
+            "blocksort.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "blocksort.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "bzip2recover.o",
+            "bzip2recover.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "bzip2recover.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "decompress.o",
+            "decompress.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "decompress.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "huffman.o",
+            "huffman.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "huffman.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "randtable.sho",
+            "randtable.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "randtable.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "bzip2.o",
+            "bzip2.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "bzip2.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "compress.sho",
+            "compress.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "compress.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "crctable.sho",
+            "crctable.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "crctable.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "crctable.o",
+            "crctable.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "crctable.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "blocksort.sho",
+            "blocksort.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "blocksort.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "huffman.sho",
+            "huffman.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "huffman.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-fPIC",
+            "-o",
+            "decompress.sho",
+            "decompress.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "decompress.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "randtable.o",
+            "randtable.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "randtable.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "bzlib.o",
+            "bzlib.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "bzlib.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Winline",
+            "-O2",
+            "-g",
+            "-D_FILE_OFFSET_BITS=64",
+            "-o",
+            "compress.o",
+            "compress.c"
+        ],
+        "directory": "/home/acanino/dep-trace/src-out/libbz2-1.0.original/bzip2-1.0.6",
+        "file": "compress.c"
+    }
+]
