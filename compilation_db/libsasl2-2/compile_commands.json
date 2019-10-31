@@ -3245,28 +3245,6 @@
     },
     {
         "arguments": [
-            "gcc",
-            "-c",
-            "-g",
-            "-O2",
-            "-Wdate-time",
-            "-D_FORTIFY_SOURCE=2",
-            "-I/usr/include/heimdal",
-            "-DOBSOLETE_CRAM_ATTR=1",
-            "-DOBSOLETE_DIGEST_ATTR=1",
-            "-I/usr/include",
-            "-I/usr/include/mysql",
-            "-I/usr/include/postgresql",
-            "-I/usr/include",
-            "-o",
-            "makemd5",
-            "../../include/makemd5.c"
-        ],
-        "directory": "/home/acanino/dep-trace/curl-src-out/libsasl2-2.original/cyrus-sasl2-2.1.27+dfsg/build-heimdal/include",
-        "file": "../../include/makemd5.c"
-    },
-    {
-        "arguments": [
             "/home/acanino/llvm/build/bin/clang",
             "-c",
             "-DHAVE_CONFIG_H",

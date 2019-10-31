@@ -17,7 +17,9 @@ COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
 ARCH='x86_64-linux-gnu'
 working_dir = ""
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar"]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info"]
+
+CONFIG_OPTS={ "libtinfo6": "--with-shared" } 
 
 ORIGINAL=".original"
 DPKG=".dpkg"
@@ -165,9 +167,10 @@ def build_with_make(src, command_db, env):
         compile_env = env.copy()
         compile_env["COMPILE_COMMAND_DB"] = command_db
         if os.path.exists(os.path.join(srcpath, './configure')):
-            #rc = subprocess.call(['./configure'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=configure_env)
-            #rc = subprocess.call(['make'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=srcpath, env=compile_env)
-            rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
+            command = ['./configure']
+            if src in CONFIG_OPTS:
+                command.append(CONFIG_OPTS[src])
+            rc = subprocess.call(command, stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
         elif os.path.exists(os.path.join(srcpath, './autogen.sh')):
             rc = subprocess.call(['./autogen.sh'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
             rc = subprocess.call(['./configure'], stdout=log, stderr=subprocess.STDOUT, cwd=srcpath, env=configure_env)
@@ -261,8 +264,8 @@ def build_src(src, libhome):
         or os.path.exists(os.path.join(origpath, "autogen.sh")) \
         or os.path.exists(os.path.join(origpath, "Makefile")):
             libs = build_with_make(src, command_db, env)
-            if libs is None:
-                return False 
+        if libs is None:
+            return False
 
     copy_libs(libs, libhome)
     return True
