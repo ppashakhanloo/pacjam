@@ -155,7 +155,6 @@ def build_with_make(src, command_db, env):
     srchome = copy_src(os.path.join(working_dir, src), MAKE)
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
     srcpath = dirs[0]
-
     success = os.path.join(srcpath, ".petablox_success")
     if os.path.exists(success):
         print("\twarning: reuse old build result")
@@ -165,6 +164,7 @@ def build_with_make(src, command_db, env):
         configure_env["CFLAGS"] = "-L/usr/local/lib -llzload"
         configure_env["LDFLAGS"] = "-L/usr/local/lib -llzload"
         compile_env = env.copy()
+        compile_env["DUMMY_LIB_GEN"] = "ON"
         compile_env["COMPILE_COMMAND_DB"] = command_db
         if os.path.exists(os.path.join(srcpath, './configure')):
             command = ['./configure']
@@ -204,6 +204,7 @@ def build_dummy(src, command_db, env):
         # Start the dummy build process
         dummylib_env = env.copy()
         dummylib_env["COMPILE_COMMAND_DB"] = command_db
+        dummylib_env["DUMMY_LIB_GEN"] = "ON"
 
         build_with_dpkg(srcpath, dummylib_env, parallel=True)
     libs = check_erasure(srcpath, True)
