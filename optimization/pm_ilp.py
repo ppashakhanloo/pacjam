@@ -4,13 +4,43 @@ import math
 import csv
 import sys
 
-def create_string(alpha, all_packages, test_cases):
+NAME = 0
+CVE = 1
+GADGET = 2
+INSTALL_SIZE = 3
+
+def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadget_flag=0, install_size_flag=0):
   # minimize
-  minimization_str = "Minimize\n"
-  for i in range(len(all_packages)):
-    minimization_str += str(int(all_packages[i][1]) + 1) + " " + "x" + str(i) + " + "
-  minimization_str = minimization_str[:-2] + "\n"
+  minimization_str = "Minimize multi-objectives\n"
   
+  # minimize the number of CVEs
+  if (cve_flag):
+    minimization_str += "obj1: Priority=1 Weight=1 AbsTol=0 RelTol=0\n"
+    for i in range(len(all_packages)):
+      minimization_str += str(int(all_packages[i][CVE])) + " " + "x" + str(i) + " + "
+    minimization_str = minimization_str[:-2] + "\n"
+  
+  # minimize the number of installed packages
+  if (num_flag):
+    minimization_str += "obj2: Priority=2 Weight=1 AbsTol=0 RelTol=0\n"
+    for i in range(len(all_packages)):
+      minimization_str += "x" + str(i) + " + "
+  minimization_str = minimization_str[:-2] + "\n"
+
+  # minimize the number of gadgets
+  if (gadget_flag):
+    minimization_str += "obj3: Priority=3 Weight=1 AbsTol=0 RelTol=0\n"
+    for i in range(len(all_packages)):
+      minimization_str += str(int(all_packages[i][GADGET])) + " " + "x" + str(i) + " + "
+    minimization_str = minimization_str[:-2] + "\n"
+
+  # minimize the total installed size
+  if (install_size_flag):
+    minimization_str += "obj4: Priority=4 Weight=1 AbsTol=0 RelTol=0\n"
+    for i in range(len(all_packages)):
+      minimization_str += str(int(all_packages[i][INSTALL_SIZE])) + " " + "x" + str(i) + " + "
+    minimization_str = minimization_str[:-2] + "\n"
+
   subject_to_str = "Subject To\n"
   # constraint type (1)
   c1_str = ""
