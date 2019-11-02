@@ -19,7 +19,7 @@ working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info"]
 
-CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"] } 
+CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"]  } 
 
 ORIGINAL=".original"
 DPKG=".dpkg"
