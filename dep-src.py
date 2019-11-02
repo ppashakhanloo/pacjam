@@ -19,7 +19,9 @@ working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info"]
 
-CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"]  } 
+CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"], "libopus0": ["--disable-maintainer-mode"] }
+
+MAKE_ONLY=["libbluray2"]
 
 ORIGINAL=".original"
 DPKG=".dpkg"
@@ -191,6 +193,9 @@ def build_with_make(src, command_db, env):
 
 def build_dummy(src, command_db, env):
     print("building dummy " + str(src))
+    if src in MAKE_ONLY:
+        return None
+
     srchome = copy_src(os.path.join(working_dir, src), DPKG)
     
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
@@ -258,6 +263,7 @@ def build_src(src, libhome):
     env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
 
     libs = build_dummy(src, command_db, env)
+
     if libs is None:
         # If we didn't find libs with __get in the ELF files, we have
         # to try ad-hoc rules
