@@ -94,10 +94,12 @@ def get_data(all_packages_file, test_cases_file):
   package_mapping = dict()
   with open(all_packages_file) as f:
     csv_reader = csv.reader(f, delimiter=' ')
+    index = 0
     for row in csv_reader:
-      # index, name, cve
-      all_packages.append((row[1], row[2]))
-      package_mapping[row[1]] = int(row[0])
+      # name, cve, gadgets, installed_size
+      all_packages.append((row[NAME], row[CVE], row[GADGET], row[INSTALL_SIZE]))
+      package_mapping[row[NAME]] = index
+      index += 1
 
   with open(test_cases_file) as f:
     csv_reader = csv.reader(f, delimiter=' ')
