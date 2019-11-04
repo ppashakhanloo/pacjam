@@ -3,7 +3,11 @@
 dir=`dirname "$0"`
 
 if [ ! -z "$COMPILE_COMMAND_DB" ]; then
-	${KLLVM}/build/bin/clang "$@"
+	if [ ! -z "$KLLVM" ]; then
+            ${KLLVM}/build/bin/clang "$@"
+	else
+	    /home/acanino/llvm/build/bin/clang "$@"
+	fi
 else
 	$dir/gcc-orig "$@"
 fi
