@@ -9,7 +9,7 @@ CVE = 1
 GADGET = 2
 INSTALL_SIZE = 3
 
-def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadget_flag=0, install_size_flag=0):
+def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadget_flag=1, install_size_flag=1):
   # minimize
   minimization_str = "Minimize multi-objectives\n"
   
@@ -22,14 +22,14 @@ def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadge
   
   # minimize the number of installed packages
   if (num_flag):
-    minimization_str += "obj2: Priority=2 Weight=1 AbsTol=0 RelTol=0\n"
+    minimization_str += "obj2: Priority=3 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += "x" + str(i) + " + "
   minimization_str = minimization_str[:-2] + "\n"
 
   # minimize the number of gadgets
   if (gadget_flag):
-    minimization_str += "obj3: Priority=3 Weight=1 AbsTol=0 RelTol=0\n"
+    minimization_str += "obj3: Priority=2 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += str(int(all_packages[i][GADGET])) + " " + "x" + str(i) + " + "
     minimization_str = minimization_str[:-2] + "\n"
@@ -104,12 +104,14 @@ def get_data(all_packages_file, test_cases_file):
   with open(test_cases_file) as f:
     csv_reader = csv.reader(f, delimiter=' ')
     for row in csv_reader:
+      num_repeats = int(row[0])
       test_case = []
-      for i in row:
-        i = i.strip()
-        if i != "":
-          test_case.append(package_mapping.get(i))
-      test_cases.append(test_case)
+      for i in range(1, len(row)):
+        row[i] = row[i].strip()
+        if row[i] != "":
+          test_case.append(package_mapping.get(row[i]))
+      for i in range(num_repeats):
+        test_cases.append(test_case)
   return all_packages, test_cases
 
 
