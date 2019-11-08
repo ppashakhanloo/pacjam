@@ -15,7 +15,6 @@ REPO_HOME = os.path.dirname(os.path.realpath(__file__))
 COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
 
 ARCH='x86_64-linux-gnu'
-working_dir = ""
 
 EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info"]
 
@@ -28,6 +27,8 @@ ORIGINAL=".original"
 DPKG=".dpkg"
 MAKE=".make"
 
+options = {}
+
 def gather_libs(path):
     out = subprocess.run(['find',path, '-name', 'lib*.so*'], stdout=subprocess.PIPE)
     libs = []
@@ -36,9 +37,16 @@ def gather_libs(path):
     return libs
 
 def check_elf(path):
-    readelf = subprocess.Popen(['readelf', '-Ws', path], stdout=subprocess.PIPE)
-    out = subprocess.run(['grep','__get'], stdout=subprocess.PIPE, stdin=readelf.stdout)
+    readelf = subprocess.Popen(['readelf', '-Ws', path], stderr=subprocess.DEVNULL, stdout=subprocess.PIPE)
+    out = subprocess.run(['grep','__get_lib_name'], stdout=subprocess.PIPE, stdin=readelf.stdout)
     return len(out.stdout) > 0
+
+def get_soname(path):
+    objdump = subprocess.Popen(['objdump', '-p', path], stdout=subprocess.PIPE)
+    out = subprocess.run(['grep','SONAME'], stdout=subprocess.PIPE, stdin=objdump.stdout)
+    if len(out.stdout) == 0:
+        return None
+    return out.stdout.strip().split()[-1] 
 
 def read_dependency_list(name):
     deps = {}
@@ -51,7 +59,7 @@ def read_dependency_list(name):
 
 def download_src(dep):
     try:
-        srchome = os.path.join(working_dir,dep)
+        srchome = os.path.join(options.working_dir,dep)
         if not os.path.exists(srchome):
             os.mkdir(srchome)
             out = subprocess.check_output(['apt-get', 'source', dep], stderr=subprocess.STDOUT, cwd=srchome)
@@ -95,7 +103,7 @@ def try_build_dep(src):
 def build_original(src, env):
     print("building original " + str(src))
 
-    srchome = copy_src(os.path.join(working_dir, src), ORIGINAL)
+    srchome = copy_src(os.path.join(options.working_dir, src), ORIGINAL, options.force)
 
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
 
@@ -113,9 +121,9 @@ def build_original(src, env):
         print("\twarning: issue building dependencies for {}".format(src)) 
 
     saved_command_db = os.path.join(*[COMPILATION_DB_DIR_PATH, src, "compile_commands.json"])
-    if os.path.exists(saved_command_db):
-        print("\twarning: reuse saved compilation db")
-    else:
+    reuse_saved_db = os.path.exists(saved_command_db)
+
+    if not reuse_saved_db or options.force:
         # Build the package normally first to get a compile_command.json
         build_with_dpkg(srcpath, env)
 
@@ -127,35 +135,43 @@ def build_original(src, env):
             print("\terror: failed to generate compile_commands.json for {}, skipping...".format(src))
             return None, None
 
-        os.makedirs(os.path.dirname(saved_command_db), exist_ok=True)
-        shutil.copy(command_db, saved_command_db)
+        if not reuse_saved_db:
+            os.makedirs(os.path.dirname(saved_command_db), exist_ok=True)
+            shutil.copy(command_db, saved_command_db)
+
+    if reuse_saved_db:
+        print("\tinfo: reusing saved compilation db")
 
     return os.path.abspath(saved_command_db), srcpath
 
-def check_erasure(srcpath, warn):
-    # Anthony : Hacking, will come back to systematically find the right libs
-    libs = gather_libs(srcpath)
-    libs_3v = [l for l in libs if re.match(".*\.so\.\d+\.\d+\.\d+$", l)]
-    libs_2v = [l for l in libs if re.match(".*\.so\.\d+\.\d+$", l)]
-    libs_1v = [l for l in libs if re.match(".*\.so\.\d+$", l)]
-    if len(libs_3v) == 0 and len(libs_2v) == 0 and len(libs_1v) == 0:
-        # As a last resort, try non-versioned libs
-        libs_0v = [l for l in libs if re.match(".*\.so$", l)]
-        if len(libs_0v) == 0:
-            if warn: print("\terror: failed to build shared library for " + str(srcpath))
-            return []
-        else:
-            libs_1v = libs_0v
+def check_libs(srcpath, ref_libs, dummy_libs):
+    common = srcpath.split("/")[-1]
+    rlibs = [l.split(common)[-1] for l in ref_libs]
+    dlibs = [l.split(common)[-1] for l in dummy_libs]
 
-    built_libs = libs_3v + libs_2v + libs_1v
-    erased_libs = [l for l in built_libs if check_elf(l)]
-    if warn and len(erased_libs) == 0: print("\twarning: failed to erase libs for {}".format(srcpath)) 
+    rset = set(rlibs)
+    dset = set(dlibs)
+    diff = rset - dset
 
+    if len(diff) != 0 and options.verbose:
+        print("\twarning: original and dummy libraries different")
+
+        print("\t== Reference ==")
+        for s in ref_libs:
+            print("\t" + s)
+
+        print("\t== Dummy ==")
+        for s in dummy_libs:
+            print("\t" + s)
+
+def check_erasure(libs, warn):
+    erased_libs = [l for l in libs if not os.path.islink(l) and check_elf(l)]
+    if warn and len(erased_libs) == 0: print("\twarning: failed to erase libs")
     return erased_libs
 
-def build_with_make(src, command_db, env):
+def build_with_make(src, command_db, env, origpath):
     # Try a re-fetch and clean build with make
-    srchome = copy_src(os.path.join(working_dir, src), MAKE)
+    srchome = copy_src(os.path.join(options.working_dir, src), MAKE, False)
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
     srcpath = dirs[0]
     success = os.path.join(srcpath, ".petablox_success")
@@ -184,7 +200,9 @@ def build_with_make(src, command_db, env):
             print("\twarning: Makefile not found")
             return None
 
-    libs = check_erasure(srcpath, True)
+    dummy_libs = gather_libs(srcpath)
+    libs = check_erasure(dummy_libs, True)
+
     if len(libs) > 0:
         with open(success, 'w') as f:
             f.write("\n")
@@ -192,16 +210,17 @@ def build_with_make(src, command_db, env):
     else:
         return None 
 
-def build_dummy(src, command_db, env):
+def find_unpacked_srcdir(path):
+    dirs = [f.path for f in os.scandir(path) if f.is_dir() ]
+    return dirs[0] 
+
+def build_dummy(src, command_db, env, origpath):
     print("building dummy " + str(src))
     if src in MAKE_ONLY:
         return None
 
-    srchome = copy_src(os.path.join(working_dir, src), DPKG)
-    
-    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ]
-
-    srcpath = dirs[0]
+    srchome = copy_src(os.path.join(options.working_dir, src), DPKG, False)
+    srcpath = find_unpacked_srcdir(srchome)
 
     success = os.path.join(srcpath, ".petablox_success")
     if os.path.exists(success):
@@ -213,7 +232,13 @@ def build_dummy(src, command_db, env):
         dummylib_env["DUMMY_LIB_GEN"] = "ON"
 
         build_with_dpkg(srcpath, dummylib_env, parallel=True)
-    libs = check_erasure(srcpath, True)
+
+    ref_libs = gather_libs(origpath)
+    dummy_libs = gather_libs(srcpath)
+    check_libs(srcpath, ref_libs, dummy_libs) 
+
+    libs = check_erasure(dummy_libs, True)
+
     if len(libs) > 0:
         with open(success, 'w') as f:
             f.write("\n")
@@ -221,38 +246,51 @@ def build_dummy(src, command_db, env):
     else:
         return None 
     
-# Anthony: Fix this
-def copy_libs(libs, libhome):
-    copied = {}
-    for l in libs:
-        libname = l.split("/")[-1]
-        toks = libname.split(".")
-
-        if len(toks) == 2 or toks[0] in copied:
-            continue
-
-        print("\tbuilt {}".format(".".join(toks)))
-
-        if len(toks) == 5:
-            shutil.copy(l, libhome)
-            # Create "version"
-            toks = libname.split(".")
-            version = ".".join(toks[0:-2])
-            path = os.path.join(libhome,version)
-            shutil.copy(l, path)
-        else:
-            shutil.copy(l, libhome)
-        
-        copied[toks[0]] = True 
-
-def copy_src(path, ext):
+def copy_src(path, ext, force):
     newpath = path + ext
+    if os.path.exists(newpath) and force:
+        shutil.rmtree(newpath)
     try:
         shutil.copytree(path, newpath, symlinks=True)
     except FileExistsError:
         print("\twarning: {} exists".format(newpath))
         pass
-    return newpath
+    return newpath 
+
+def scrape_lib(src, libhome):
+    dpkg_home = os.path.join(options.working_dir, src) + DPKG
+    make_home = os.path.join(options.working_dir, src) + MAKE
+
+    libs = check_erasure(gather_libs(find_unpacked_srcdir(dpkg_home)), False)
+    if len(libs) == 0: 
+        libs = check_erasure(gather_libs(find_unpacked_srcdir(make_home)), False)
+    
+    if len(libs) == 0:
+        print("\twarning: no libs built")
+        return
+
+    # If it follows the .libs pattern, filter for those, else we just leave as is
+    deblibs = [l for l in libs if ".lib" in l]
+    if len(deblibs) > 0:
+        libs = deblibs
+
+    for l in libs:
+        name = l.split("/")[-1]
+        soname = get_soname(l).decode("utf-8")
+
+        shutil.copy(l, libhome)
+        # Create "version"
+        path = os.path.join(libhome,soname)
+        shutil.copy(l, path)
+
+        print("\tbuilt {} => {}".format(name, soname)) 
+
+def scrape_libs(srcs, pkg_name):
+    libhome = os.path.join(options.working_dir, "lib")
+    if not os.path.exists(libhome):
+        os.mkdir(libhome)
+    for s in srcs:
+        rc = scrape_lib(s, libhome)
 
 def build_src(src, libhome):
     env = os.environ.copy()
@@ -263,7 +301,7 @@ def build_src(src, libhome):
     env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
     env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
 
-    libs = build_dummy(src, command_db, env)
+    libs = build_dummy(src, command_db, env, origpath)
 
     if libs is None:
         # If we didn't find libs with __get in the ELF files, we have
@@ -271,15 +309,15 @@ def build_src(src, libhome):
         if os.path.exists(os.path.join(origpath, "configure")) \
         or os.path.exists(os.path.join(origpath, "autogen.sh")) \
         or os.path.exists(os.path.join(origpath, "Makefile")):
-            libs = build_with_make(src, command_db, env)
+            libs = build_with_make(src, command_db, env, origpath)
         if libs is None:
             return False
 
-    copy_libs(libs, libhome)
+    scrape_lib(src, libhome)
     return True
 
 def build_srcs(srcs, pkg_name):
-    libhome = os.path.join(working_dir, "lib")
+    libhome = os.path.join(options.working_dir, "lib")
     if not os.path.exists(libhome):
         os.mkdir(libhome)
 
@@ -289,7 +327,7 @@ def build_srcs(srcs, pkg_name):
         print("error: Set KLLVM to point to our modified LLVM installation")
         return
 
-    stat = open(os.path.join(working_dir, pkg_name + '.stat'), "w")
+    stat = open(os.path.join(options.working_dir, pkg_name + '.stat'), "w")
     stat.write("package name, build\n")
 
     for s in srcs:
@@ -309,10 +347,11 @@ def exclude_src(dep, excludes):
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
 parser.add_option('-d', '--dir', dest='working_dir', default='symbol-out', help='use DIR as working output directory', metavar='DIR')
+parser.add_option('-f', '--force', dest='force', action='store_true', help='force rebuild of original packages', metavar='DIR')
+parser.add_option('-s', '--scrape', dest='scrape', action='store_true', help='scrape libraries of built packages', metavar='DIR')
+parser.add_option('-v', '--verbose', dest='verbose', action='store_true', help='verbose output', metavar='DIR')
 
 (options, args) = parser.parse_args()
-
-working_dir = options.working_dir
 
 if len(args) < 1:
     print("error: must supply dependency-list")
@@ -326,7 +365,10 @@ srcs=download_srcs(deps)
 
 pkgname = deplist.split('/')[-1]
 
-build_srcs(srcs, pkgname)
+if options.scrape:
+    scrape_libs(srcs, pkgname)
+else: 
+    build_srcs(srcs, pkgname)
 
 log.close()
 

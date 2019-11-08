@@ -7,18 +7,18 @@ apt-get install -y bear
 # Hooking into build system
 if [ ! -f /usr/bin/make-orig ]; then
   sudo mv /usr/bin/make /usr/bin/make-orig
-  cp aux/make /usr/bin/
 fi
+cp aux/make /usr/bin/
 
 if [ ! -f /usr/bin/gcc-orig ]; then
   sudo mv /usr/bin/gcc /usr/bin/gcc-orig
-  cp aux/gcc /usr/bin/
 fi
+cp aux/gcc /usr/bin/
 
 if [ ! -f /usr/bin/g++-orig ]; then
   sudo mv /usr/bin/g++ /usr/bin/g++-orig
-  cp aux/g++ /usr/bin/
 fi 
+cp aux/g++ /usr/bin/
 
 cp aux/buildflags.conf /etc/dpkg/
 
