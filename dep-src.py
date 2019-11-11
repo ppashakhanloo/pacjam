@@ -276,7 +276,11 @@ def scrape_lib(src, libhome):
 
     for l in libs:
         name = l.split("/")[-1]
-        soname = get_soname(l).decode("utf-8")
+        soname = get_soname(l)
+        if soname is not None:
+            soname = soname.decode("utf-8")
+        else:
+            soname = name
 
         shutil.copy(l, libhome)
         # Create "version"
