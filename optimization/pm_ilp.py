@@ -9,7 +9,7 @@ CVE = 1
 GADGET = 2
 INSTALL_SIZE = 3
 
-def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadget_flag=1, install_size_flag=1):
+def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=0, gadget_flag=0, install_size_flag=0):
   # minimize
   minimization_str = "Minimize multi-objectives\n"
   
@@ -25,7 +25,7 @@ def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=1, gadge
     minimization_str += "obj2: Priority=3 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += "x" + str(i) + " + "
-  minimization_str = minimization_str[:-2] + "\n"
+    minimization_str = minimization_str[:-2] + "\n"
 
   # minimize the number of gadgets
   if (gadget_flag):
