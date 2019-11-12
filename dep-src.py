@@ -26,8 +26,27 @@ MAKE_ONLY=["libbluray2", "libprotobuf-lite17"]
 ORIGINAL=".original"
 DPKG=".dpkg"
 MAKE=".make"
+VARARG=".vararg"
 
 options = {}
+
+LZLOAD_SYMBOL="__get_lib_name"
+VARARG_SYMBOL="__dummy__va"
+
+def dump_vararg_symbols(lib, f):
+    soname = soname_lib(lib)
+    symbols = readelf_grepped(lib, VARARG_SYMBOL)
+    if symbols is None:
+        print("\twarning: expected vararg symbols for {} but found none".format(lib))
+        return
+
+    for s in symbols:
+        f.write("{} {}\n".format(s,soname))
+
+def generate_vararg_symbols(libs):
+    with open(os.path.join(options.working_dir,'symbols.txt'), 'w') as f:
+        for l in libs:
+            dump_vararg_symbols(l,f)
 
 def gather_libs(path):
     out = subprocess.run(['find',path, '-name', 'lib*.so*'], stdout=subprocess.PIPE)
@@ -36,9 +55,33 @@ def gather_libs(path):
         libs.append(l.decode('utf-8'))
     return libs
 
-def check_elf(path):
+def gather_lib(path, name):
+    out = subprocess.run(['find', path, '-name', name], stdout=subprocess.PIPE)
+    libs = []
+    for l in out.stdout.splitlines():
+        libs.append(l.decode('utf-8'))
+    return libs
+
+
+def readelf_grepped(path, pattern):
     readelf = subprocess.Popen(['readelf', '-Ws', path], stderr=subprocess.DEVNULL, stdout=subprocess.PIPE)
-    out = subprocess.run(['grep','__get_lib_name'], stdout=subprocess.PIPE, stdin=readelf.stdout)
+    out = subprocess.run(['grep',pattern], stdout=subprocess.PIPE, stdin=readelf.stdout)
+
+    if out.stdout is None:
+        return None
+    
+    symbols = []
+    out = out.stdout.decode("utf-8")
+
+    for l in out.splitlines():
+        toks = l.split()
+        symbols.append(toks[-1])
+
+    return symbols 
+
+def check_elf(path, symbol):
+    readelf = subprocess.Popen(['readelf', '-Ws', path], stderr=subprocess.DEVNULL, stdout=subprocess.PIPE)
+    out = subprocess.run(['grep',symbol], stdout=subprocess.PIPE, stdin=readelf.stdout)
     return len(out.stdout) > 0
 
 def get_soname(path):
@@ -90,8 +133,6 @@ def build_with_dpkg(path, env, parallel=False):
         rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     else:
         rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
-    #rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], cwd=path)
-    #rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], cwd=path, env=env)
 
 def try_build_dep(src):
     rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
@@ -144,6 +185,29 @@ def build_original(src, env):
 
     return os.path.abspath(saved_command_db), srcpath
 
+def build_vararg(src, env):
+    srchome = copy_src(os.path.join(options.working_dir, src), VARARG, options.force)
+    dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ] 
+    srcpath = dirs[0]
+
+    if len(dirs) > 1:
+        print("error: multiple source directories for package: {}".format(src))
+        return None
+    if len(dirs) == 0:
+        print("error: no source directories for package: {}".format(src))
+        return None 
+
+    vararg_env = env.copy()
+    vararg_env["DUMMY_LIB_GEN"] = "ON"
+
+    vararg_libs = gather_libs(srcpath)
+    if len(vararg_libs) > 0:
+        return srcpath
+
+    build_with_dpkg(srcpath, vararg_env)
+
+    return srcpath
+
 def check_libs(srcpath, ref_libs, dummy_libs):
     common = srcpath.split("/")[-1]
     rlibs = [l.split(common)[-1] for l in ref_libs]
@@ -165,9 +229,13 @@ def check_libs(srcpath, ref_libs, dummy_libs):
             print("\t" + s)
 
 def check_erasure(libs, warn):
-    erased_libs = [l for l in libs if not os.path.islink(l) and check_elf(l)]
+    erased_libs = [l for l in libs if not os.path.islink(l) and check_elf(l, LZLOAD_SYMBOL)]
     if warn and len(erased_libs) == 0: print("\twarning: failed to erase libs")
     return erased_libs
+
+def check_vararg(libs):
+    vararg_libs = [l for l in libs  if check_elf(l, VARARG_SYMBOL)]
+    return vararg_libs
 
 def build_with_make(src, command_db, env, origpath):
     # Try a re-fetch and clean build with make
@@ -257,6 +325,19 @@ def copy_src(path, ext, force):
         pass
     return newpath 
 
+def trim_libname(libpath):
+    return libpath.split("/")[-1]
+
+def soname_lib(libpath):
+    soname = get_soname(libpath)
+    if soname is not None:
+        soname = soname.decode("utf-8")
+    else:
+        soname = trim_libname(libpath)
+    return soname
+
+
+# Anthony : Refactor this functionality out. 
 def scrape_lib(src, libhome):
     dpkg_home = os.path.join(options.working_dir, src) + DPKG
     make_home = os.path.join(options.working_dir, src) + MAKE
@@ -267,7 +348,7 @@ def scrape_lib(src, libhome):
     
     if len(libs) == 0:
         print("\twarning: no libs built")
-        return
+        return None
 
     # If it follows the .libs pattern, filter for those, else we just leave as is
     deblibs = [l for l in libs if ".lib" in l]
@@ -275,13 +356,9 @@ def scrape_lib(src, libhome):
         libs = deblibs
 
     for l in libs:
-        name = l.split("/")[-1]
-        soname = get_soname(l)
-        if soname is not None:
-            soname = soname.decode("utf-8")
-        else:
-            soname = name
-
+        name = trim_libname(l)
+        soname = soname_lib(l)
+        
         shutil.copy(l, libhome)
         # Create "version"
         path = os.path.join(libhome,soname)
@@ -289,14 +366,16 @@ def scrape_lib(src, libhome):
 
         print("\tbuilt {} => {}".format(name, soname)) 
 
+    return libs
+
 def scrape_libs(srcs, pkg_name):
     libhome = os.path.join(options.working_dir, "lib")
     if not os.path.exists(libhome):
         os.mkdir(libhome)
     for s in srcs:
-        rc = scrape_lib(s, libhome)
+        scrape_lib(s, libhome)
 
-def build_src(src, libhome):
+def build_src(src, libhome, modhome):
     env = os.environ.copy()
     command_db, origpath = build_original(src, env) 
     if not command_db:
@@ -317,13 +396,43 @@ def build_src(src, libhome):
         if libs is None:
             return False
 
-    scrape_lib(src, libhome)
+    # Anthony : I don't like how this scraping is essentially recomputed
+    libs = scrape_lib(src, libhome)
+
+    vararg_libs = check_vararg(libs)
+    if len(vararg_libs) > 0:
+        generate_vararg_symbols(vararg_libs) 
+        varargpath = build_vararg(src, env)
+        for l in vararg_libs:
+            name = trim_libname(l)
+            canidate_libs = gather_lib(varargpath, name)
+            if len(canidate_libs) == 0:
+                print("\twarning: found no candidate vararg libs for {}".format(l))
+                continue
+            if len(canidate_libs) > 1:
+                print("\twarning: multiple candidate vararg libs for {}".format(name))
+
+            vl = canidate_libs[0]
+            print("\tinfo: using candidate for {}".format(vl))
+
+            soname = soname_lib(vl)
+            
+            shutil.copy(vl, modhome)
+            # Create "version"
+            path = os.path.join(modhome,soname)
+            shutil.copy(vl, path)
+
+            print("\tvararg {} => {}".format(name, soname)) 
+
     return True
 
 def build_srcs(srcs, pkg_name):
     libhome = os.path.join(options.working_dir, "lib")
     if not os.path.exists(libhome):
         os.mkdir(libhome)
+    modhome = os.path.join(options.working_dir, "mod-lib")
+    if not os.path.exists(modhome):
+        os.mkdir(modhome)
 
     env = os.environ.copy()
 
@@ -335,7 +444,7 @@ def build_srcs(srcs, pkg_name):
     stat.write("package name, build\n")
 
     for s in srcs:
-        rc = build_src(s, libhome)
+        rc = build_src(s, libhome, modhome)
         stat.write("{},{}\n".format(s, rc))
 
     stat.close()
