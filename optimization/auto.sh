@@ -15,7 +15,10 @@ alphas=(
 
 package=$1
 
+rm -rf $package.hr
+
 for a in ${alphas[@]}; do
   python3 pm_ilp.py $a $package.tdeps $package.traces $package.votes $package $package-$a.lp
   gurobi_cl ResultFile=$package-$a.sol $package-$a.lp
+  echo $a: `python3 human_readable_sol.py $package-$a.sol $package.tdeps` >> $package.hr
 done

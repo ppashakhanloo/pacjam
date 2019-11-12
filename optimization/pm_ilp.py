@@ -11,32 +11,29 @@ INSTALL_SIZE = 3
 
 def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=0, gadget_flag=0, install_size_flag=0):
   # minimize
-  minimization_str = "Minimize multi-objectives\n"
+  minimization_str = "Minimize\n"
   
   # minimize the number of CVEs
   if (cve_flag):
-    minimization_str += "obj1: Priority=1 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += str(int(all_packages[i][CVE])) + " " + "x" + str(i) + " + "
     minimization_str = minimization_str[:-2] + "\n"
   
   # minimize the number of installed packages
   if (num_flag):
-    minimization_str += "obj2: Priority=3 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += "x" + str(i) + " + "
     minimization_str = minimization_str[:-2] + "\n"
 
   # minimize the number of gadgets
   if (gadget_flag):
-    minimization_str += "obj3: Priority=2 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += str(int(all_packages[i][GADGET])) + " " + "x" + str(i) + " + "
     minimization_str = minimization_str[:-2] + "\n"
 
   # minimize the total installed size
   if (install_size_flag):
-    minimization_str += "obj4: Priority=4 Weight=1 AbsTol=0 RelTol=0\n"
+    #minimization_str += "obj: Priority=1 Weight=1 AbsTol=0 RelTol=0\n"
     for i in range(len(all_packages)):
       minimization_str += str(int(all_packages[i][INSTALL_SIZE])) + " " + "x" + str(i) + " + "
     minimization_str = minimization_str[:-2] + "\n"
@@ -88,9 +85,11 @@ def create_string(alpha, all_packages, test_cases, cve_flag=1, num_flag=0, gadge
          + end_str
 
 
-def get_data(all_packages_file, test_cases_file):
+def get_data(all_packages_file, test_cases_file, votes_file):
+  print(votes_file)
   all_packages = []
   test_cases = []
+  repeats = []
   package_mapping = dict()
   with open(all_packages_file) as f:
     csv_reader = csv.reader(f, delimiter=' ')
@@ -100,18 +99,30 @@ def get_data(all_packages_file, test_cases_file):
       all_packages.append((row[NAME], row[CVE], row[GADGET], row[INSTALL_SIZE]))
       package_mapping[row[NAME]] = index
       index += 1
+  
+  #with open(votes_file) as f:
+   # csv_reader = csv.reader(f, delimiter=' ')
+    #repeats = []
+    #for row in csv_reader:
+     # repeats.append(int(row[0]) + 1)
 
   with open(test_cases_file) as f:
     csv_reader = csv.reader(f, delimiter=' ')
+    index = 0
     for row in csv_reader:
-      num_repeats = int(row[0])
       test_case = []
-      for i in range(1, len(row)):
+      test_case.append(package_mapping.get(package_name))
+      for i in range(0, len(row)):
         row[i] = row[i].strip()
         if row[i] != "":
-          test_case.append(package_mapping.get(row[i]))
-      for i in range(num_repeats):
+          if row[i] == 'nodep':
+            continue
+          else:
+            test_case.append(package_mapping.get(row[i]))
+      for i in range(1):#(repeats[index]):
         test_cases.append(test_case)
+      index += 1
+
   return all_packages, test_cases
 
 
@@ -120,10 +131,13 @@ if __name__ == '__main__':
   alpha = float(sys.argv[1])
   all_packages_file = sys.argv[2]
   test_cases_file = sys.argv[3]
-  lp_file = sys.argv[4]
+  votes_file = sys.argv[4]
+  package_name = sys.argv[5]
+  lp_file = sys.argv[6]
+
 
   # get data
-  all_packages, test_cases = get_data(all_packages_file, test_cases_file)
+  all_packages, test_cases = get_data(all_packages_file, test_cases_file, votes_file)
   
   # create ilp string 
   ilp_formulation = create_string(alpha, all_packages, test_cases)

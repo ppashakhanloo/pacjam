@@ -2,6 +2,13 @@
 - Gurobi solver (the academic license is free)
 - Python3
 
+## Quick Start
+`$ ./auto.sh <package_nam>`
+For alpha=0.1 ... 1.0,
+this script will first generate .lp files from traces.
+Next, it will solve every .lp file.
+Finally, it will transform .sol results to a human-readable format.
+
 ## Usage
 `$ python3 pm_ilp.py <alpha> <package_file> <test_cases_file> <output_file>`
 
