@@ -30,7 +30,7 @@ VARARG=".vararg"
 
 options = {}
 
-LZLOAD_SYMBOL="__get_lib_name"
+LZLOAD_SYMBOL="__loadsym"
 VARARG_SYMBOL="__dummy__va"
 
 def dump_vararg_symbols(lib, f):
