@@ -342,7 +342,11 @@ def scrape_lib(src, libhome):
     dpkg_home = os.path.join(options.working_dir, src) + DPKG
     make_home = os.path.join(options.working_dir, src) + MAKE
 
-    libs = check_erasure(gather_libs(find_unpacked_srcdir(dpkg_home)), False)
+    if os.path.exists(dpkg_home):
+        libs = check_erasure(gather_libs(find_unpacked_srcdir(dpkg_home)), False)
+    else:
+        libs = []
+
     if len(libs) == 0: 
         libs = check_erasure(gather_libs(find_unpacked_srcdir(make_home)), False)
     
