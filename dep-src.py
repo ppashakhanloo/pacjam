@@ -44,7 +44,7 @@ def dump_vararg_symbols(lib, f):
         f.write("{} {}\n".format(s,soname))
 
 def generate_vararg_symbols(libs):
-    with open(os.path.join(options.working_dir,'symbols.txt'), 'w') as f:
+    with open(os.path.join(options.working_dir,'symbols.txt'), 'a') as f:
         for l in libs:
             dump_vararg_symbols(l,f)
 
@@ -439,6 +439,9 @@ def build_srcs(srcs, pkg_name):
         os.mkdir(modhome)
 
     env = os.environ.copy()
+
+    if os.path.exists(os.path.join(options.working_dir, "symbols.txt")):
+        os.remove(os.path.join(options.working_dir, "symbols.txt")) 
 
     if not env["KLLVM"]:
         print("error: Set KLLVM to point to our modified LLVM installation")
