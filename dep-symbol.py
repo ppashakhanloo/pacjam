@@ -81,16 +81,36 @@ def download_deps(deps,metas):
 
     return debs
 
+def trim_libname(libpath):
+    return libpath.split("/")[-1].split('.')[0]
+
+def gather_libs(path):
+    out = subprocess.run(['find',path, '-name', 'lib*.so*'], stdout=subprocess.PIPE)
+    libs = []
+    for l in out.stdout.splitlines():
+        libs.append(l.decode('utf-8'))
+    return libs
+
+
 def build_symbols(meta):
-    try:
-        subprocess.check_call(['dpkg', '-x', meta.package_deb, 'tmp']) 
-        subprocess.check_call(['dpkg-gensymbols', '-v0', '-p' + meta.package_name, '-etmp/lib/'+ARCH+'/lib*.so*', '-Osymbols'])
-        subprocess.check_call(['dpkg-gensymbols', '-v0', '-p' + meta.package_name, '-etmp/usr/lib/'+ARCH+'/lib*.so*', '-Osymbols'])
-        meta.has_symbols = True
-        #subprocess.check_call(['rm', '-rf', 'tmp'])
-    except subprocess.CalledProcessError as err:
-        print(err)
-        print('failed to build symbols file for ' + meta.package_deb)
+    added = set()
+    with open("symbols", "w") as f:
+        try:
+            subprocess.check_call(['dpkg', '-x', meta.package_deb, 'tmp']) 
+            libs = gather_libs("tmp")
+            for l in libs:
+                n = trim_libname(l)
+                if n in added:
+                    continue
+                subprocess.check_call(['dpkg-gensymbols', '-v0', '-p' + meta.package_name, '-e{}'.format(l), '-Osymbols-t'])
+                with open("symbols-t") as f2:
+                    f.write(f2.read())
+                added.add(n)
+                os.remove("symbols-t")
+            meta.has_symbols = True
+        except subprocess.CalledProcessError as err:
+            print(err)
+            print('failed to build symbols file for ' + meta.package_deb)
     
 
 def extract_debs(debs,metas):
