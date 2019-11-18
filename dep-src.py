@@ -55,7 +55,7 @@ def gather_libs(path):
         libs.append(l.decode('utf-8'))
     return libs
 
-def gather_lib(path, name):
+def exec_find(path, name):
     out = subprocess.run(['find', path, '-name', name], stdout=subprocess.PIPE)
     libs = []
     for l in out.stdout.splitlines():
@@ -130,9 +130,9 @@ def download_srcs(deps):
 def build_with_dpkg(path, env, parallel=False):
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
     if parallel:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     else:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-b'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
 
 def try_build_dep(src):
     rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
@@ -185,7 +185,12 @@ def build_original(src, env):
 
     return os.path.abspath(saved_command_db), srcpath
 
+def path_for(src, typ):
+    return os.path.join(options.working_dir, src) + typ
+
 def build_vararg(src, env):
+    print("building vararg " + str(src))
+
     srchome = copy_src(os.path.join(options.working_dir, src), VARARG, options.force)
     dirs = [f.path for f in os.scandir(srchome) if f.is_dir() ] 
     srcpath = dirs[0]
@@ -196,6 +201,11 @@ def build_vararg(src, env):
     if len(dirs) == 0:
         print("error: no source directories for package: {}".format(src))
         return None 
+
+    # Trying to get a complete build to work. dpkg can fail on symbol check
+    symbols = exec_find(srcpath, "*.symbols")
+    for s in symbols:
+        os.remove(s)
 
     vararg_env = env.copy()
     vararg_env["DUMMY_LIB_GEN"] = "ON"
@@ -298,6 +308,7 @@ def build_dummy(src, command_db, env, origpath):
         dummylib_env = env.copy()
         dummylib_env["COMPILE_COMMAND_DB"] = command_db
         dummylib_env["DUMMY_LIB_GEN"] = "ON"
+        dummylib_env["DEB_LDFLAGS_APPEND"] = "-L/usr/local/lib -llzload"
 
         build_with_dpkg(srcpath, dummylib_env, parallel=True)
 
@@ -363,7 +374,6 @@ def scrape_lib(src, libhome):
         name = trim_libname(l)
         soname = soname_lib(l)
         
-        shutil.copy(l, libhome)
         # Create "version"
         path = os.path.join(libhome,soname)
         shutil.copy(l, path)
@@ -379,11 +389,48 @@ def scrape_libs(srcs, pkg_name):
     for s in srcs:
         scrape_lib(s, libhome)
 
+def manual_install(src, modhome, vararg_libs, varargpath):
+    print("\tsearching in {}".format(varargpath))
+    errored = False
+    for l in vararg_libs:
+        name = trim_libname(l)
+        canidate_libs = exec_find(varargpath, name)
+        if len(canidate_libs) == 0:
+            print("\twarning: found no candidate vararg libs for {}".format(l))
+            errored = True
+            continue
+        if len(canidate_libs) > 1:
+            print("\twarning: multiple candidate vararg libs for {}".format(name))
+
+        vl = canidate_libs[0]
+        print("\tinfo: using {} for {}".format(vl, l))
+
+        soname = soname_lib(vl)
+        
+        # Create "version"
+        path = os.path.join(modhome,soname)
+        shutil.copy(vl, path)
+
+        print("\tvararg {} => {}".format(name, soname)) 
+    return errored
+
+def dpkg_install(src, modhome, debs):
+    errored = False
+    for d in debs:
+        out = subprocess.run(['dpkg', '-x', d, modhome], stdout=subprocess.PIPE)
+        if out.returncode == 0:
+            print("\tinstalled " + d) 
+        else:
+            errored = True
+            print("\terror: could not install " + d) 
+    return errored
+
+
 def build_src(src, libhome, modhome):
     env = os.environ.copy()
     command_db, origpath = build_original(src, env) 
     if not command_db:
-        return False
+        return False, "none", False
 
     env["CC"] = os.path.join(env["KLLVM"], "build/bin/clang")
     env["CXX"] = os.path.join(env["KLLVM"], "build/bin/clang++")
@@ -398,37 +445,26 @@ def build_src(src, libhome, modhome):
         or os.path.exists(os.path.join(origpath, "Makefile")):
             libs = build_with_make(src, command_db, env, origpath)
         if libs is None:
-            return False
+            return False, "none", False
 
     # Anthony : I don't like how this scraping is essentially recomputed
     libs = scrape_lib(src, libhome)
 
     vararg_libs = check_vararg(libs)
+    vc = None
+    vararg_type = "none"
     if len(vararg_libs) > 0:
         generate_vararg_symbols(vararg_libs) 
         varargpath = build_vararg(src, env)
-        for l in vararg_libs:
-            name = trim_libname(l)
-            canidate_libs = gather_lib(varargpath, name)
-            if len(canidate_libs) == 0:
-                print("\twarning: found no candidate vararg libs for {}".format(l))
-                continue
-            if len(canidate_libs) > 1:
-                print("\twarning: multiple candidate vararg libs for {}".format(name))
+        debs = exec_find(path_for(src, VARARG), "*.deb")
+        if len(debs) != 0:
+            vc = dpkg_install(src, modhome, debs) 
+            vararg_type = "dpkg"
+        else:
+            vc = manual_install(src, modhome, vararg_libs, varargpath)
+            vararg_type = "manual"
 
-            vl = canidate_libs[0]
-            print("\tinfo: using candidate for {}".format(vl))
-
-            soname = soname_lib(vl)
-            
-            shutil.copy(vl, modhome)
-            # Create "version"
-            path = os.path.join(modhome,soname)
-            shutil.copy(vl, path)
-
-            print("\tvararg {} => {}".format(name, soname)) 
-
-    return True
+    return True, vararg_type, vc
 
 def build_srcs(srcs, pkg_name):
     libhome = os.path.join(options.working_dir, "lib")
@@ -448,11 +484,11 @@ def build_srcs(srcs, pkg_name):
         return
 
     stat = open(os.path.join(options.working_dir, pkg_name + '.stat'), "w")
-    stat.write("package name, build\n")
+    stat.write("package name, build, vararg-build, vararg-error\n")
 
     for s in srcs:
-        rc = build_src(s, libhome, modhome)
-        stat.write("{},{}\n".format(s, rc))
+        rc, vararg_type, vc = build_src(s, libhome, modhome)
+        stat.write("{}, {}, {}, {}\n".format(s, rc, vararg_type, vc))
 
     stat.close()
         
