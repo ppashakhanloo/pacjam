@@ -91,7 +91,6 @@ def gather_libs(path):
         libs.append(l.decode('utf-8'))
     return libs
 
-
 def build_symbols(meta):
     added = set()
     with open("symbols", "w") as f:
@@ -137,11 +136,10 @@ def extract_debs(debs,metas):
 
 
         # Test for symbol file
-        has_sym = os.path.exists('symbols')
-        meta = Meta(dep, deb, has_sym, [])
-        if not has_sym:
-            print(dep + ' has no symbols file. Attempting to build...')
-            build_symbols(meta)
+        if (os.path.exists('symbols')):
+            os.remove('symbols')
+        meta = Meta(dep, deb, False, [])
+        build_symbols(meta)
 
         metas[deb] = meta
 
