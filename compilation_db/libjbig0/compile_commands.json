@@ -1,0 +1,239 @@
+[
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-I../libjbig",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-I../libjbig",
+            "-o",
+            "jbgtopbm.o",
+            "jbgtopbm.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/pbmtools",
+        "file": "jbgtopbm.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-fPIC",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-o",
+            "jbig.pic_o",
+            "jbig.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-fPIC",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-o",
+            "jbig85.pic_o",
+            "jbig85.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig85.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "jbig_ar.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig_ar.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "jbig.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-I../libjbig",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-I../libjbig",
+            "-o",
+            "jbgtopbm85.o",
+            "jbgtopbm85.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/pbmtools",
+        "file": "jbgtopbm85.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "jbig85.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig85.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "tstcodec85.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "tstcodec85.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-fPIC",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-o",
+            "jbig_ar.pic_o",
+            "jbig_ar.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "jbig_ar.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-I../libjbig",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-I../libjbig",
+            "-o",
+            "pbmtojbg85.o",
+            "pbmtojbg85.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/pbmtools",
+        "file": "pbmtojbg85.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "-I../libjbig",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-I../libjbig",
+            "-o",
+            "pbmtojbg.o",
+            "pbmtojbg.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/pbmtools",
+        "file": "pbmtojbg.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-O2",
+            "-Wall",
+            "tstcodec.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libjbig0.original/jbigkit-2.1/libjbig",
+        "file": "tstcodec.c"
+    }
+]

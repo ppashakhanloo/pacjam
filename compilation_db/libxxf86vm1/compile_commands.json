@@ -1,0 +1,52 @@
+[
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-I../../src",
+            "-I../../include",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-DMALLOC_0_RETURNS_NULL",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libxxf86vm1.original/libxxf86vm-1.1.4=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/XF86VMode.o",
+            "../../src/XF86VMode.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libxxf86vm1.original/libxxf86vm-1.1.4/build/src",
+        "file": "../../src/XF86VMode.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-I../../src",
+            "-I../../include",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-DMALLOC_0_RETURNS_NULL",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/vlc-src-out/libxxf86vm1.original/libxxf86vm-1.1.4=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-o",
+            "XF86VMode.o",
+            "../../src/XF86VMode.c"
+        ],
+        "directory": "/home/acanino/dep-trace/vlc-src-out/libxxf86vm1.original/libxxf86vm-1.1.4/build/src",
+        "file": "../../src/XF86VMode.c"
+    }
+]
