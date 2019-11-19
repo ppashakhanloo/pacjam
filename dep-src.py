@@ -414,9 +414,20 @@ def manual_install(src, modhome, vararg_libs, varargpath):
         print("\tvararg {} => {}".format(name, soname)) 
     return errored
 
+# Source packages can build multiple debian packages.
+# This simple check for "libX_" tries to match the actual debian
+# package we originally wanted
+# 
+# For example, libssl1.1_ will match libssl_1.1_version, but not match
+# libssl1.1-dev, libssl1.1-dbg etc
+def is_proper_deb(src, deb):
+    return ("{}_".format(src) in deb)
+
 def dpkg_install(src, modhome, debs):
     errored = False
     for d in debs:
+        if not is_proper_deb(src, d):
+            continue
         out = subprocess.run(['dpkg', '-x', d, modhome], stdout=subprocess.PIPE)
         if out.returncode == 0:
             print("\tinstalled " + d) 
