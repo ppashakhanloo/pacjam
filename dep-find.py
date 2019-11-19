@@ -51,12 +51,12 @@ def fetch(deps):
         ]).decode()
         dep_list = []
 
-        for dep in [dep for dep in depends.split('\n') if 'Depends:' in dep]:
+        for dep in [dep for dep in depends.split('\n') if 'Depends:' in dep or 'Recommends:' in dep]:
             dep_name = dep.split(':')[1].strip()
             dep_list.append(dep_name)
         deps[name] = dep_list
 
-        if counter % 10 == 0:
+        if counter % 1000 == 0:
             save(deps)
     save(deps)
     return deps
