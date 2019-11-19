@@ -20,7 +20,10 @@ if [ ! -f /usr/bin/g++-orig ]; then
 fi 
 cp aux/g++ /usr/bin/
 
-cp aux/buildflags.conf /etc/dpkg/
+if [ ! -f /usr/bin/ld-orig ]; then
+  sudo mv /usr/bin/ld /usr/bin/ld-orig
+fi 
+cp aux/ld /usr/bin/
 
 # Setup for lzload
 LZLOAD_PATH=$HOME/var/lib/lzload
