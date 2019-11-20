@@ -118,7 +118,8 @@ def search(name, name2idx, g, trans):
 
     with open(name + '.dep', 'w') as f:
         for w in dp.out_neighbors():
-            f.write('{}\n'.format(v_prop[w]['label']))
+            if '<' not in v_prop[w]['label']:
+                f.write('{}\n'.format(v_prop[w]['label']))
 
 
 def stats(deps, g, trans):
