@@ -16,20 +16,7 @@ COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
 
 ARCH='x86_64-linux-gnu'
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info", "ibdc1394-22", "libelf1", "libgdk-pixbuf2.0-0", "libgdk-pixbuf2.0-common", "libqt5core5a", "libqt5network5", "libqt5dbus5", "libqt5svg5", "libqt5x11extras5", "libllvm7", "libgomp1", "libbluray2", "python2", "python", "python2-minimal", "libqt5gui5",
-"libqt5widgets5",
-"libqt5svg5",
-"qt5-gtk-platformtheme",
-"qttranslations5-l10n",
-"cpp",
-"cpp-8",
-"adduser",
-"ca-certificates",
-"fonts-liberation",
-"gpgv",
-"gsettings-desktop-schemas",
-"hicolor-icon-theme"
-]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info", "ibdc1394-22", "libelf1", "libgdk-pixbuf2.0-bin", "libgdk-pixbuf2.0-0", "libgdk-pixbuf2.0-common", "libqt5core5a", "libqt5network5", "libqt5dbus5", "libqt5svg5", "libqt5x11extras5", "libllvm7", "libgomp1", "libbluray2", "python2", "python", "python2-minimal", "libqt5gui5", "libqt5widgets5", "libqt5svg5", "qt5-gtk-platformtheme", "qttranslations5-l10n", "cpp", "cpp-8", "adduser", "ca-certificates", "fonts-liberation", "gpgv", "gsettings-desktop-schemas", "hicolor-icon-theme", "gpgv1", "gpgv2", "adwaita-icon-theme" ]
 
 CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"],
               "libopus0": ["--disable-maintainer-mode"], "libprotobuf-lite17": ["--disable-maintainer-mode", "--disable-dependency-tracking"] }
