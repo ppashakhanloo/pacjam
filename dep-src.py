@@ -23,6 +23,12 @@ EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libseli
 "qttranslations5-l10n",
 "cpp",
 "cpp-8",
+"adduser",
+"ca-certificates",
+"fonts-liberation",
+"gpgv",
+"gsettings-desktop-schemas",
+"hicolor-icon-theme"
 ]
 
 CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"],
