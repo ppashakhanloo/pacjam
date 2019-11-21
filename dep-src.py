@@ -16,96 +16,7 @@ COMPILATION_DB_DIR_PATH = os.path.join(REPO_HOME, "compilation_db")
 
 ARCH='x86_64-linux-gnu'
 
-EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info", "ibdc1394-22", "libelf1", "libgdk-pixbuf2.0-bin", "libgdk-pixbuf2.0-0", "libgdk-pixbuf2.0-common", "libqt5core5a", "libqt5network5", "libqt5dbus5", "libqt5svg5", "libqt5x11extras5", "libllvm7", "libgomp1", "libbluray2", "python2", "python", "python2-minimal", "libqt5gui5",
-"libqt5widgets5",
-"libqt5svg5",
-"qt5-gtk-platformtheme",
-"qttranslations5-l10n",
-"cpp",
-"cpp-8",
-"adduser",
-"ca-certificates",
-"fonts-liberation",
-"gpgv",
-"gsettings-desktop-schemas",
-"hicolor-icon-theme", "gpgv1", "gpgv2",
-"adwaita-icon-theme",
-"cdebconf", "debconf-i18n", "debian-archive-keyring", "dmsetup", "fonts-freefont-ttf", "glib-networking", "glib-networking-common",
-"glib-networking-services", "i965-va-driver",
-"libatk1.0-0",
-"libatk1.0-data", "libauthen-sasl-perl", "libdata-dump-perl", "libdc1394-22", "libencode-locale-perl", "libfile-basedir-perl", "libdevmapper1.02.1", "intel-media-va-driver",
-"libfile-desktopentry-perl",
-"libfile-listing-perl",
-"libfile-mimeinfo-perl",
-"libfont-afm-perl",
-"libgdbm-compat4",
-"libgdbm6",
-"libhtml-form-perl",
-"libhtml-format-perl",
-"libhtml-parser-perl",
-"libhtml-tagset-perl",
-"libhtml-tree-perl",
-"libhttp-cookies-perl",
-"libhttp-daemon-perl",
-"libhttp-date-perl",
-"libhttp-message-perl",
-"libhttp-negotiate-perl",
-"libio-html-perl",
-"libio-socket-inet6-perl",
-"libio-socket-ip-perl",
-"libio-socket-ssl-perl",
-"libio-stringy-perl",
-"libipc-system-simple-perl"
-"liblocale-gettext-perl",
-"liblwp-mediatypes-perl",
-"liblwp-protocol-https-perl",
-"libmailtools-perl",
-"libnet-dbus-perl",
-"libnet-http-perl",
-"libnet-idn-encode-perl",
-"libnet-libidn-perl",
-"libnet-smtp-ssl-perl",
-"libnet-ssleay-perl",
-"libperl5.28",
-"libpython-stdlib",
-"libpython2-stdlib",
-"publicsuffix",
-"python-minimal",
-"samba-libs",
-"libpython2.7",
-"libpython2.7-stdlib",
-"libpython2.7-minimal",
-"libscalar-list-utils-perl",
-"libsocket-perl",
-"libsocket6-perl",
-"libtext-charwidth-perl",
-"libtext-iconv-perl",
-"libtext-wrapi18n-perl",
-"libtie-ixhash-perl",
-"libtimedate-perl",
-"libtry-tiny-perl",
-"liburi-perl",
-"libwww-perl",
-"libwww-robotrules-perl",
-"libx11-protocol-perl",
-"libxml-parser-perl",
-"libxml-twig-perl",
-"libxml-xpath-perl",
-"libxml-xpathengine-perl",
-"login",
-"mime-support",
-"netbase",
-"notification-daemon",
-"passwd",
-"perl-modules-5.28",
-"publicsuffix",
-"python-minimal",
-"samba-libs",
-"x11-utils",
-"x11-xserver-utils",
-"xdg-user-dirs",
-"xdg-utils"
-]
+EXCLUDES=["libc6", "libgcc1", "gcc-8-base", "<debconf-2.0>", "debconf", "libselinux1", "libzstd1", "libstdc++6", "dpkg", "tar", "perl-base", "install-info", "ibdc1394-22", "libelf1", "libgdk-pixbuf2.0-bin", "libgdk-pixbuf2.0-0", "libgdk-pixbuf2.0-common", "libqt5core5a", "libqt5network5", "libqt5dbus5", "libqt5svg5", "libqt5x11extras5", "libllvm7", "libgomp1", "libbluray2", "python2", "python", "python2-minimal", "libqt5gui5", "libqt5widgets5", "libqt5svg5", "qt5-gtk-platformtheme", "qttranslations5-l10n", "cpp", "cpp-8", "adduser", "ca-certificates", "fonts-liberation", "gpgv", "gsettings-desktop-schemas", "hicolor-icon-theme", "gpgv1", "gpgv2", "adwaita-icon-theme", "cdebconf", "debconf-i18n", "debian-archive-keyring", "dmsetup", "fonts-freefont-ttf", "glib-networking", "glib-networking-common", "glib-networking-services", "i965-va-driver", "libatk1.0-0", "libatk1.0-data", "libauthen-sasl-perl", "libdata-dump-perl", "libdc1394-22", "libencode-locale-perl", "libfile-basedir-perl", "libdevmapper1.02.1", "intel-media-va-driver", "libfile-desktopentry-perl", "libfile-listing-perl", "libfile-mimeinfo-perl", "libfont-afm-perl", "libgdbm-compat4", "libgdbm6", "libhtml-form-perl", "libhtml-format-perl", "libhtml-parser-perl", "libhtml-tagset-perl", "libhtml-tree-perl", "libhttp-cookies-perl", "libhttp-daemon-perl", "libhttp-date-perl", "libhttp-message-perl", "libhttp-negotiate-perl", "libio-html-perl", "libio-socket-inet6-perl", "libio-socket-ip-perl", "libio-socket-ssl-perl", "libio-stringy-perl", "libipc-system-simple-perl" "liblocale-gettext-perl", "liblwp-mediatypes-perl", "liblwp-protocol-https-perl", "libmailtools-perl", "libnet-dbus-perl", "libnet-http-perl", "libnet-idn-encode-perl", "libnet-libidn-perl", "libnet-smtp-ssl-perl", "libnet-ssleay-perl", "libperl5.28", "libpython-stdlib", "libpython2-stdlib", "publicsuffix", "python-minimal", "samba-libs", "libpython2.7", "libpython2.7-stdlib", "libpython2.7-minimal", "libscalar-list-utils-perl", "libsocket-perl", "libsocket6-perl", "libtext-charwidth-perl", "libtext-iconv-perl", "libtext-wrapi18n-perl", "libtie-ixhash-perl", "libtimedate-perl", "libtry-tiny-perl", "liburi-perl", "libwww-perl", "libwww-robotrules-perl", "libx11-protocol-perl", "libxml-parser-perl", "libxml-twig-perl", "libxml-xpath-perl", "libxml-xpathengine-perl", "login", "mime-support", "netbase", "notification-daemon", "passwd", "perl-modules-5.28", "python-minimal", "samba-libs", "x11-utils", "x11-xserver-utils", "xdg-user-dirs", "xdg-utils"]
 
 CONFIG_OPTS={ "libtinfo6": ["--with-shared", "--with-termlib"], "libncurses6": ["--with-shared"], "libncursesw6": ["--with-shared"],
               "libopus0": ["--disable-maintainer-mode"], "libprotobuf-lite17": ["--disable-maintainer-mode", "--disable-dependency-tracking"] }
@@ -216,12 +127,13 @@ def download_srcs(deps):
 
     return srcs
 
-def build_with_dpkg(path, env, parallel=False):
+def build_with_dpkg(path, env, parallel=False, binary_only=False):
+    opt = "-B" if binary_only else "-b"
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
     if parallel:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', opt, '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     else:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', opt], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
 
 def try_build_dep(src):
     rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
@@ -303,7 +215,7 @@ def build_vararg(src, env):
     if len(vararg_libs) > 0:
         return srcpath
 
-    build_with_dpkg(srcpath, vararg_env)
+    build_with_dpkg(srcpath, vararg_env, binary_only=True)
 
     return srcpath
 

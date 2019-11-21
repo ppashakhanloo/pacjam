@@ -26,8 +26,10 @@ for fn in files:
     if not options.preserve:
         os.remove(fn)
 
-print(used)
 with open("{}/{}".format(options.working_dir, tracename), "a") as f:
-    for d in used:
-        f.write(d)
-    f.write("\n")
+    if len(used) > 0:
+        for d in used:
+            f.write(d + " ")
+        f.write("\n")
+    else:
+        f.write("nodep\n")
