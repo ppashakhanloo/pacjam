@@ -1,0 +1,67 @@
+[
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/textwrap.o",
+            "textwrap.c"
+        ],
+        "directory": "/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1",
+        "file": "textwrap.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-o",
+            "textwrap.o",
+            "textwrap.c"
+        ],
+        "directory": "/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1",
+        "file": "textwrap.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-Wdate-time",
+            "-D_FORTIFY_SOURCE=2",
+            "-g",
+            "-O2",
+            "-fdebug-prefix-map=/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1=.",
+            "-fstack-protector-strong",
+            "-Wformat",
+            "-Werror=format-security",
+            "-o",
+            "dotextwrap.o",
+            "dotextwrap.c"
+        ],
+        "directory": "/home/acanino/dep-trace/error-src-out/libtextwrap1.original/libtextwrap-0.1",
+        "file": "dotextwrap.c"
+    }
+]
