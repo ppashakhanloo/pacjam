@@ -127,12 +127,13 @@ def download_srcs(deps):
 
     return srcs
 
-def build_with_dpkg(path, env, parallel=False):
+def build_with_dpkg(path, env, parallel=False, binary_only=False):
+    opt = "-B" if binary_only else "-b"
     rc = subprocess.call(['dpkg-buildpackage', '-rfakeroot', '-Tclean'], stdout=log, stderr=subprocess.STDOUT, cwd=path)
     if parallel:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B', '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', opt, '-j32'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
     else:
-        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', '-B'], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
+        rc = subprocess.call(['dpkg-buildpackage', '-us', '-uc', '-d', opt], stdout=log, stderr=subprocess.STDOUT, cwd=path, env=env)
 
 def try_build_dep(src):
     rc = subprocess.call(['apt-get', 'build-dep', '-y', src], stdout=log, stderr=subprocess.STDOUT)
@@ -214,7 +215,7 @@ def build_vararg(src, env):
     if len(vararg_libs) > 0:
         return srcpath
 
-    build_with_dpkg(srcpath, vararg_env)
+    build_with_dpkg(srcpath, vararg_env, binary_only=True)
 
     return srcpath
 
