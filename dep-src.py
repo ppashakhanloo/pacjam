@@ -522,24 +522,59 @@ def read_package_list(package_file):
             packages[package].append(lib)
     return packages
 
+def read_build_stat(build_file):
+    packages = {}
+    with open(build_file, 'r') as f:
+        for d in f.read().splitlines():
+            toks = d.split(",")
+            package = toks[0]
+            success = toks[1]
+            packages[package] = success
+    return packages
 
-def check(deps):
-    packages = read_package_list(options.check)
+
+
+def check(deps, pkg_name):
+    packages = read_package_list(os.path.join(options.check, "packages.txt"))
+    buildstat = read_build_stat(os.path.join(options.working_dir, pkg_name + '.stat'))
+
     libhome = os.path.join(options.working_dir, "lib")
 
     check_result = {}
+    have_symbols = {}
     for d in deps:
         if exclude_src(d, EXCLUDES):
             continue
         check_result[d] = []
+        have_symbols[d] = False
+    nsymbols = 0
 
     for p, libs in packages.items():
         if exclude_src(p, EXCLUDES):
             continue
-        for l in libs:
+        have_symbols[p] = True
+        nsymbols += 1
+        for l in libs: 
             if not os.path.exists(os.path.join(libhome, l)):
                 print("{} in package {} not erased".format(l, p)) 
                 check_result[p].append(l)
+
+    nbuilds = 0
+    for p, r in buildstat.items():
+        if r:
+            nbuilds += 1
+
+    nno_symbols = 0
+    for p, has in have_symbols.items():
+        if not has and buildstat[p]:
+            libs = gather_libs(os.path.join(options.check, p))
+            if len(libs) > 0:
+                nno_symbols += 1 
+
+    print("{} non-excluded packages".format(len(check_result)))
+    print("{} successfuly built packages".format(nbuilds))
+    print("{} packages have symbols".format(nsymbols)) 
+    print("{} packages do not have symbols and are not binary packages".format(nno_symbols)) 
 
     with open(os.path.join(options.working_dir, "check.txt"), "w") as f:
         for p, r in check_result.items():
@@ -548,6 +583,7 @@ def check(deps):
                 for l in r:
                     f.write(", {}".format(l))
                 f.write("\n")
+
 
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
@@ -569,7 +605,7 @@ deps=read_dependency_list(deplist)
 pkgname = deplist.split('/')[-1]
 
 if options.check is not None:
-    check(deps)
+    check(deps, pkgname)
     sys.exit(0)
 if options.scrape:
     scrape_libs(srcs, pkgname)
