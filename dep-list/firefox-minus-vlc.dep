@@ -1,0 +1,13 @@
+debianutils
+init-system-helpers
+libavcodec-extra58
+libdbus-glib-1-2
+libevent-2.1-6
+libjsoncpp1
+libopencore-amrnb0
+libopencore-amrwb0
+libprocps7
+libstartup-notification0
+libvo-amrwbenc0
+procps
+psmisc

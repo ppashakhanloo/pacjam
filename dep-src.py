@@ -504,13 +504,50 @@ def build_srcs(srcs, pkg_name):
 
     stat.close()
         
-#STDOUT From Anthony, this is very hacky and ugly, but for now while we are designing the
-# system, I'll just keep it as is.
 def exclude_src(dep, excludes):
     for e in excludes:
         if dep in e:
             return True
     return False
+
+def read_package_list(package_file):
+    packages = {}
+    with open(package_file, 'r') as f:
+        for d in f.read().splitlines():
+            toks = d.split()
+            package = toks[1]
+            lib = toks[0]
+            if package not in packages:
+                packages[package] = []
+            packages[package].append(lib)
+    return packages
+
+
+def check(deps):
+    packages = read_package_list(options.check)
+    libhome = os.path.join(options.working_dir, "lib")
+
+    check_result = {}
+    for d in deps:
+        if exclude_src(d, EXCLUDES):
+            continue
+        check_result[d] = []
+
+    for p, libs in packages.items():
+        if exclude_src(p, EXCLUDES):
+            continue
+        for l in libs:
+            if not os.path.exists(os.path.join(libhome, l)):
+                print("{} in package {} not erased".format(l, p)) 
+                check_result[p].append(l)
+
+    with open(os.path.join(options.working_dir, "check.txt"), "w") as f:
+        for p, r in check_result.items():
+            if len(r) > 0:
+                f.write("{}".format(p))
+                for l in r:
+                    f.write(", {}".format(l))
+                f.write("\n")
 
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
@@ -518,6 +555,7 @@ parser.add_option('-d', '--dir', dest='working_dir', default='symbol-out', help=
 parser.add_option('-f', '--force', dest='force', action='store_true', help='force rebuild of original packages', metavar='DIR')
 parser.add_option('-s', '--scrape', dest='scrape', action='store_true', help='scrape libraries of built packages', metavar='DIR')
 parser.add_option('-v', '--verbose', dest='verbose', action='store_true', help='verbose output', metavar='DIR')
+parser.add_option('-c', '--check', dest='check', default=None, help='check against packages.txt', metavar='PACKAGES')
 
 (options, args) = parser.parse_args()
 
@@ -527,16 +565,20 @@ if len(args) < 1:
     sys.exit(1)
 
 deplist = args[0]
-log = open("build.log", "w")
 deps=read_dependency_list(deplist)
-srcs=download_srcs(deps)
-
 pkgname = deplist.split('/')[-1]
 
+if options.check is not None:
+    check(deps)
+    sys.exit(0)
 if options.scrape:
     scrape_libs(srcs, pkgname)
-else: 
-    build_srcs(srcs, pkgname)
+    sys.exit(0)
+
+log = open("build.log", "w")
+
+srcs=download_srcs(deps)
+build_srcs(srcs, pkgname)
 
 log.close()
 
