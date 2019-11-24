@@ -571,7 +571,8 @@ def check(deps, pkg_name):
         if d in packages:
             bi.has_symbols = True
             for l in packages[d]:
-                if os.path.exists(os.path.join(libhome, l)):
+                path = os.path.join(libhome, l)
+                if os.path.exists(path) and check_elf(path, LZLOAD_SYMBOL):
                     bi.erased_libs.append(l)
                 else:
                     bi.unerased_libs.append(l) 
