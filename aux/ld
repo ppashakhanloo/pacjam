@@ -4,6 +4,11 @@ dir=`dirname "$0"`
 
 if [ ! -z "$KLLVM" ]; then
     ${KLLVM}/build/bin/ld.lld "$@"
-else
+elif [ -f /home/acanino/llvm/build/bin/ld.lld ]; then
     /home/acanino/llvm/build/bin/ld.lld "$@"
+elif [ -f /home/aspire/llvm/build/bin/ld.lld ]; then
+    /home/aspire/llvm/build/bin/ld.lld "$@"
+else
+    echo "Loader not found"
+    exit 1
 fi
