@@ -14,7 +14,7 @@ working_dir = options.working_dir
 
 libs = []
 for l in os.listdir(os.path.join(working_dir, "lib")):
-    if re.match(".*\.so\.\d+$", l) or re.match(".*\.so\.\d+\.\d+$", l):
+    if re.match(".*\.so\d+$", l) or re.match(".*\.so\.\d+$", l) or re.match(".*\.so\.\d+\.\d+$", l):
         libs.append(l)
 
 print("export LZLOAD_LIB=\"", end="")
