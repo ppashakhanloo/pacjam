@@ -538,6 +538,38 @@ def read_build_stat(build_file):
             packages[package] = success
     return packages
 
+def install(deps, pkg_name):
+    installed_home = os.path.join(options.working_dir, "installed-lib")
+
+    if not os.path.exists(installed_home):
+        os.mkdir(installed_home)
+    
+    libhome = os.path.join(options.working_dir, "lib")
+    packages = read_package_list(options.packages)
+
+    for d in deps:
+        if exclude_src(d, EXCLUDES):
+            continue
+        if d not in packages:
+            print("Error: no package information for {}".format(d))
+            continue
+        libs = packages[d]
+        for l in libs:
+            p = os.path.join(libhome, l)
+            if os.path.exists(p):
+                print("Installing {} from {} ".format(l, d))
+                shutil.move(p, installed_home)
+            else:
+                print("Warning: {} not in dummy libs".format(l)) 
+
+def restore():
+    installed_home = os.path.join(options.working_dir, "installed-lib")
+    libhome = os.path.join(options.working_dir, "lib")
+
+    for l in os.listdir(installed_home):
+        print("Restoring {}".format(l)) 
+        shutil.move(os.path.join(installed_home, l), libhome) 
+
 class BuildInfo:
     def __init__(self, package):
         self.package = package
@@ -632,15 +664,6 @@ def check(deps, pkg_name):
     print("Builds with unerased libraries (non-binary): {}".format(nwithunerased_libs))
     print("Builds missing symbols (non-binary): {}".format(nmissing_sym))
                 
-   # with open(os.path.join(options.working_dir, "check.txt"), "w") as f:
-   #     for p, r in check_result.items():
-   #         if len(r) > 0:
-   #             f.write("{}".format(p))
-   #             for l in r:
-   #                 f.write(", {}".format(l))
-   #             f.write("\n")
-
-
 usage = "usage: %prog [options] dependency-list"
 parser = OptionParser(usage=usage)
 parser.add_option('-d', '--dir', dest='working_dir', default='symbol-out', help='use DIR as working output directory', metavar='DIR')
@@ -648,13 +671,20 @@ parser.add_option('-f', '--force', dest='force', action='store_true', help='forc
 parser.add_option('-s', '--scrape', dest='scrape', action='store_true', help='scrape libraries of built packages', metavar='DIR')
 parser.add_option('-v', '--verbose', dest='verbose', action='store_true', help='verbose output', metavar='DIR')
 parser.add_option('-c', '--check', dest='check', default=None, help='check against packages.txt', metavar='PACKAGES')
+parser.add_option('-p', '--packages', dest='packages', default=None, help='path to packages.txt', metavar='PACKAGES')
+parser.add_option('-i', '--install', dest='install', action='store_true', help='install packages in dependency list')
+parser.add_option('-r', '--restore', dest='restore', action='store_true', help='restore build')
 
 (options, args) = parser.parse_args()
+
+if options.restore is not None:
+    restore()
+    sys.exit(0) 
 
 if len(args) < 1:
     print("error: must supply dependency-list")
     parser.print_usage()
-    sys.exit(1)
+    sys.exit(1) 
 
 deplist = args[0]
 deps=read_dependency_list(deplist)
@@ -663,6 +693,14 @@ pkgname = deplist.split('/')[-1]
 if options.check is not None:
     check(deps, pkgname)
     sys.exit(0)
+
+if options.install is not None:
+    if options.packages is None:
+        print("Error, supply a path to a packages.txt from dep-symbol.py")
+        sys.exit(1)
+    install(deps, pkgname)
+    sys.exit(0) 
+
 if options.scrape:
     scrape_libs(srcs, pkgname)
     sys.exit(0)
