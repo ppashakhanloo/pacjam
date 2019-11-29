@@ -167,6 +167,7 @@ def build_original(src, env):
 
     if not reuse_saved_db or options.force:
         # Build the package normally first to get a compile_command.json
+        env["DEB_BUILD_OPTIONS"] = "nocheck notest"
         build_with_dpkg(srcpath, env)
 
         # Check for compile_command.json, and then move to tmp file so the next build doesn't
@@ -209,6 +210,7 @@ def build_vararg(src, env):
         os.remove(s)
 
     vararg_env = env.copy()
+    vararg_env["DEB_BUILD_OPTIONS"] = "nocheck notest"
     vararg_env["DUMMY_LIB_GEN"] = "ON"
 
     vararg_libs = gather_libs(srcpath)
@@ -310,6 +312,7 @@ def build_dummy(src, command_db, env, origpath):
         dummylib_env["COMPILE_COMMAND_DB"] = command_db
         dummylib_env["DUMMY_LIB_GEN"] = "ON"
         dummylib_env["DEB_LDFLAGS_APPEND"] = "-L/usr/local/lib -llzload"
+        dummylib_env["DEB_BUILD_OPTIONS"] = "nocheck notest"
 
         build_with_dpkg(srcpath, dummylib_env, parallel=True)
 
