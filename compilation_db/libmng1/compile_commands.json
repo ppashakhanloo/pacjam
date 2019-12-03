@@ -1,0 +1,781 @@
+[
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_chunk_xs.pic.o",
+            "libmng_chunk_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_jpeg.pic.o",
+            "libmng_jpeg.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_jpeg.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_dither.o",
+            "libmng_dither.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_dither.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_chunk_prc.o",
+            "libmng_chunk_prc.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_prc.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_trace.o",
+            "libmng_trace.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_trace.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_zlib.pic.o",
+            "libmng_zlib.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_zlib.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_chunk_io.pic.o",
+            "libmng_chunk_io.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_io.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_prop_xs.pic.o",
+            "libmng_prop_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_prop_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_write.o",
+            "libmng_write.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_write.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_chunk_descr.pic.o",
+            "libmng_chunk_descr.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_descr.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_hlapi.o",
+            "libmng_hlapi.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_hlapi.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_callback_xs.pic.o",
+            "libmng_callback_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_callback_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_write.pic.o",
+            "libmng_write.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_write.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_object_prc.o",
+            "libmng_object_prc.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_object_prc.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_filter.pic.o",
+            "libmng_filter.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_filter.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_zlib.o",
+            "libmng_zlib.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_zlib.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_chunk_io.o",
+            "libmng_chunk_io.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_io.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_pixels.o",
+            "libmng_pixels.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_pixels.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_chunk_descr.o",
+            "libmng_chunk_descr.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_descr.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_cms.o",
+            "libmng_cms.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_cms.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_jpeg.o",
+            "libmng_jpeg.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_jpeg.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_display.pic.o",
+            "libmng_display.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_display.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_hlapi.pic.o",
+            "libmng_hlapi.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_hlapi.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_dither.pic.o",
+            "libmng_dither.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_dither.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_pixels.pic.o",
+            "libmng_pixels.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_pixels.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_error.o",
+            "libmng_error.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_error.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_filter.o",
+            "libmng_filter.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_filter.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_object_prc.pic.o",
+            "libmng_object_prc.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_object_prc.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_read.pic.o",
+            "libmng_read.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_read.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_trace.pic.o",
+            "libmng_trace.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_trace.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_display.o",
+            "libmng_display.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_display.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_error.pic.o",
+            "libmng_error.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_error.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_chunk_prc.pic.o",
+            "libmng_chunk_prc.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_prc.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_chunk_xs.o",
+            "libmng_chunk_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_chunk_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_callback_xs.o",
+            "libmng_callback_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_callback_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_read.o",
+            "libmng_read.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_read.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-o",
+            "libmng_prop_xs.o",
+            "libmng_prop_xs.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_prop_xs.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-I/usr/include",
+            "-Wall",
+            "-O3",
+            "-fPIC",
+            "-funroll-loops",
+            "-DMNG_BUILD_SO",
+            "-DMNG_FULL_CMS",
+            "-fPIC",
+            "-o",
+            "libmng_cms.pic.o",
+            "libmng_cms.c"
+        ],
+        "directory": "/home/aspire/src-out/libmng1.original/libmng-1.0.10+dfsg",
+        "file": "libmng_cms.c"
+    }
+]
