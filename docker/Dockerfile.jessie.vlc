@@ -1,0 +1,17 @@
+FROM debian:jessie
+
+RUN cd /etc/apt && mv sources.list sources.list.bk && \
+      echo "deb http://snapshot.debian.org/archive/debian/20180530T212459Z buster main" > sources.list && \
+      apt-get -o Acquire::Check-Valid-Until=false update && \
+      apt-get install -y python3 cmake git vim sudo clang libpsl-dev bear nlohmann-json-dev debhelper
+RUN useradd -m -s /bin/bash aspire
+RUN usermod -aG sudo aspire
+RUN (echo "ai4code"; echo "ai4code") | passwd aspire
+RUN echo 'KLLVM=$HOME/llvm' >> /home/aspire/.bashrc
+RUN echo "alias sudo='sudo KLLVM=\$KLLVM'" >> /home/aspire/.bashrc
+USER aspire
+WORKDIR /home/aspire
+RUN echo "#!/bin/bash\ngit clone https://github.com/petablox/dep-trace.git\ncd dep-trace && sudo ./setup.sh" > /home/aspire/install-dep-trace.sh
+RUN echo "#!/bin/bash\ngit clone https://github.com/petablox/lzload.git\ncd lzload && mkdir build && cd build && cmake .. && make && sudo make install" > /home/aspire/install-lzload.sh
+RUN echo "#!/bin/bash\ngit clone https://github.com/petablox/llvm.git\ncd llvm && mkdir build && cd build && CC=clang CXX=clang++ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS=\"-static-libstdc++\" -DLLVM_ENABLE_PROJECTS=\"clang;lld\" -G \"Unix Makefiles\" ../llvm && make -j32" > /home/aspire/install-llvm.sh
+RUN chmod +x *.sh
