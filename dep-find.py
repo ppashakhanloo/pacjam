@@ -100,7 +100,7 @@ def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
                 deps[current_package] = []
             elif category in ['Depends:', 'Recommends:', 'Pre-Depends:']:
                 if current_package == '':
-                    log.error(f'Depends for empty package. (Line=${line_no})')
+                    log.error(f'Depends for empty package. (Line={line_no})')
                     sys.exit(-1)
 
                 deps[current_package].extend(parse_package_list(' '.join(tokens[1:])))
