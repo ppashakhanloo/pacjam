@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
-import subprocess
 import json
 import os.path
 import graph_tool.all
+import sys
+from os import walk
+from typing import List, Tuple
+import logging
 
 from optparse import OptionParser 
+
+log = logging.getLogger()
+log.setLevel(logging.INFO)
+
 
 def get_vertex(g, name2idx, v_prop, name):
     if name in name2idx:
@@ -17,48 +24,87 @@ def get_vertex(g, name2idx, v_prop, name):
     return idx
 
 
-def load():
-    if os.path.exists('deps.json'):
-        with open('deps.json', 'r') as f:
+def load(filename: str) -> Tuple[dict, bool]:
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
             deps = json.load(f)
-        return deps, False
-    else:
-        return {}, True
+
+            return deps, False
+
+    return {}, True
 
 
-def save(deps):
-    with open('deps.json', 'w') as f:
+def save(deps: dict, filename: str) -> None:
+    with open(filename, 'w') as f:
         json.dump(deps, f, indent=2)
 
 
-def fetch(deps):
-    lst = subprocess.check_output(['apt-cache', 'search', '.']).decode()
-    counter = 0
-    lst = lst.split('\n')
-    total = len(lst)
-    counter = 0
-    for pkg in lst:
-        name = pkg.split(' ')[0]
-        counter += 1
-        print('[{}/{}] Fetching {}'.format(counter, total, name))
-        if name in deps:
-            continue
-        if name == '':
-            continue
-        depends = subprocess.check_output([
-            'apt-cache', 'depends', '--no-suggests', '--no-breaks',
-            '--no-conflicts', name
-        ]).decode()
-        dep_list = []
+def get_package_file(distro: str, category: str, arch: str) -> str:
+    try:
+        base_dir, _, file_list = next(walk('/var/lib/apt/lists'))
+    except StopIteration:
+        logging.error('Cannot access: /var/lib/apt/lists')
+        sys.exit(-1)
 
-        for dep in [dep for dep in depends.split('\n') if 'Depends:' in dep or 'Recommends:' in dep]:
-            dep_name = dep.split(':')[1].strip()
-            dep_list.append(dep_name)
-        deps[name] = dep_list
+    suffix: str = f'_{distro}_{category}_binary-{arch}_Packages'
 
-        if counter % 1000 == 0:
-            save(deps)
-    save(deps)
+    for file in file_list:
+        if file.endswith(suffix):
+            return f'{base_dir}/{file}'
+
+    return ''
+
+
+def parse_package_list(packages_str: str) -> List[str]:
+    packages = []
+    for package_info in packages_str.split(','):
+        package_name = package_info.split()[0].strip()
+        packages.append(package_name)
+
+    log.debug(f'Dep-packages: {packages}')
+    return packages
+
+
+def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
+    package_file = get_package_file(distro, category, arch)
+    log.info(f'Building deps: {package_file}')
+
+    if len(package_file) == 0:
+        log.error("Matched 'Packages' file not found. Please run 'apt-get update', then retry.")
+        sys.exit(-1)
+
+    with open(package_file, 'rt') as infile:
+        line_no: int = 0
+        current_package: str = ''
+        for line in infile:
+            line_no += 1
+            tokens = line.strip().split()
+
+            if len(tokens) == 0:
+                # end of package
+                current_package = ''
+                continue
+
+            category: str = tokens[0].strip()
+
+            if category == 'Package:':
+                if current_package != '':
+                    log.error(f"Something wrong in 'Packages'' file format. (Line={line_no})")
+                    sys.exit(-1)
+
+                current_package = tokens[1].strip()
+                if current_package in deps:
+                    log.error(f'Duplicated package name: {current_package}')
+                    sys.exit(-1)
+
+                deps[current_package] = []
+            elif category in ['Depends:', 'Recommends:', 'Pre-Depends:']:
+                if current_package == '':
+                    log.error(f'Depends for empty package. (Line=${line_no})')
+                    sys.exit(-1)
+
+                deps[current_package].extend(parse_package_list(' '.join(tokens[1:])))
+
     return deps
 
 
@@ -146,14 +192,32 @@ def stats(deps, g, trans):
             f.write('{}, {}, {}\n'.format(counter, name, size))
             counter += 1
 
+
 parser = OptionParser()
 parser.add_option('-p', '--package', dest='package', help='build a dependency list for PACKAGE', metavar='PACKAGE')
+parser.add_option('-f', '--file', default='deps.json',
+                  help='Name of deps-file. [default: %default]')
+parser.add_option('-r', '--rebuild', action='store_true', default=False,
+                  help='Rebuild deps-file. [default: %default]')
+parser.add_option('-d', '--distro', default='buster',
+                  help='Linux distribution (required only for building deps-file). [default: %default]')
+parser.add_option('-c', '--category', default='main',
+                  help='Package category (required only for building deps-file).  [default: %default]')
+parser.add_option('-a', '--arch', default='amd64',
+                  help='Architecture (required only for building deps-file). [default: %default]')
 
 (options, args) = parser.parse_args()
 
-deps, need_init = load()
+deps, need_init = load(options.file)
+
+# reset if rebuild is True
+if options.rebuild:
+    deps = {}
+    need_init = True
+
 if need_init:
-    deps = fetch(deps)
+    deps = fetch(deps, options.distro, options.category, options.arch)
+    save(deps, options.file)
 
 g, name2idx = build(deps)
 transitive = transitive_closure(g)
