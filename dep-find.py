@@ -50,7 +50,9 @@ def get_package_file(distro: str, category: str, arch: str) -> str:
 
     for file in file_list:
         if file.endswith(suffix):
-            return f'{base_dir}/{file}'
+            # make sure debian repo, not 3rd-party
+            if file.find("debian.org") != -1:
+                return f'{base_dir}/{file}'
 
     return ''
 
