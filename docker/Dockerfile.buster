@@ -1,8 +1,8 @@
 FROM debian:buster
 
 RUN cd /etc/apt && mv sources.list sources.list.bk && \
-      echo "deb http://snapshot.debian.org/archive/debian/20191119T031319Z buster main" > sources.list && \
-      echo "deb-src http://snapshot.debian.org/archive/debian/20191119T031319Z buster main" >> sources.list && \
+      echo "deb http://fir01.seas.upenn.edu/debloat/debian-common buster main" > sources.list && \
+      echo "deb-src http://fir01.seas.upenn.edu/debloat/debian-common buster main" >> sources.list && \
       apt-get -o Acquire::Check-Valid-Until=false update && \
       apt-get install -y python3 cmake git vim sudo clang libpsl-dev bear nlohmann-json-dev debhelper
 RUN useradd -m -s /bin/bash aspire
