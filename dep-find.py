@@ -122,7 +122,7 @@ def search(name, deps):
     results = set()
     trans_deps = fixpt(deps, works, results)
     with open(name + '.dep', 'w') as f:
-        for p in trans_deps:
+        for p in sorted(trans_deps):
             f.write('{}\n'.format(p))
 
 
