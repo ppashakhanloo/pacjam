@@ -2,7 +2,6 @@
 
 import json
 import os.path
-import graph_tool.all
 import sys
 from os import walk
 from typing import List, Tuple
@@ -12,16 +11,6 @@ from optparse import OptionParser
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
-
-
-def get_vertex(g, name2idx, v_prop, name):
-    if name in name2idx:
-        return name2idx[name]
-    v = g.add_vertex()
-    v_prop[v] = {'label': name}
-    idx = g.vertex_index[v]
-    name2idx[name] = idx
-    return idx
 
 
 def load(filename: str) -> Tuple[dict, bool]:
@@ -51,7 +40,7 @@ def get_package_file(distro: str, category: str, arch: str) -> str:
     for file in file_list:
         if file.endswith(suffix):
             # make sure debian repo, not 3rd-party
-            if file.find("debian.org") != -1:
+            if file.find("fir01.seas.upenn.edu") != -1:
                 return f'{base_dir}/{file}'
 
     return ''
@@ -110,64 +99,31 @@ def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
     return deps
 
 
-def build(deps):
-    g = graph_tool.Graph()
-    name2idx = {}
-    v_prop = g.new_vertex_property('object')
-    total = len(deps)
-    counter = 0
-
-    for name, depends in deps.items():
-        counter += 1
-        print('[{}/{}] Building {}'.format(counter, total, name))
-        src = get_vertex(g, name2idx, v_prop, name)
-        edges = []
-        for dep_name in depends:
-            dst = get_vertex(g, name2idx, v_prop, dep_name)
-            edges.append((src, dst))
-        g.add_edge_list(edges)
-
-    g.vertex_properties['info'] = v_prop
-    return g, name2idx
+def fixpt(deps, works, results):
+    if len(works) == 0:
+        return results
+    w = works.pop()
+    try:
+        directs = deps[w]
+    except:
+        directs = set()
+    for d in directs:
+        if d in results:
+            continue
+        else:
+            works.update(directs)
+            results.update(directs)
+    return fixpt(deps, works, results)
 
 
-def transitive_closure(g):
-    transitive = graph_tool.topology.transitive_closure(g)
-    return transitive
-
-
-def draw(g, output):
-    v_prop = g.vertex_properties['info']
-    #v_shape = g.vertex_properties['shape']
-    #v_color = g.vertex_properties['color']
-    #vprops = {'shape': v_shape}
-    graph_tool.graphviz_draw(
-        g,
-        #    vcolor=v_color,
-        #    vprops=vprops,
-        size=(30, 30),
-        overlap=False,
-        output=output)
-
-
-def print_node_id(g, output):
-    v_prop = g.vertex_properties['info']
-
-    with open(output, 'w') as f:
-        for v in g.vertices():
-            f.write('{}: {}\n'.format(v, v_prop[v]['label']))
-
-def search(name, name2idx, g, trans):
-    v_prop = g.vertex_properties['info']
-    print(v_prop)
-    idx = name2idx[name]
-    index = trans.vertex_index.copy()
-    dp = graph_tool.util.find_vertex(trans,index,idx)[0]
-
+def search(name, deps):
+    works = set()
+    works.add(name)
+    results = set()
+    trans_deps = fixpt(deps, works, results)
     with open(name + '.dep', 'w') as f:
-        for w in dp.out_neighbors():
-            if '<' not in v_prop[w]['label']:
-                f.write('{}\n'.format(v_prop[w]['label']))
+        for p in trans_deps:
+            f.write('{}\n'.format(p))
 
 
 def stats(deps, g, trans):
@@ -221,14 +177,5 @@ if need_init:
     deps = fetch(deps, options.distro, options.category, options.arch)
     save(deps, options.file)
 
-g, name2idx = build(deps)
-transitive = transitive_closure(g)
-
-if need_init:
-    stats(deps, g, transitive)
-
 if options.package is not None:
-    search(options.package, name2idx, g, transitive)
-
-#draw(g, 'output.svg')
-#print_node_id(g, 'labels.txt')
+    search(options.package, deps)
