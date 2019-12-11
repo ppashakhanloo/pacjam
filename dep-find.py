@@ -64,7 +64,7 @@ def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
         log.error("Matched 'Packages' file not found. Please run 'apt-get update', then retry.")
         sys.exit(-1)
 
-    with open(package_file, 'rt') as infile:
+    with open(package_file, 'rt', errors='replace') as infile:
         line_no: int = 0
         current_package: str = ''
         for line in infile:
