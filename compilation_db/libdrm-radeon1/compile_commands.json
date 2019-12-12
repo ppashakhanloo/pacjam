@@ -2187,17 +2187,6 @@
         "arguments": [
             "cc",
             "-c",
-            "-o",
-            "/home/acanino/dep-trace/vlc-src-out/libdrm-radeon1.original/libdrm-2.4.97/build/meson-private/sanitycheckc.exe",
-            "sanitycheckc.c"
-        ],
-        "directory": "/home/acanino/dep-trace/vlc-src-out/libdrm-radeon1.original/libdrm-2.4.97/build/meson-private",
-        "file": "sanitycheckc.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
             "-Itests/proptest/7eb5fbb@@proptest@exe",
             "-Itests/proptest",
             "-I../tests/proptest",
