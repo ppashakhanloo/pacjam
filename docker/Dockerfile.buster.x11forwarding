@@ -16,7 +16,7 @@ RUN useradd -m -s /bin/bash -G sudo aspire && \
     echo 'KLLVM=$HOME/llvm' >> /home/aspire/.bashrc && \
     echo "alias sudo='sudo KLLVM=\$KLLVM'" >> /home/aspire/.bashrc
 
-COPY src/*.sh /home/aspire/
+COPY src/install-*.sh /home/aspire/
 RUN chown aspire.aspire -R /home/aspire/* /home/aspire/.[a-z]*
 
 EXPOSE 22
