@@ -1,10 +1,18 @@
 FROM debian:jessie
 
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C
+
 RUN cd /etc/apt && mv sources.list sources.list.bk && \
       echo "deb http://fir01.seas.upenn.edu/debloat/debian-vlc buster main" > sources.list && \
       echo "deb-src http://fir01.seas.upenn.edu/debloat/debian-vlc buster main" >> sources.list && \
       apt-get -o Acquire::Check-Valid-Until=false update && \
-      apt-get install -y python3 cmake git vim sudo clang libpsl-dev bear nlohmann-json-dev debhelper
+      apt-get install -y python3 cmake git vim sudo clang libpsl-dev bear debhelper wget
+
+# manually install nlohmann-json-dev package
+RUN wget http://fir01.seas.upenn.edu/debloat/debian-vlc/pool/main/n/nlohmann-json/nlohmann-json-dev_2.1.1-1.1_all.deb && \
+    dpkg -i nlohmann-json-dev_2.1.1-1.1_all.deb && \
+    rm -f nlohmann-json-dev_2.1.1-1.1_all.deb
 
 # ssh-server & x11-fowrwaring
 RUN apt-get install -y ssh xauth && \
@@ -13,10 +21,10 @@ RUN apt-get install -y ssh xauth && \
 
 RUN useradd -m -s /bin/bash -G sudo aspire && \
     (echo "ai4code"; echo "ai4code") | passwd aspire && \
-    echo 'KLLVM=$HOME/llvm' >> /home/aspire/.bashrc && \
+    echo 'export KLLVM=$HOME/llvm' >> /home/aspire/.bashrc && \
     echo "alias sudo='sudo KLLVM=\$KLLVM'" >> /home/aspire/.bashrc
 
-COPY src/*.sh /home/aspire/
+COPY src/install-*.sh /home/aspire/
 RUN chown aspire.aspire -R /home/aspire/* /home/aspire/.[a-z]*
 
 EXPOSE 22
