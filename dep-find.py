@@ -4,7 +4,6 @@ import json
 import os.path
 import sys
 from os import walk
-from typing import List, Tuple
 import logging
 
 from optparse import OptionParser 
@@ -13,7 +12,7 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 
-def load(filename: str) -> Tuple[dict, bool]:
+def load(filename):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
             deps = json.load(f)
@@ -23,50 +22,50 @@ def load(filename: str) -> Tuple[dict, bool]:
     return {}, True
 
 
-def save(deps: dict, filename: str) -> None:
+def save(deps, filename):
     with open(filename, 'w') as f:
         json.dump(deps, f, indent=2)
 
 
-def get_package_file(distro: str, category: str, arch: str) -> str:
+def get_package_file(distro, category, arch):
     try:
         base_dir, _, file_list = next(walk('/var/lib/apt/lists'))
     except StopIteration:
         logging.error('Cannot access: /var/lib/apt/lists')
         sys.exit(-1)
 
-    suffix: str = f'_{distro}_{category}_binary-{arch}_Packages'
+    suffix = '_{}_{}_binary-{}_Packages'.format(distro, category, arch)
 
     for file in file_list:
         if file.endswith(suffix):
             # make sure debian repo, not 3rd-party
             if file.find("fir01.seas.upenn.edu") != -1:
-                return f'{base_dir}/{file}'
+                return '{}/{}'.format(base_dir, file)
 
     return ''
 
 
-def parse_package_list(packages_str: str) -> List[str]:
+def parse_package_list(packages_str):
     packages = []
     for package_info in packages_str.split(','):
         package_name = package_info.split()[0].strip()
         packages.append(package_name)
 
-    log.debug(f'Dep-packages: {packages}')
+    log.debug('Dep-packages: {}'.format(packages))
     return packages
 
 
-def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
+def fetch(deps, distro, category, arch):
     package_file = get_package_file(distro, category, arch)
-    log.info(f'Building deps: {package_file}')
+    log.info('Building deps: {}'.format(package_file))
 
     if len(package_file) == 0:
         log.error("Matched 'Packages' file not found. Please run 'apt-get update', then retry.")
         sys.exit(-1)
 
     with open(package_file, 'rt', errors='replace') as infile:
-        line_no: int = 0
-        current_package: str = ''
+        line_no = 0
+        current_package = ''
         for line in infile:
             line_no += 1
             tokens = line.strip().split()
@@ -76,22 +75,22 @@ def fetch(deps: dict, distro: str, category: str, arch: str) -> dict:
                 current_package = ''
                 continue
 
-            category: str = tokens[0].strip()
+            category = tokens[0].strip()
 
             if category == 'Package:':
                 if current_package != '':
-                    log.error(f"Something wrong in 'Packages'' file format. (Line={line_no})")
+                    log.error("Something wrong in 'Packages'' file format. (Line={})".format(line_no))
                     sys.exit(-1)
 
                 current_package = tokens[1].strip()
                 if current_package in deps:
-                    log.error(f'Duplicated package name: {current_package}')
+                    log.error('Duplicated package name: {}'.format(current_package))
                     sys.exit(-1)
 
                 deps[current_package] = []
             elif category in ['Depends:', 'Recommends:', 'Pre-Depends:']:
                 if current_package == '':
-                    log.error(f'Depends for empty package. (Line={line_no})')
+                    log.error('Depends for empty package. (Line={})'.format(line_no))
                     sys.exit(-1)
 
                 deps[current_package].extend(parse_package_list(' '.join(tokens[1:])))
