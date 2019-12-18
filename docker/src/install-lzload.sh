@@ -7,7 +7,7 @@ export LANG=C
 
 mkdir build && \ 
 cd build && \
-cmake .. && \
+CC=clang cmake .. && \
 make && \
 sudo make install
 
