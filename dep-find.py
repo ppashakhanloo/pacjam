@@ -42,6 +42,11 @@ def get_package_file(distro, category, arch):
             if file.find("fir01.seas.upenn.edu") != -1:
                 return '{}/{}'.format(base_dir, file)
 
+    for file in file_list:
+        if file.find(suffix):
+            log.error("Please uncompress the file: {}".format(file))
+            sys.exit(-1)
+
     return ''
 
 
@@ -84,8 +89,7 @@ def fetch(deps, distro, category, arch):
 
                 current_package = tokens[1].strip()
                 if current_package in deps:
-                    log.error('Duplicated package name: {}'.format(current_package))
-                    sys.exit(-1)
+                    log.warn('Duplicated package name: {}'.format(current_package))
 
                 deps[current_package] = []
             elif category in ['Depends:', 'Recommends:', 'Pre-Depends:']:

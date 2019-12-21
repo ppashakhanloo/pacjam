@@ -266,7 +266,7 @@ def build_with_make(src, command_db, env, origpath):
         compile_env = env.copy()
         compile_env["DUMMY_LIB_GEN"] = "ON"
         compile_env["COMPILE_COMMAND_DB"] = command_db
-        if os.path.exists(os.path.join(srcpath, './configure')):
+        if os.path.exists(os.path.join(srcpath, './configure')) and os.access(os.path.join(srcpath, './configure'), os.X_OK):
             command = ['./configure']
             if src in CONFIG_OPTS:
                 command = command + CONFIG_OPTS[src]
