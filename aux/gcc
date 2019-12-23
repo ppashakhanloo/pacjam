@@ -2,7 +2,7 @@
 
 dir=`dirname "$0"`
 
-if [ ! -z "$COMPILE_COMMAND_DB" ]; then
+if [ ! -z "$DUMMY_LIB_GEN" ]; then
 	if [ ! -z "$KLLVM" ]; then
             ${KLLVM}/build/bin/clang "$@"
         elif [ -f /home/acanino/llvm/build/bin/clang ]; then

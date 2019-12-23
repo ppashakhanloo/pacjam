@@ -2,7 +2,7 @@
 
 dir=`dirname "$0"`
 
-if [ ! -z "$COMPILE_COMMAND_DB" ]; then
+if [ ! -z "$DUMMY_LIB_GEN" ]; then
 	${KLLVM}/build/bin/clang++ "$@"
 else
 	$dir/g++-orig "$@"
