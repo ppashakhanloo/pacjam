@@ -61,20 +61,54 @@ RUN wget http://fir01.seas.upenn.edu/debloat/debian-vlc/pool/main/n/nlohmann-jso
     dpkg -i nlohmann-json-dev_2.1.1-1.1_all.deb && \
     rm -f nlohmann-json-dev_2.1.1-1.1_all.deb
 
-# ssh-server & x11-fowrwaring
-RUN apt-get install -y ssh xauth && \
-      mkdir /var/run/sshd && \
-      echo "X11UseLocalhost no" >> /etc/ssh/sshd_config
-
 RUN useradd -m -s /bin/bash -G sudo aspire && \
     (echo "ai4code"; echo "ai4code") | passwd aspire && \
-    echo 'export KLLVM=$HOME/llvm\nexport LANG=C' >> /home/aspire/.bashrc && \
+    echo 'export KLLVM=$HOME/llvm' >> /home/aspire/.bashrc && \
     echo "alias sudo='sudo KLLVM=\$KLLVM'" >> /home/aspire/.bashrc
+
+## Envrionment config
+ENV HOME=/home/aspire \
+    DISPLAY=:1 \
+    VNC_PORT=5901 \
+    NO_VNC_PORT=6901 \
+    TERM=xterm \
+    NO_VNC_HOME=/headless/noVNC \
+    DEBIAN_FRONTEND=noninteractive \
+    VNC_COL_DEPTH=24 \
+    VNC_RESOLUTION=1280x1024 \
+    VNC_PW=vncpassword 
+
+RUN apt-get install -y \
+    vim wget net-tools locales bzip2 ca-certificates \
+    python-numpy \
+    ttf-wqy-zenhei \
+    supervisor xfce4 xfce4-terminal xterm
+
+# tigerVNC
+RUN wget -qO- http://fir01.seas.upenn.edu/debloat/debian-chrome/extra/tigervnc-1.8.0.x86_64.tar.gz | tar xz --strip 1 -C /
+
+# noVNC
+RUN mkdir -p $NO_VNC_HOME/utils/websockify && \
+    wget -qO- https://github.com/novnc/noVNC/archive/v1.0.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME && \
+    wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME/utils/websockify && \
+    chmod +x -v $NO_VNC_HOME/utils/*.sh && \
+    ln -s $NO_VNC_HOME/vnc_lite.html $NO_VNC_HOME/index.html
+
+### configure startup
+COPY ./src/vnc_startup.sh /headless
+COPY ./src/xfce4.tar.gz /home/aspire
+RUN mkdir -p /home/aspire/.config && \
+    tar xf /home/aspire/xfce4.tar.gz -C /home/aspire/.config && \
+    rm /home/aspire/xfce4.tar.gz
 
 COPY src/install-*.sh /home/aspire/
 RUN chown aspire.aspire -R /home/aspire/* /home/aspire/.[a-z]*
 
-EXPOSE 22
+EXPOSE $VNC_PORT $NO_VNC_PORT
 
-CMD ["/usr/sbin/sshd", "-D"]
+USER aspire
+WORKDIR /home/aspire
+
+ENTRYPOINT ["/headless/vnc_startup.sh"]
+CMD [""]
 
