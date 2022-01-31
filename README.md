@@ -4,10 +4,9 @@ Repository is a suite of tools for manipulating debian packages. At a high level
 
 # dep-find
 
-This tool (written by Kihong) builds a dependency graph of the debian packages cached by apt. I have incluced the files ``direct.txt`` and ``transitive.txt`` which show the direct and transitive dependencies for debian packages respectively. 
+This tool builds a dependency graph of the debian packages cached by apt. I have incluced the files ``direct.txt`` and ``transitive.txt`` which show the direct and transitive dependencies for debian packages respectively. 
 
-For the time being, you can grab a dependency list for a package with:
-
+You can grab a dependency list for a package with:
 ```
 ./dep-find.py -p PACKAGE
 ```
@@ -35,10 +34,10 @@ mkdir symbol-out
 
 # lzload
 
-lzload is a C library that does the actual shim / dummy library loading at runtime. Seperately, clone https://github.com/petablox/lzload and build and install with cmake:
+lzload is a C library that does the actual shim / dummy library loading at runtime. Build and install with cmake:
 
 ```
-git@github.com:petablox/lzload.git
+cd lzload
 mkdir build && cd build
 cmake .. -DCMAKE_C_COMPILER=/path/to/clang 
 make
