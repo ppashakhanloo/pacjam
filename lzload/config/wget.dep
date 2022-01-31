@@ -1,0 +1,11 @@
+libc6
+libgcc1
+gcc-8-base
+libuuid1
+<debconf-2.0>
+debconf
+libssl1.1
+libpcre3
+libpsl5
+libidn2-0
+libunistring2
